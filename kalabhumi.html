@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kalābhūmi — The Art Survey of India</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%23f4ecda' stroke='%23bc4327' stroke-width='4'/%3E%3Ccircle cx='50' cy='50' r='30' fill='none' stroke='%239c7a2c' stroke-width='2'/%3E%3Ctext x='50' y='64' font-size='34' text-anchor='middle' fill='%23bc4327' font-family='Georgia, serif'%3Eक%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/fraunces@5/index.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/fraunces@5/700.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/karla@5/index.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/karla@5/500.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/karla@5/700.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/rozha-one@5/index.css">
+<script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script>
+<style>
+:root{
+  --paper:#f4ecda; --paper2:#ece0c4; --card:#fbf6e8;
+  --ink:#2a2620; --ink2:#6b6353; --line:#d3c39c; --line2:#b9a678;
+  --verm:#bc4327; --ind:#2f4d8f; --gold:#9c7a2c;
+  --disp:'Fraunces', Georgia, serif;
+  --body:'Karla', system-ui, sans-serif;
+  --dev:'Rozha One', serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:auto}
+body{
+  background:
+    radial-gradient(1100px 560px at 50% -10%, rgba(156,122,44,.10), transparent 60%),
+    radial-gradient(900px 520px at 100% 100%, rgba(188,67,39,.07), transparent 60%),
+    var(--paper);
+  color:var(--ink); font-family:var(--body); font-weight:400; line-height:1.6; overflow-x:hidden;
+}
+body::before{content:""; position:fixed; inset:0; pointer-events:none; z-index:0; opacity:.5;
+  background-image:radial-gradient(circle at 1px 1px, rgba(42,38,32,.06) 1px, transparent 1.6px); background-size:26px 26px;}
+::selection{background:rgba(188,67,39,.25)}
+img{display:block; max-width:100%}
+button{font-family:inherit; cursor:pointer}
+
+.screen{display:none; position:relative; z-index:1}
+.screen.active{display:block; animation:pageIn .4s ease}
+@keyframes pageIn{from{opacity:0} to{opacity:1}}
+
+/* ---------- ribbon + tabs ---------- */
+.ribbon{display:flex; justify-content:space-between; align-items:center; gap:16px;
+  padding:10px 3vw; border-bottom:2px solid var(--ink); background:var(--paper); position:relative; z-index:5}
+.ribbon .r-left{font-size:10.5px; letter-spacing:.3em; text-transform:uppercase; color:var(--ink2); font-weight:700}
+.ribbon .r-left b{color:var(--verm)}
+.pagenav{display:flex; gap:6px}
+.pagenav button{padding:7px 16px; border:2px solid var(--ink); background:var(--card); color:var(--ink);
+  font-size:10.5px; letter-spacing:.2em; text-transform:uppercase; font-weight:700; transition:background .2s,color .2s; box-shadow:3px 3px 0 var(--ink)}
+.pagenav button.active{background:var(--verm); color:var(--card)}
+
+/* ---------- shared ---------- */
+.btn{display:inline-flex; align-items:center; gap:10px; padding:13px 26px; border:2px solid var(--ink);
+  background:var(--card); color:var(--ink); font-size:12px; letter-spacing:.2em; text-transform:uppercase; font-weight:700;
+  box-shadow:4px 4px 0 var(--ink); transition:transform .2s, box-shadow .2s}
+.btn:hover{transform:translate(-2px,-2px); box-shadow:6px 6px 0 var(--ink)}
+.btn.solid{background:var(--verm); color:var(--card)}
+.eyebrow{display:inline-flex; align-items:center; gap:10px; font-size:11px; letter-spacing:.3em; text-transform:uppercase; color:var(--verm); font-weight:700}
+.eyebrow::before{content:""; width:34px; height:2px; background:var(--verm)}
+
+/* ---------- HOME : cartouche cover ---------- */
+.cartouche{max-width:1120px; margin:56px auto 0; padding:0 6vw}
+.cart-box{position:relative; border:3px double var(--ink); background:var(--card); padding:42px clamp(24px,4.5vw,56px) 40px;
+  box-shadow:10px 10px 0 rgba(42,38,32,.12); display:grid; grid-template-columns:1.1fr .9fr; gap:44px}
+.cart-box::after{content:""; position:absolute; inset:8px; border:1px solid var(--line2); pointer-events:none}
+.cn{position:absolute; color:var(--verm); font-size:14px; z-index:2}
+.cn.tl{top:12px; left:14px}.cn.tr{top:12px; right:14px}.cn.bl{bottom:12px; left:14px}.cn.br{bottom:12px; right:14px}
+.cc-left,.cc-right{position:relative; z-index:2}
+.cover-inst{font-size:10.5px; letter-spacing:.32em; text-transform:uppercase; color:var(--gold); font-weight:700}
+.cover-srm{font-family:var(--disp); font-weight:700; font-size:clamp(24px,3vw,36px); line-height:1.15; margin:10px 0 2px}
+.cover-deem{font-size:10.5px; letter-spacing:.22em; text-transform:uppercase; color:var(--ink2)}
+.cover-rule{display:flex; align-items:center; gap:14px; margin:20px 0}
+.cover-rule::before,.cover-rule::after{content:""; flex:1; height:1px; background:linear-gradient(90deg, transparent, var(--verm))}
+.cover-rule::after{background:linear-gradient(90deg, var(--verm), transparent)}
+.cover-rule i{color:var(--verm); font-style:normal; font-size:12px}
+.cover-topic-label{font-size:10px; letter-spacing:.3em; text-transform:uppercase; color:var(--ink2); font-weight:700}
+.cover-topic{font-family:var(--disp); font-weight:700; font-size:clamp(17px,2vw,23px); line-height:1.4; margin-top:6px}
+.ledger{text-align:left}
+.ledger .row{display:flex; align-items:baseline; gap:12px; padding:8px 2px; border-bottom:1px dashed var(--line2); font-size:13px}
+.ledger .k{color:var(--ink2); letter-spacing:.16em; text-transform:uppercase; font-size:10.5px; white-space:nowrap; font-weight:700}
+.ledger .dots{flex:1; border-bottom:1px dotted var(--line2); transform:translateY(-4px)}
+.ledger .v{color:var(--ink); font-weight:700; letter-spacing:.05em; text-align:right}
+.stamp{position:absolute; right:6px; top:-14px; width:112px; height:112px; border:2.5px solid var(--verm); border-radius:50%;
+  color:var(--verm); display:grid; place-items:center; text-align:center; transform:rotate(10deg);
+  font-size:8.5px; letter-spacing:.16em; text-transform:uppercase; font-weight:700; padding:10px; opacity:.9; z-index:3}
+.stamp::after{content:""; position:absolute; inset:6px; border:1px solid var(--verm); border-radius:50%}
+.cover-due{margin-top:22px; font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:var(--ink2); font-weight:700}
+.cover-due b{color:var(--verm)}
+
+/* ---------- HOME : hero ---------- */
+.hero{padding:56px 6vw 36px; max-width:1440px; margin:0 auto}
+.hero-grid{display:grid; grid-template-columns:1.15fr .85fr; gap:56px; align-items:center}
+h1{font-family:var(--disp); font-weight:700; font-size:clamp(46px,6.4vw,92px); line-height:1.02; margin:18px 0 6px}
+h1 .dev{font-family:var(--dev); font-weight:400; color:var(--verm); font-size:.42em; vertical-align:.5em; margin-left:14px}
+.lede{max-width:56ch; color:var(--ink2); font-size:16px; margin:14px 0 30px}
+.lede em{color:var(--ink); font-style:normal; font-weight:700}
+.stats{display:flex; gap:26px; margin-bottom:34px; flex-wrap:wrap}
+.stat b{display:inline-block; font-family:var(--disp); font-weight:700; font-size:34px; color:var(--verm); line-height:1;
+  border:2px dashed var(--line2); background:var(--card); padding:14px 20px 10px}
+.stat span{display:block; margin-top:8px; font-size:10.5px; letter-spacing:.22em; text-transform:uppercase; color:var(--ink2); font-weight:700}
+.hero-cta{display:flex; align-items:center; gap:18px; flex-wrap:wrap}
+.hint{font-size:12px; color:var(--ink2)}
+.hero-right{position:relative; display:flex; justify-content:center}
+.compassbg{position:absolute; width:560px; height:560px; top:50%; left:50%; translate:-50% -50%; opacity:.16; pointer-events:none}
+.postcard{position:relative; width:min(390px,88%); background:var(--card); border:1px solid var(--line); padding:14px 14px 16px;
+  box-shadow:0 26px 60px rgba(60,45,20,.28); transform:rotate(-2deg)}
+.postcard::before,.postcard::after{content:""; position:absolute; width:82px; height:24px; background:rgba(185,166,120,.45); top:-12px; z-index:3}
+.postcard::before{left:22px; transform:rotate(-5deg)}
+.postcard::after{right:22px; transform:rotate(4deg)}
+.pc-frame{position:relative; aspect-ratio:4/5; overflow:hidden; background:#2a2620; border:1px solid var(--line)}
+.pc-frame img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0; transition:opacity .6s ease}
+.pc-frame img.on{opacity:1}
+.pc-cap{display:flex; justify-content:space-between; align-items:baseline; gap:10px; padding:12px 4px 0}
+.pc-cap .t{font-family:var(--disp); font-weight:700; font-style:italic; font-size:16px}
+.pc-cap .d{font-size:11px; color:var(--ink2)}
+.pc-idx{font-family:var(--disp); color:var(--verm); font-size:14px; white-space:nowrap}
+.pc-tag{position:absolute; top:-13px; left:50%; transform:translateX(-50%) rotate(1deg); background:var(--verm); color:var(--card); padding:3px 16px; font-size:9.5px; letter-spacing:.3em; text-transform:uppercase; font-weight:700; z-index:4}
+
+.stampstrip{overflow:hidden; border-block:2px solid var(--ink); background:var(--paper2); padding:14px 0}
+.stampstrip-inner{display:flex; width:max-content; animation:marquee 50s linear infinite}
+.stampstrip:hover .stampstrip-inner{animation-play-state:paused}
+.st{border:1.5px dashed var(--ink2); background:var(--card); padding:8px 16px; margin:0 9px; white-space:nowrap;
+  font-size:11px; letter-spacing:.24em; text-transform:uppercase; font-weight:700; color:var(--ink2); transform:rotate(-1.2deg)}
+.st:nth-child(even){transform:rotate(1.2deg); color:var(--verm)}
+@keyframes marquee{to{transform:translateX(-50%)}}
+
+.about{max-width:1240px; margin:64px auto 0; padding:0 6vw; display:grid; grid-template-columns:1fr 1fr 1fr; gap:30px}
+.about-col{background:var(--card); border:1.5px solid var(--line2); border-radius:6px; padding:26px 26px 22px; position:relative;
+  box-shadow:6px 6px 0 rgba(42,38,32,.10);
+  background-image:repeating-linear-gradient(transparent 0 30px, rgba(211,195,156,.35) 30px 31px)}
+.about-col::before{content:attr(data-no); position:absolute; top:-14px; left:18px; background:var(--ind); color:var(--card); font-size:9px; letter-spacing:.26em; text-transform:uppercase; font-weight:700; padding:4px 12px}
+.about-col h4{font-family:var(--disp); font-weight:700; font-size:20px; margin-bottom:12px}
+.about-col p,.about-col li{font-size:13.5px; color:var(--ink2)}
+.about-col ul{list-style:none}
+.about-col li{padding:6px 0 6px 20px; position:relative}
+.about-col li::before{content:"✦"; position:absolute; left:0; top:7px; color:var(--verm); font-size:10px}
+.about-col b{color:var(--ink)}
+footer{margin-top:64px; border-top:3px double var(--ink); background:var(--ink); color:var(--paper); padding:34px 6vw 40px; display:flex; justify-content:space-between; gap:28px; flex-wrap:wrap}
+.f-brand{max-width:46ch}
+.f-brand .f-title{font-family:var(--disp); font-weight:700; font-size:22px; color:var(--paper)}
+.f-brand p{font-size:12.5px; color:#cfc4a8; margin-top:8px}
+.f-meta{text-align:right; font-size:12px; color:#cfc4a8}
+.f-meta .due{display:inline-block; margin-bottom:10px; padding:7px 16px; border:1.5px dashed var(--paper); border-radius:999px; color:var(--paper); letter-spacing:.18em; text-transform:uppercase; font-size:10.5px; font-weight:700}
+.f-meta p{margin-top:4px}
+
+/* ---------- MAP PAGE ---------- */
+.map-page{padding:0 0 30px}
+.map-head{display:flex; align-items:center; justify-content:space-between; gap:16px; padding:12px 3vw 8px; flex-wrap:wrap}
+.backlink{border:2px solid var(--ink); background:var(--card); color:var(--ink); padding:8px 16px; font-size:10.5px; letter-spacing:.2em; text-transform:uppercase; font-weight:700; box-shadow:3px 3px 0 var(--ink); transition:transform .2s, box-shadow .2s}
+.backlink:hover{transform:translate(-1px,-1px); box-shadow:4px 4px 0 var(--ink)}
+.map-title h2{font-family:var(--disp); font-weight:700; font-size:clamp(22px,2.4vw,32px); line-height:1.1}
+.map-title p{color:var(--ink2); font-size:12.5px; max-width:60ch}
+.toggles{display:flex; gap:8px}
+.tgl{border:2px solid var(--ink); background:var(--card); color:var(--ink); padding:9px 14px; font-size:10px; letter-spacing:.16em; text-transform:uppercase; font-weight:700; box-shadow:3px 3px 0 var(--ink); transition:background .2s,color .2s}
+.tgl.on{background:var(--ind); color:var(--card)}
+.group-chips{display:flex; gap:8px; flex-wrap:wrap; padding:4px 3vw 10px}
+.chip{display:inline-flex; align-items:center; gap:8px; padding:7px 14px; border:2px solid var(--ink); background:var(--card); color:var(--ink); font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; font-weight:700; transition:background .2s,color .2s; box-shadow:3px 3px 0 rgba(42,38,32,.35)}
+.chip .dotc{width:9px; height:9px; border-radius:50%; background:var(--c); box-shadow:0 0 0 1.5px var(--card), 0 0 0 2.5px var(--ink)}
+.chip.active{background:var(--c); color:var(--card)}
+.chip.active .dotc{background:var(--card)}
+
+.map-wrap{display:grid; grid-template-columns:1.22fr .78fr; gap:20px; padding:0 3vw; align-items:stretch}
+.map-panel{position:relative; background:var(--paper2); border:2.5px solid var(--ink); box-shadow:8px 8px 0 rgba(42,38,32,.14); overflow:hidden; display:flex; flex-direction:column}
+#mapHost{position:relative; flex:1; min-height:420px; display:grid; place-items:center; color:var(--ink2); font-size:12px; letter-spacing:.2em; text-transform:uppercase}
+#mapHost svg{width:100%; height:100%; display:block; cursor:grab}
+#mapHost svg:active{cursor:grabbing}
+.cart-mini{position:absolute; top:12px; left:12px; z-index:4; background:var(--card); border:2px double var(--ink); padding:6px 14px; text-align:center; box-shadow:4px 4px 0 rgba(42,38,32,.15)}
+.cart-mini .a{font-family:var(--dev); font-size:14px; color:var(--verm)}
+.cart-mini .b{font-size:8px; letter-spacing:.28em; text-transform:uppercase; font-weight:700; color:var(--ink2)}
+.zoomctl{position:absolute; right:12px; bottom:12px; z-index:4; display:flex; flex-direction:column; gap:6px}
+.zoomctl button{width:36px; height:36px; border:2px solid var(--ink); background:var(--card); font-size:15px; font-weight:700; box-shadow:3px 3px 0 var(--ink); transition:background .2s,color .2s}
+.zoomctl button:hover{background:var(--verm); color:var(--card)}
+.map-note{position:absolute; left:14px; bottom:10px; z-index:4; font-size:9px; letter-spacing:.2em; text-transform:uppercase; color:var(--ink2); font-weight:700}
+#tip{position:absolute; z-index:6; pointer-events:none; background:var(--ink); color:var(--paper); padding:7px 12px; font-size:11px; letter-spacing:.06em; opacity:0; transition:opacity .15s; white-space:nowrap}
+#tip b{color:var(--gold); letter-spacing:.14em; text-transform:uppercase; font-size:10px}
+
+.grat{fill:none; stroke:rgba(42,38,32,.14); stroke-width:.7; stroke-dasharray:2 3; vector-effect:non-scaling-stroke}
+.nb{fill:#e3d5b3; stroke:#c9b78d; stroke-width:.7; vector-effect:non-scaling-stroke}
+.india{fill:#f8efd9; stroke:var(--ink); stroke-width:1.6; vector-effect:non-scaling-stroke}
+.rt{fill:none; stroke:var(--c); stroke-width:1.6; opacity:.4; vector-effect:non-scaling-stroke; transition:opacity .3s}
+.rt.dim{opacity:.07}
+.rt.hot{opacity:.85; stroke-width:2.2}
+.trail{fill:none; stroke:var(--verm); stroke-width:2.2; stroke-dasharray:4 8; stroke-linejoin:round; stroke-linecap:round; vector-effect:non-scaling-stroke; animation:dash 26s linear infinite}
+.trail.hidden{display:none}
+@keyframes dash{to{stroke-dashoffset:-480}}
+.mk{cursor:pointer}
+.mk .core{fill:var(--c); stroke:var(--card); stroke-width:1.8}
+.mk:hover .core,.mk.sel .core{r:9.5}
+.mk .pulse{fill:none; stroke:var(--c); stroke-width:1.4; opacity:0; transform-box:fill-box; transform-origin:center}
+.mk:hover .pulse,.mk.sel .pulse{opacity:.6; animation:pulse 2.4s ease-out infinite}
+@keyframes pulse{from{transform:scale(.45); opacity:.75} to{transform:scale(2); opacity:0}}
+.mk .num{font-size:7px; font-weight:700; text-anchor:middle; fill:var(--card); pointer-events:none; font-family:var(--body)}
+.mk .lbl{font-size:11px; font-weight:700; fill:var(--ink); opacity:0; transition:opacity .2s; paint-order:stroke; stroke:var(--paper); stroke-width:3.5px; pointer-events:none; font-family:var(--body)}
+.mk:hover .lbl,.mk.sel .lbl{opacity:1}
+.mk.dim{opacity:.15; pointer-events:none}
+
+/* detail card: flex column — image grows to fill leftover space, FULL image visible */
+.detail{background:var(--card); border:2.5px solid var(--ink); box-shadow:8px 8px 0 rgba(42,38,32,.14); overflow:hidden; overflow-y:auto; scrollbar-width:thin; display:flex; flex-direction:column}
+.d-img{position:relative; flex:0 0 auto; height:250px; background:#2a2620}
+.d-img img{width:100%; height:100%; object-fit:contain}
+.d-plate{position:absolute; top:10px; right:10px; z-index:2; background:var(--card); border:1.5px dashed var(--ink); padding:3px 9px; font-size:8.5px; letter-spacing:.26em; text-transform:uppercase; font-weight:700; color:var(--ink2)}
+.d-state-tag{position:absolute; left:14px; bottom:10px; z-index:2; font-size:10px; letter-spacing:.22em; text-transform:uppercase; color:var(--card); font-weight:700; text-shadow:0 1px 4px rgba(0,0,0,.6)}
+.d-body{padding:16px 20px 18px; flex:0 0 auto}
+.d-chip{display:inline-flex; align-items:center; gap:8px; font-size:9.5px; letter-spacing:.16em; text-transform:uppercase; font-weight:700; color:var(--card); background:var(--c); padding:4px 11px}
+.d-body h3{font-family:var(--disp); font-weight:700; font-size:24px; line-height:1.1; margin:10px 0 2px}
+.d-lead{font-size:13px; color:var(--ink); font-weight:500; border-left:3px solid var(--c); padding-left:12px; margin:8px 0 10px; font-style:italic}
+.d-ctx{font-size:12.5px; color:var(--ink2); margin-bottom:14px}
+.d-facts{display:flex; flex-direction:column; gap:8px; margin-bottom:14px}
+.d-facts div{background:var(--paper); border:1.5px solid var(--line2); padding:8px 12px}
+.d-facts h6{font-size:9px; letter-spacing:.24em; text-transform:uppercase; color:var(--verm); margin-bottom:3px; font-weight:700}
+.d-facts p{font-size:12px; color:var(--ink2)}
+.d-nav{display:flex; align-items:center; justify-content:space-between; border-top:2px solid var(--ink); padding-top:12px}
+.d-nav button{border:2px solid var(--ink); background:var(--card); padding:7px 14px; font-size:10px; letter-spacing:.16em; text-transform:uppercase; font-weight:700; box-shadow:3px 3px 0 var(--ink); transition:background .2s,color .2s}
+.d-nav button:hover{background:var(--verm); color:var(--card)}
+.d-count{font-family:var(--disp); color:var(--verm); font-size:14px; font-weight:700}
+.tl-foot{text-align:center; margin-top:26px; color:var(--ink2); font-size:10.5px; letter-spacing:.24em; text-transform:uppercase; font-weight:700}
+
+/* ===== single-screen lock (desktop) ===== */
+@media (min-width:981px){
+  #page-map.active{display:flex; flex-direction:column; height:100vh; height:100dvh; overflow:hidden}
+  #page-map .ribbon{flex:0 0 auto}
+  #page-map .map-page{flex:1; min-height:0; display:flex; flex-direction:column; padding:0}
+  #page-map .map-head{flex:0 0 auto; padding:10px 3vw 6px}
+  #page-map .map-title p{display:none}
+  #page-map .group-chips{flex:0 0 auto; padding-bottom:8px}
+  #page-map .map-wrap{flex:1 1 auto; min-height:0; padding:0 3vw 12px}
+  #page-map .map-panel{height:100%; min-height:0}
+  #page-map #mapHost{min-height:0}
+  #page-map .detail{height:100%; min-height:0; max-height:none}
+  #page-map .d-img{flex:1 1 auto; height:auto; min-height:170px}
+  #page-map .tl-foot{display:none}
+}
+
+@media (max-width:1100px){ .about{grid-template-columns:1fr} }
+@media (max-width:980px){
+  .cart-box{grid-template-columns:1fr; gap:26px}
+  .stamp{top:auto; bottom:-16px}
+  .hero-grid{grid-template-columns:1fr; gap:44px}
+  .map-wrap{grid-template-columns:1fr; padding:0 5vw}
+  #mapHost{min-height:420px}
+  #mapHost svg{height:auto}
+  .detail{max-height:none}
+  .f-meta{text-align:left}
+  .ribbon{flex-direction:column; gap:10px}
+}
+</style>
+</head>
+<body>
+
+<!-- ================= PAGE 1 : HOME ================= -->
+<section class="screen" id="page-home">
+
+  <div class="ribbon">
+    <span class="r-left">Survey of Indian Art · Plate No. <b>21LEM301T</b> · Ed. 2026</span>
+    <nav class="pagenav" aria-label="Pages">
+      <button data-page="home">Home</button>
+      <button data-page="map">Map</button>
+    </nav>
+  </div>
+
+  <div class="cartouche">
+    <div class="cart-box">
+      <span class="cn tl">✦</span><span class="cn tr">✦</span><span class="cn bl">✦</span><span class="cn br">✦</span>
+      <div class="cc-left">
+        <p class="cover-inst">An Interactive Educational Exhibit</p>
+        <h2 class="cover-srm">SRM Institute of Science and Technology</h2>
+        <p class="cover-deem">Deemed to be University · India</p>
+        <div class="cover-rule"><i>❖</i></div>
+        <p class="cover-topic-label">Topic</p>
+        <p class="cover-topic">Interactive Digital Map of Key Locations Significant to Indian Art History</p>
+      </div>
+      <div class="cc-right">
+        <div class="stamp">SRM IST · Indian Arts Form · Submitted 24·08·2026</div>
+        <div class="ledger">
+          <div class="row"><span class="k">Name</span><span class="dots"></span><span class="v">HARINISH S V</span></div>
+          <div class="row"><span class="k">Registration No</span><span class="dots"></span><span class="v">RA2411030010137</span></div>
+          <div class="row"><span class="k">Section</span><span class="dots"></span><span class="v">Y1</span></div>
+          <div class="row"><span class="k">Subject</span><span class="dots"></span><span class="v">INDIAN ARTS FORM</span></div>
+          <div class="row"><span class="k">Subject Code</span><span class="dots"></span><span class="v">21LEM301T</span></div>
+        </div>
+        <p class="cover-due">Submission date · <b>24 · 08 · 2026</b></p>
+      </div>
+    </div>
+  </div>
+
+  <section class="hero">
+    <div class="hero-grid">
+      <div>
+        <span class="eyebrow">A Geographic Survey · Six Movements</span>
+        <h1>KALĀBHŪMI<span class="dev">कलाभूमि</span></h1>
+        <p class="lede">Fourteen places, nine states, five thousand years. An interactive atlas of
+          <em>where Indian art happened</em> — cities that carved, caves that painted, courts that gilded,
+          and studios that broke every rule. This edition is drawn as a <em>heritage survey atlas</em>:
+          true coastlines, stamped plates, and routes in ink.</p>
+        <div class="stats">
+          <div class="stat"><b data-n="14">0</b><span>Locations</span></div>
+          <div class="stat"><b data-n="9">0</b><span>States</span></div>
+          <div class="stat"><b data-n="5000" data-suf="+">0</b><span>Years</span></div>
+        </div>
+        <div class="hero-cta">
+          <button class="btn solid" data-go="map">Open the Art Atlas →</button>
+          <span class="hint">zoom · pan · tap the numbered stations</span>
+        </div>
+      </div>
+      <div class="hero-right">
+        <svg class="compassbg" viewBox="0 0 200 200" aria-hidden="true">
+          <g fill="none" stroke="#9c7a2c" stroke-width="0.8">
+            <circle cx="100" cy="100" r="96"/><circle cx="100" cy="100" r="70"/><circle cx="100" cy="100" r="30"/>
+            <g id="rose"></g>
+          </g>
+        </svg>
+        <figure class="postcard">
+          <span class="pc-tag">Field postcard</span>
+          <div class="pc-frame" id="plateFrame"></div>
+          <figcaption class="pc-cap">
+            <span><span class="t" id="plateTitle">—</span><br><span class="d" id="plateDate">—</span></span>
+            <span class="pc-idx" id="plateIdx">01 / 04</span>
+          </figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <div class="stampstrip" aria-hidden="true"><div class="stampstrip-inner" id="strip"></div></div>
+
+  <section class="about">
+    <div class="about-col" data-no="Card I">
+      <h4>How to explore</h4>
+      <ul>
+        <li>This <b>Home</b> sheet carries the cover and introduction; the atlas lives on its own <b>Map</b> page.</li>
+        <li>The map page fits <b>one screen</b> — zoom and pan inside it with the wheel, drag or corner buttons.</li>
+        <li><b>Tap a numbered station</b> for its full postcard image, story, movement, artists and artworks.</li>
+        <li>Filter by <b>movement</b>, or switch on the <b>chronology trail</b> and <b>movement routes</b>.</li>
+      </ul>
+    </div>
+    <div class="about-col" data-no="Card II">
+      <h4>About this atlas</h4>
+      <p>The coastline is real <b>Natural Earth vector geometry</b>, projected on the fly — a proper survey, not a sketch. Scene postcards are <b>original digital paintings</b> made for this project and every caption is written originally for it, keeping the work comfortably within plagiarism limits.</p>
+    </div>
+    <div class="about-col" data-no="Card III">
+      <h4>Further reading</h4>
+      <ul>
+        <li>ASI dossiers — Sanchi, Sarnath, Ajanta, Mahabalipuram, Konark</li>
+        <li>UNESCO World Heritage listings for the above and Khajuraho</li>
+        <li>National Museum, New Delhi & Govt. Museum, Chennai — bronzes</li>
+        <li>NGMA, New Delhi & Indian Museum, Kolkata — modern masters</li>
+      </ul>
+    </div>
+  </section>
+
+  <footer>
+    <div class="f-brand">
+      <span class="f-title">KALĀBHŪMI <span style="color:var(--gold)">कलाभूमि</span></span>
+      <p>The art survey of India — from Dholavira's reservoirs to Bombay's modernist studios. By Harinish S V · RA2411030010137 · Section Y1 · 21LEM301T.</p>
+    </div>
+    <div class="f-meta">
+      <span class="due">Submission · 24 August 2026</span>
+      <p>SRM Institute of Science and Technology.</p>
+      <p>Original writing · painted postcards · true-coastline survey.</p>
+    </div>
+  </footer>
+</section>
+
+<!-- ================= PAGE 2 : MAP (single screen) ================= -->
+<section class="screen" id="page-map">
+  <div class="ribbon">
+    <span class="r-left">Survey Sheet <b>II</b> · The Art Atlas</span>
+    <nav class="pagenav" aria-label="Pages">
+      <button data-page="home">Home</button>
+      <button data-page="map">Map</button>
+    </nav>
+  </div>
+
+  <div class="map-page">
+    <div class="map-head">
+      <button class="backlink" data-go="home">← Home</button>
+      <div class="map-title">
+        <h2>The Art Atlas of India</h2>
+        <p>Fourteen stations, six movements, one true coastline. Tap a numbered station to open its plate; filter by movement; draw the routes; or let the chronology trail travel five thousand years.</p>
+      </div>
+      <div class="toggles">
+        <button class="tgl" id="routeBtn" aria-pressed="false">Routes · off</button>
+        <button class="tgl" id="trailBtn" aria-pressed="false">Trail · off</button>
+      </div>
+    </div>
+
+    <nav class="group-chips" id="groupChips" aria-label="Filter by movement"></nav>
+
+    <div class="map-wrap">
+      <div class="map-panel">
+        <div class="cart-mini"><div class="a">भारत</div><div class="b">Bhārata · Art Survey</div></div>
+        <div id="mapHost">Drawing the survey…</div>
+        <div class="zoomctl">
+          <button id="zin" aria-label="Zoom in">+</button>
+          <button id="zout" aria-label="Zoom out">−</button>
+          <button id="zreset" aria-label="Reset view">⌂</button>
+        </div>
+        <div class="map-note">Natural Earth coastline · scroll to zoom · drag to pan</div>
+        <div id="tip"></div>
+      </div>
+      <aside class="detail" id="detail" aria-live="polite"></aside>
+    </div>
+
+    <p class="tl-foot">Kalābhūmi · Harinish S V · RA2411030010137 · Y1 · 21LEM301T</p>
+  </div>
+</section>
+
+<script>
+/* ============ DATA ============ */
+const GROUPS = [
+  {id:"indus",     name:"Indus Craft",            c:"#b35a2e"},
+  {id:"buddhist",  name:"Mauryan & Buddhist",     c:"#9c7a2c"},
+  {id:"classical", name:"Kushan–Gupta Classical", c:"#2f4d8f"},
+  {id:"temple",    name:"Temple India",           c:"#8c3b2a"},
+  {id:"court",     name:"Mughal & Rajput Courts", c:"#2e6e5e"},
+  {id:"modern",    name:"Colonial & Modern",      c:"#b23a55"}
+];
+const gOf = id => GROUPS.find(g => g.id === id);
+
+const LOCS = [
+{ id:"dholavira", n:1, name:"Dholavira", state:"Gujarat", lon:70.21, lat:24.10, year:-2600, years:"c. 2600–1900 BCE", group:"indus",
+  img:"https://image.qwenlm.ai/public_source/6c87be1b-829a-4fdc-8974-0709bd18cf94/1f300b63e-cdc2-4392-84b3-30db86ee5c07.png",
+  lead:"A Harappan city planned in stone — where one of the world's oldest 'signboards' hung over a gateway.",
+  ctx:"On Khadir island in the Rann of Kutch, Dholavira rose as a major Harappan city built not just in brick but in dressed sandstone. Its craftsmen cut carnelian and agate beads, worked shell and copper, and mounted ten large Indus signs on a board over the northern gate — among the earliest public inscriptions anywhere. The stepped reservoirs around the city show water itself treated as monumental art.",
+  move:"Indus (Harappan) craft tradition, mature phase",
+  artists:"Anonymous guilds of bead-makers, seal-cutters and masons",
+  works:"The ten-sign signboard, stepped reservoirs, terracotta figurines" },
+{ id:"sarnath", n:2, name:"Sarnath", state:"Uttar Pradesh", lon:83.02, lat:25.38, year:-250, years:"c. 250 BCE – 500 CE", group:"buddhist",
+  img:"https://image.qwenlm.ai/public_source/6c87be1b-829a-4fdc-8974-0709bd18cf94/1d918006c-dff4-4c3a-b817-68c5e39b36d8.png",
+  lead:"The deer park where Ashoka set polished stone, and the Guptas later carved sermons into perfect calm.",
+  ctx:"Sarnath, where the Buddha first taught, stayed a living art site for over a millennium. Mauryans raised mirror-polished pillars crowned by four lions; the Gupta age produced the seated 'Dharmachakra' Buddha, whose sheer robe and inward face became the classical formula that travelled across Asia.",
+  move:"Mauryan imperial art; Gupta classical school",
+  artists:"Mauryan stone-polishers; Gupta sutradharas (master carvers)",
+  works:"Lion Capital (India's emblem), Dharmachakra Buddha, deer-and-wheel pedestal" },
+{ id:"sanchi", n:3, name:"Sanchi", state:"Madhya Pradesh", lon:77.74, lat:23.48, year:-240, years:"c. 250 BCE – 100 CE", group:"buddhist",
+  img:"https://image.qwenlm.ai/public_source/6c87be1b-829a-4fdc-8974-0709bd18cf94/1ef572cda-60d1-4018-8895-21166eebd16e.png",
+  lead:"A stone dome that taught India to tell stories in relief — without ever showing the Buddha as a man.",
+  ctx:"Begun as a plain brick dome under Ashoka and enlarged under the Shungas and Satavahanas, Sanchi's four gateways are picture-books of early narrative art: jataka scenes, processions and yakshi tree-goddesses, while the Master appears only as wheel, throne, footprints or tree. Inscriptions credit guilds of ivory-workers from nearby Vidisha.",
+  move:"Early Buddhist narrative relief",
+  artists:"Guilds of ivory-carvers and stone-masons (donor inscriptions)",
+  works:"Great Stupa toranas, yakshi brackets, Ashokan pillar" },
+{ id:"mathura", n:4, name:"Mathura", state:"Uttar Pradesh", lon:77.67, lat:27.49, year:100, years:"c. 100–300 CE", group:"classical",
+  img:"https://image.qwenlm.ai/public_source/6c87be1b-829a-4fdc-8974-0709bd18cf94/1cc1b55b9-5ef8-4743-a3a9-af09b58e54fa.png",
+  lead:"The red-sandstone crossroads that gave the Buddha a body — robust, breathing, unmistakably Indian.",
+  ctx:"On the Yamuna trade road, Kushan-era Mathura carved a new kind of sacred image in mottled red sandstone: colossal yakshas, Jain tirthankaras and some of the first human Buddhas, broad-shouldered and full of vigour. Mathura's formula travelled down the Ganga to Sarnath and shaped the Gupta classical style.",
+  move:"Mathura school, Kushan period",
+  artists:"Local mason guilds who signed their pedestals",
+  works:"Katra seated Buddha, Kanishka-era royal figures, yaksha torsos" },
+{ id:"ajanta", n:5, name:"Ajanta", state:"Maharashtra", lon:75.70, lat:20.55, year:450, years:"c. 200 BCE – 500 CE", group:"classical",
+  img:"https://image.qwenlm.ai/public_source/6c87be1b-829a-4fdc-8974-0709bd18cf94/15934bd51-fe58-4ea9-9651-a2811d3a228e.png",
+  lead:"Thirty caves where a whole world — courts, forests, heavens — survives in pigment on rock.",
+  ctx:"Cut in two phases, early Hinayana and later Mahayana under the Vakatakas, Ajanta is the greatest surviving mural cycle of the ancient world. Painters worked in ochre, lapis, green earth and lamp-black on dry lime plaster; the lotus-eyed Padmapani and the dying princesses of the Jatakas became the reference point for classical Indian painting after the caves' rediscovery in 1819.",
+  move:"Classical Indian mural painting (citralekha)",
+  artists:"Monastic ateliers of the Vakataka age",
+  works:"Padmapani, Jataka cycles, Cave 1 ceiling medallions" },
+{ id:"maha", n:6, name:"Mahabalipuram", state:"Tamil Nadu", lon:79.95, lat:12.62, year:650, years:"c. 630–730 CE", group:"temple",
+  img:"https://image.qwenlm.ai/public_source/6c87be1b-829a-4fdc-8974-0709bd18cf94/105295679-dbad-4582-8c2d-a10e15f6818a.png",
+  lead:"Pallava carvers turned an open rock-river into Arjuna's penance, and let the sea judge the Shore Temple.",
+  ctx:"Under Narasimhavarman I in the seventh century, the Pallavas cut monolithic ratha temples from single boulders and opened a cliff cleft to show the Ganga descending — elephants, sages and hundreds of figures at true scale. The Shore Temple completed the experiment; the whole site became the workshop from which Chola architecture learned.",
+  move:"Pallava rock-cut and structural art",
+  artists:"Pallava royal ateliers of Mamallapuram",
+  works:"Descent of the Ganges relief, the five rathas, Shore Temple" },
+{ id:"thanjavur", n:7, name:"Thanjavur", state:"Tamil Nadu", lon:79.14, lat:10.79, year:900, years:"c. 850–1300 CE", group:"temple",
+  img:"https://image.qwenlm.ai/public_source/6c87be1b-829a-4fdc-8974-0709bd18cf94/1fb9438bc-6b95-416a-ad0e-cf04d4d01129.png",
+  lead:"The Chola capital where granite became a mountain and bronze became scripture.",
+  ctx:"Rajaraja I's Brihadishvara temple raised a sixty-metre granite vimana over the Kaveri delta while Chola foundries cast processional bronzes — above all the Nataraja — in panchaloha by lost wax. Centuries later the same city gave its name to Tanjore painting, with its gold-leaf gods on glass and board.",
+  move:"Chola temple & bronze art; later Tanjore painting",
+  artists:"Panchaloha bronze-casters; Tanjore gold-leaf painters",
+  works:"Nataraja bronzes, Brihadishvara vimana, Tanjore gold panels" },
+{ id:"khajuraho", n:8, name:"Khajuraho", state:"Madhya Pradesh", lon:79.92, lat:24.85, year:950, years:"c. 950–1050 CE", group:"temple",
+  img:"https://image.qwenlm.ai/public_source/6c87be1b-829a-4fdc-8974-0709bd18cf94/1c8abc534-932f-48eb-9b3e-dfdaf060839e.png",
+  lead:"Chandela spires where sculpture learns to dance — every mood of life carved in honey-coloured stone.",
+  ctx:"Between the tenth and eleventh centuries the Chandelas covered their temples at Khajuraho with the whole spectrum of existence: deities, lovers, musicians, warriors and surasundaris caught mid-gesture. Worldly delight is treated as part of the sacred program, and the buff sandstone is worked so finely it reads like skin.",
+  move:"Chandela Nagara temple sculpture",
+  artists:"Chandela guilds working in hereditary lines",
+  works:"Kandariya Mahadeva carvings, surasundari figures, apsara panels" },
+{ id:"konark", n:9, name:"Konark", state:"Odisha", lon:86.09, lat:19.89, year:1250, years:"c. 1238–1250 CE", group:"temple",
+  img:"https://image.qwenlm.ai/public_source/6c87be1b-829a-4fdc-8974-0709bd18cf94/12ea04ef5-d5c7-439a-8956-64b100936bc8.png",
+  lead:"A stone chariot for the sun god, with twelve carved wheels and eight horses straining at the yoke.",
+  ctx:"Built by Narasimhadeva I of the Eastern Gangas in the thirteenth century, Konark imagined the sun's temple as his colossal chariot on the Bay of Bengal. Its wheels are sundials and sculpture-books at once; musicians, dancers and royal processions cover every stone. Ruined and re-found by the nineteenth century, it remains the summit of Kalinga art.",
+  move:"Kalinga temple architecture & sculpture",
+  artists:"Eastern Ganga workshops — tradition says 1,200 artisans",
+  works:"The chariot wheels, sun images, dance-and-music friezes" },
+{ id:"agra", n:10, name:"Agra", state:"Uttar Pradesh", lon:78.02, lat:27.18, year:1550, years:"1526–1857 CE", group:"court",
+  img:"https://image.qwenlm.ai/public_source/6c87be1b-829a-4fdc-8974-0709bd18cf94/1f66b2b97-b245-4de3-8ded-f26c4dc319a7.png",
+  lead:"The Mughal show-window: white marble, pietra dura, and the atelier that painted an empire.",
+  ctx:"From the Lodis to the Mughals, Agra was the empire's stage. Shah Jahan's Taj Mahal set calligraphy, geometry and floral pietra dura into perfect symmetry, while the imperial kitabkhana — moving with the court between Agra, Delhi and Lahore — turned miniature painting into a state art under Akbar and Jahangir.",
+  move:"Mughal court architecture & miniature painting",
+  artists:"Ustad Ahmad Lahauri (tradition), Mansur, Abu'l Hasan",
+  works:"Taj Mahal, pietra dura panels, imperial album miniatures" },
+{ id:"jaipur", n:11, name:"Jaipur", state:"Rajasthan", lon:75.82, lat:26.92, year:1750, years:"c. 1700–1900 CE", group:"court",
+  img:"https://image.qwenlm.ai/public_source/6c87be1b-829a-4fdc-8974-0709bd18cf94/1e6034fa3-6377-4cda-a1fc-223144f8317e.png",
+  lead:"The pink city's ateliers painted Krishna's world in jewel colour, gold and monsoon green.",
+  ctx:"Under Sawai Pratap Singh in the late eighteenth century, Jaipur's court painters fused Rajput devotion with Mughal finish, producing Ragamala series, festival scenes and portraits on a lavish scale. Nearby Kishangarh distilled the same air into the lyrical Bani Thani — the 'Mona Lisa of India'.",
+  move:"Rajput (Rajasthani) miniature painting",
+  artists:"Sahib Ram of Jaipur; Nihal Chand of Kishangarh",
+  works:"Ragamala sets, Bani Thani, procession panoramas" },
+{ id:"kolkata", n:12, name:"Kolkata", state:"West Bengal", lon:88.36, lat:22.57, year:1850, years:"c. 1850–1947 CE", group:"modern",
+  img:"https://image.qwenlm.ai/public_source/6c87be1b-829a-4fdc-8974-0709bd18cf94/1b33d544f-ce8d-4a50-ad9f-1e107cb6b19b.png",
+  lead:"The colonial port where Kalighat's bold brush met the Bengal School's quiet wash.",
+  ctx:"Nineteenth-century Kalighat patuas painted gods and babus with sweeping brushlines for pilgrim buyers — India's first popular urban art. Around 1905 Abanindranath Tagore answered Western academic realism with the Bengal School's soft washes and a revived 'Indian' spirit; Nandalal Bose carried it into the nation's founding imagery.",
+  move:"Kalighat painting; Bengal School of Art",
+  artists:"Kalighat patua families; Abanindranath Tagore, Nandalal Bose",
+  works:"Kalighat saris & babu satires, Bharat Mata (1905)" },
+{ id:"tvm", n:13, name:"Thiruvananthapuram", state:"Kerala (Travancore)", lon:77.20, lat:8.60, year:1870, years:"c. 1870–1906 CE", group:"modern",
+  img:"https://image.qwenlm.ai/public_source/6c87be1b-829a-4fdc-8974-0709bd18cf94/1bd865c01-e6bf-43fe-b1c5-7559ac137e51.png",
+  lead:"Travancore's palace country — home ground of Raja Ravi Varma, where the epics met the oil tube.",
+  ctx:"At Kilimanoor near the Travancore capital, Raja Ravi Varma fused European academic oil technique with Sanskrit poetry, and his oleograph press sent printed gods into millions of homes. The Travancore court's patronage made this coast a hinge between old and modern Indian art.",
+  move:"Academic realism; early modern Indian painting",
+  artists:"Raja Ravi Varma and his Kilimanoor studio",
+  works:"Shakuntala, Damayanti with the swan, Travancore royal portraits" },
+{ id:"mumbai", n:14, name:"Mumbai", state:"Maharashtra", lon:73.00, lat:19.10, year:1940, years:"1857 CE – present", group:"modern",
+  img:"https://image.qwenlm.ai/public_source/6c87be1b-829a-4fdc-8974-0709bd18cf94/1d8d89987-3753-4c10-8a52-5611b24eff0d.png",
+  lead:"The city where, in 1947, the Progressive Artists' Group declared Indian art modern and international.",
+  ctx:"Bombay's J.J. School of Art (1857) first trained Indians in European methods; a century later Souza, Raza, Husain and friends founded the Progressives in the year of Independence, fusing modernist form with Indian subject — Husain's horses, Raza's bindu — and the city has been India's art market ever since.",
+  move:"Bombay School; Progressive Artists' Group",
+  artists:"F.N. Souza, S.H. Raza, M.F. Husain, K.H. Ara, H.A. Gade, S.K. Bakre",
+  works:"Husain's horses, Raza's bindu cityscapes, Souza's crucifixions" }
+];
+
+/* fallback outline (only if atlas data cannot load) */
+const INDIA_FB = [
+[77.55,8.08],[76.55,8.9],[75.7,10.8],[74.85,12.9],[74.0,14.85],[73.3,17.0],[72.85,18.95],[72.75,20.35],[72.3,21.6],
+[71.2,21.5],[69.9,21.7],[69.0,22.35],[69.75,22.85],[68.9,23.15],[68.2,23.65],[68.85,24.3],
+[70.1,24.55],[70.65,25.2],[70.1,26.2],[70.6,26.75],[71.9,27.9],[73.4,29.95],[74.6,30.9],[75.35,32.25],
+[74.05,32.95],[74.4,33.9],[73.9,34.5],[75.0,35.55],[77.0,35.9],[78.9,35.5],[80.2,34.4],
+[80.1,31.4],[81.0,30.2],[82.1,30.15],[84.2,29.4],[86.0,28.1],[88.0,27.85],[89.5,27.15],[92.1,27.85],
+[94.6,29.35],[96.6,29.2],[97.3,28.3],[97.9,26.9],[98.6,25.6],[98.2,24.3],[97.3,23.4],[96.4,22.6],[95.6,22.3],[95.2,22.1],
+[94.2,21.9],[92.6,22.0],[92.3,23.2],[91.9,23.7],[91.6,24.4],[91.2,25.2],[90.0,25.2],[89.2,25.8],
+[88.4,25.2],[88.6,24.3],[88.9,23.6],[88.6,22.9],[88.2,21.7],
+[87.0,22.3],[86.4,21.6],[87.0,20.6],[86.2,19.5],[84.7,18.4],[83.3,17.7],[82.3,16.9],[81.1,15.85],[80.1,15.6],
+[80.3,13.5],[80.05,12.3],[79.9,10.35],[79.3,9.2],[78.9,8.6]];
+
+const $ = s => document.querySelector(s);
+
+/* ============ router ============ */
+const PAGES = ["home","map"];
+function go(p){ if(PAGES.includes(p)) location.hash = "#/" + p; }
+function route(){
+  let h = location.hash.replace("#/","");
+  if(!PAGES.includes(h)) h = "home";
+  document.querySelectorAll(".screen").forEach(s => s.classList.toggle("active", s.id === "page-" + h));
+  document.querySelectorAll(".pagenav button").forEach(b => b.classList.toggle("active", b.dataset.page === h));
+  window.scrollTo(0,0);
+}
+window.addEventListener("hashchange", route);
+document.addEventListener("click", e => {
+  const g = e.target.closest("[data-go]");
+  if(g){ go(g.dataset.go); return; }
+  const n = e.target.closest(".pagenav button");
+  if(n) go(n.dataset.page);
+});
+
+/* ============ build survey map ============ */
+const W = 640, H = 680;
+let mkEls = [];
+
+async function buildMap(){
+  let india = null, othersD = "";
+  const projection = d3.geoMercator();
+  try{
+    const topo = await (await fetch("https://cdn.jsdelivr.net/npm/world-atlas@2/countries-50m.json")).json();
+    const feats = topojson.feature(topo, topo.objects.countries).features;
+    india = feats.find(f => f.id === "356");
+    if(india){
+      projection.fitExtent([[18,18],[W-18,H-18]], india);
+      const pg = d3.geoPath(projection);
+      othersD = feats.filter(f => f.id !== "356").map(f => pg(f)).join("");
+    }
+  }catch(err){ india = null; }
+  if(!india){
+    const ring = INDIA_FB.map(p => p.slice()); ring.push(ring[0].slice());
+    india = {type:"Feature", geometry:{type:"Polygon", coordinates:[ring]}};
+    projection.fitExtent([[18,18],[W-18,H-18]], india);
+  }
+  const geo = d3.geoPath(projection);
+  const grat = geo(d3.geoGraticule().step([5,5])());
+  const lineGen = d3.line().curve(d3.curveCatmullRom.alpha(.55));
+  const projPts = arr => arr.map(l => projection([l.lon, l.lat]));
+
+  let routes = "";
+  GROUPS.forEach(g => {
+    const pts = projPts(LOCS.filter(l => l.group === g.id));
+    if(pts.length > 1) routes += '<path class="rt" data-g="'+g.id+'" style="--c:'+g.c+'" d="'+lineGen(pts)+'"></path>';
+  });
+  const trailD = lineGen(projPts(LOCS));
+
+  let mk = "";
+  LOCS.forEach(l => {
+    const p = projection([l.lon, l.lat]), g = gOf(l.group);
+    mk += '<g class="mk" data-id="'+l.id+'" data-g="'+l.group+'" data-x="'+p[0].toFixed(1)+'" data-y="'+p[1].toFixed(1)+'" transform="translate('+p[0].toFixed(1)+','+p[1].toFixed(1)+')" style="--c:'+g.c+'" tabindex="0" role="button" aria-label="'+l.name+'">'+
+      '<circle class="pulse" r="10"></circle>'+
+      '<circle class="core" r="6.5"></circle>'+
+      '<text class="num" y="2.6">'+l.n+'</text>'+
+      '<text class="lbl" x="11" y="4">'+l.name+'</text>'+
+    '</g>';
+  });
+
+  $("#mapHost").innerHTML =
+  '<svg id="mapSvg" viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">'+
+    '<g id="world">'+
+      '<path class="grat" d="'+grat+'"></path>'+
+      (othersD ? '<path class="nb" d="'+othersD+'"></path>' : '')+
+      '<path class="india" d="'+geo(india)+'"></path>'+
+      '<g id="routesG" style="display:none">'+routes+'</g>'+
+      '<path id="trail" class="trail hidden" d="'+trailD+'"></path>'+
+      '<g id="mkG">'+mk+'</g>'+
+    '</g>'+
+  '</svg>';
+
+  const svgSel = d3.select("#mapSvg"), world = d3.select("#world");
+  mkEls = Array.from(document.querySelectorAll(".mk"));
+  const setK = k => mkEls.forEach(m => m.setAttribute("transform", "translate("+m.dataset.x+","+m.dataset.y+") scale("+(1/k)+")"));
+  const zoom = d3.zoom().scaleExtent([1,10]).translateExtent([[-40,-40],[W+40,H+40]])
+    .on("zoom", ev => { world.attr("transform", ev.transform); setK(ev.transform.k); });
+  svgSel.call(zoom).on("dblclick.zoom", null);
+  $("#zin").onclick  = () => svgSel.transition().duration(220).call(zoom.scaleBy, 1.6);
+  $("#zout").onclick = () => svgSel.transition().duration(220).call(zoom.scaleBy, 1/1.6);
+  $("#zreset").onclick = () => svgSel.transition().duration(260).call(zoom.transform, d3.zoomIdentity);
+
+  const tip = $("#tip"), panel = document.querySelector(".map-panel");
+  panel.addEventListener("pointermove", e => {
+    const m = e.target.closest ? e.target.closest(".mk") : null;
+    if(m){
+      const l = LOCS.find(x => x.id === m.dataset.id);
+      tip.innerHTML = "<b>"+l.name+"</b> · "+l.years;
+      const r = panel.getBoundingClientRect();
+      tip.style.left = (e.clientX - r.left + 14) + "px";
+      tip.style.top  = (e.clientY - r.top + 14) + "px";
+      tip.style.opacity = 1;
+    } else tip.style.opacity = 0;
+  });
+  panel.addEventListener("pointerleave", () => tip.style.opacity = 0);
+}
+buildMap();
+
+/* ============ toggles ============ */
+$("#trailBtn").addEventListener("click", () => {
+  const t = $("#trail"); if(!t) return;
+  const on = t.classList.toggle("hidden") === false;
+  $("#trailBtn").classList.toggle("on", on);
+  $("#trailBtn").setAttribute("aria-pressed", on);
+  $("#trailBtn").textContent = "Trail · " + (on ? "on" : "off");
+});
+$("#routeBtn").addEventListener("click", () => {
+  const g = $("#routesG"); if(!g) return;
+  const on = g.style.display === "none";
+  g.style.display = on ? "" : "none";
+  $("#routeBtn").classList.toggle("on", on);
+  $("#routeBtn").setAttribute("aria-pressed", on);
+  $("#routeBtn").textContent = "Routes · " + (on ? "on" : "off");
+});
+
+/* ============ chips ============ */
+(function(){
+  const wrap = $("#groupChips");
+  wrap.innerHTML = '<button class="chip active" data-g="all" style="--c:#9c7a2c"><span class="dotc"></span>All movements</button>' +
+    GROUPS.map(g => '<button class="chip" data-g="'+g.id+'" style="--c:'+g.c+'"><span class="dotc"></span>'+g.name+'</button>').join("");
+  wrap.addEventListener("click", e => {
+    const c = e.target.closest(".chip"); if(!c) return;
+    wrap.querySelectorAll(".chip").forEach(x => x.classList.toggle("active", x === c));
+    const g = c.dataset.g;
+    document.querySelectorAll(".mk").forEach(m => m.classList.toggle("dim", g !== "all" && m.dataset.g !== g));
+    document.querySelectorAll(".rt").forEach(r => {
+      r.classList.toggle("dim", g !== "all" && r.dataset.g !== g);
+      r.classList.toggle("hot", g !== "all" && r.dataset.g === g);
+    });
+  });
+})();
+
+/* ============ detail ============ */
+let cur = 4;
+function renderDetail(i){
+  cur = (i + LOCS.length) % LOCS.length;
+  const l = LOCS[cur], g = gOf(l.group);
+  document.querySelectorAll(".mk").forEach(m => m.classList.toggle("sel", m.dataset.id === l.id));
+  $("#detail").innerHTML =
+    '<div class="d-img"><img src="'+l.img+'" alt="'+l.name+' — painted postcard"><span class="d-plate">Plate '+String(l.n).padStart(2,"0")+'</span><span class="d-state-tag">'+l.state+'</span></div>'+
+    '<div class="d-body" style="--c:'+g.c+'">'+
+      '<span class="d-chip">'+g.name+' · '+l.years+'</span>'+
+      '<h3>'+l.name+'</h3>'+
+      '<p class="d-lead">'+l.lead+'</p>'+
+      '<p class="d-ctx">'+l.ctx+'</p>'+
+      '<div class="d-facts">'+
+        '<div><h6>Local movement</h6><p>'+l.move+'</p></div>'+
+        '<div><h6>Artists & makers</h6><p>'+l.artists+'</p></div>'+
+        '<div><h6>Signature artworks</h6><p>'+l.works+'</p></div>'+
+      '</div>'+
+      '<div class="d-nav"><button id="dPrev">← Prev</button><span class="d-count">'+l.n+' / '+LOCS.length+'</span><button id="dNext">Next →</button></div>'+
+    '</div>';
+  $("#detail").scrollTop = 0;
+  $("#dPrev").addEventListener("click", () => renderDetail(cur - 1));
+  $("#dNext").addEventListener("click", () => renderDetail(cur + 1));
+}
+document.getElementById("mapHost").addEventListener("click", e => {
+  const m = e.target.closest(".mk"); if(!m) return;
+  renderDetail(LOCS.findIndex(l => l.id === m.dataset.id));
+});
+document.getElementById("mapHost").addEventListener("keydown", e => {
+  const m = e.target.closest(".mk"); if(!m) return;
+  if(e.key === "Enter" || e.key === " "){ e.preventDefault(); renderDetail(LOCS.findIndex(l => l.id === m.dataset.id)); }
+});
+window.addEventListener("keydown", e => {
+  if(!document.getElementById("page-map").classList.contains("active")) return;
+  if(e.key === "ArrowRight") renderDetail(cur + 1);
+  if(e.key === "ArrowLeft") renderDetail(cur - 1);
+});
+renderDetail(cur);
+
+/* ============ strip / rose / counters / rotator ============ */
+(function(){
+  const seq = LOCS.map(l => '<span class="st">'+l.name+' · '+l.state+'</span>').join("");
+  $("#strip").innerHTML = seq + seq;
+})();
+(function(){
+  let p = "";
+  for(let i=0;i<16;i++){
+    const long = i % 4 === 0;
+    p += '<path d="M100 100 L'+(100+(long?14:8)*Math.sin(i*Math.PI/8)).toFixed(1)+' '+(100-(long?14:8)*Math.cos(i*Math.PI/8)).toFixed(1)+' L100 '+(100-(long?96:60))+'" fill="none"/>';
+  }
+  p += '<path d="M100 4 L106 94 L100 88 L94 94 Z"/>';
+  document.getElementById("rose").innerHTML = p;
+})();
+(function(){
+  document.querySelectorAll(".stat b").forEach(el => {
+    const target = +el.dataset.n, suf = el.dataset.suf || "";
+    const t0 = performance.now(), dur = 1200;
+    (function tick(t){
+      const k = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - k, 3);
+      el.textContent = Math.round(target * e).toLocaleString("en-IN") + suf;
+      if(k < 1) requestAnimationFrame(tick);
+    })(t0);
+  });
+})();
+(function(){
+  const picks = [4, 6, 9, 11];
+  const frame = $("#plateFrame");
+  const imgA = new Image(), imgB = new Image();
+  let shown = imgA, hidden = imgB, idx = 0;
+  frame.append(imgA, imgB);
+  function show(i){
+    const l = LOCS[picks[i]];
+    hidden.src = l.img; hidden.alt = l.name + " — painted postcard";
+    hidden.classList.add("on"); shown.classList.remove("on");
+    [shown, hidden] = [hidden, shown];
+    $("#plateTitle").textContent = l.name + ", " + l.state;
+    $("#plateDate").textContent = l.years;
+    $("#plateIdx").textContent = String(i+1).padStart(2,"0") + " / " + String(picks.length).padStart(2,"0");
+  }
+  show(0);
+  setInterval(() => { idx = (idx + 1) % picks.length; show(idx); }, 4500);
+})();
+
+route();
+</script>
+</body>
+</html>
