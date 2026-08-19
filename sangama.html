@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sangama — A Fusion of Regional Painting Styles</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%238f3b22' stroke='%23f7f0e1' stroke-width='4'/%3E%3Ccircle cx='50' cy='50' r='30' fill='none' stroke='%23c99a3f' stroke-width='2'/%3E%3Ctext x='50' y='64' font-size='34' text-anchor='middle' fill='%23f7f0e1' font-family='Georgia, serif'%3Eसं%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/yatra-one@5/index.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/mukta@5/300.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/mukta@5/400.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/mukta@5/500.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/mukta@5/600.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/mukta@5/700.css">
+<style>
+:root{
+  --madder:#8f3b22; --madder2:#7c3018; --cream:#f7f0e1; --cream2:#efe3cc;
+  --ink:#2b2018; --indigo:#274067; --gold:#c99a3f; --leaf:#57703f; --verm:#c14a2a;
+  --disp:'Yatra One', Georgia, serif;
+  --body:'Mukta', system-ui, sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  background:var(--madder); color:var(--cream); font-family:var(--body); font-weight:400; line-height:1.6; overflow-x:hidden;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150'%3E%3Cg fill='none' stroke='%23f7f0e1' stroke-opacity='.08' stroke-width='2'%3E%3Cpath d='M22 34 L38 12 L54 34 Z'/%3E%3Ccircle cx='108' cy='30' r='12'/%3E%3Cpath d='M100 62 h16 M108 56 v16 M98 84 l10 -11 l10 11'/%3E%3Cpath d='M30 100 l11 -15 l11 15 z M41 85 v-11'/%3E%3Cpath d='M96 108 q8 -8 16 0 q8 8 16 0'/%3E%3C/g%3E%3C/svg%3E");
+}
+::selection{background:rgba(193,74,42,.5); color:#fff}
+img{display:block; max-width:100%}
+button,select{font-family:inherit}
+.wob{border-radius:255px 15px 225px 15px/15px 225px 15px 255px}
+.wob2{border-radius:15px 225px 15px 255px/255px 15px 225px 15px}
+
+.screen{display:none; position:relative; z-index:1}
+.screen.active{display:block; animation:pageIn .45s ease}
+@keyframes pageIn{from{opacity:0} to{opacity:1}}
+
+/* ---------- ribbon ---------- */
+.ribbon{display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap;
+  padding:12px 4vw; background:var(--cream); color:var(--ink); border-bottom:4px solid var(--ink)}
+.ribbon .r-left{font-size:11px; letter-spacing:.28em; text-transform:uppercase; font-weight:700}
+.ribbon .r-left b{color:var(--verm)}
+.pagenav{display:flex; gap:8px}
+.pagenav button{padding:8px 18px; border:2.5px solid var(--ink); background:var(--cream); color:var(--ink);
+  font-size:11px; letter-spacing:.18em; text-transform:uppercase; font-weight:700; transition:all .2s;
+  border-radius:255px 15px 225px 15px/15px 225px 15px 255px}
+.pagenav button:hover{transform:translateY(-2px)}
+.pagenav button.active{background:var(--indigo); color:var(--cream)}
+
+/* ---------- shared ---------- */
+.btn{display:inline-flex; align-items:center; gap:10px; padding:13px 26px; border:3px solid var(--ink);
+  background:var(--cream); color:var(--ink); font-size:12px; letter-spacing:.2em; text-transform:uppercase; font-weight:700;
+  box-shadow:5px 5px 0 rgba(43,32,24,.45); transition:transform .2s, box-shadow .2s;
+  border-radius:255px 15px 225px 15px/15px 225px 15px 255px}
+.btn:hover{transform:translate(-2px,-2px); box-shadow:7px 7px 0 rgba(43,32,24,.45)}
+.btn.solid{background:var(--verm); color:var(--cream)}
+.eyebrow{display:inline-flex; align-items:center; gap:10px; font-size:11px; letter-spacing:.3em; text-transform:uppercase; color:var(--gold); font-weight:700}
+.eyebrow::before{content:""; width:34px; height:3px; background:var(--gold)}
+h1,h2,h3{font-family:var(--disp); font-weight:400}
+
+/* ---------- HOME cover ---------- */
+.cartouche{max-width:1120px; margin:56px auto 0; padding:0 4vw}
+.cart-box{position:relative; border:4px solid var(--ink); background:var(--cream); color:var(--ink);
+  padding:42px clamp(24px,4.5vw,56px) 40px; box-shadow:10px 10px 0 rgba(43,32,24,.4);
+  display:grid; grid-template-columns:1.1fr .9fr; gap:44px;
+  border-radius:255px 15px 225px 15px/15px 225px 15px 255px}
+.cart-orn{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:.14; pointer-events:none; mix-blend-mode:multiply; border-radius:inherit}
+.cc-left,.cc-right{position:relative; z-index:2}
+.cover-inst{font-size:10.5px; letter-spacing:.32em; text-transform:uppercase; color:var(--verm); font-weight:700}
+.cover-srm{font-family:var(--disp); font-size:clamp(24px,3vw,36px); line-height:1.2; margin:10px 0 2px}
+.cover-deem{font-size:10.5px; letter-spacing:.22em; text-transform:uppercase; color:var(--ink); opacity:.7}
+.cover-rule{display:flex; align-items:center; gap:14px; margin:20px 0}
+.cover-rule::before,.cover-rule::after{content:""; flex:1; height:2px; background:repeating-linear-gradient(90deg, var(--verm) 0 8px, transparent 8px 14px)}
+.cover-rule i{color:var(--verm); font-style:normal}
+.cover-topic-label{font-size:10px; letter-spacing:.3em; text-transform:uppercase; font-weight:700; opacity:.7}
+.cover-topic{font-family:var(--disp); font-size:clamp(17px,2vw,23px); line-height:1.45; margin-top:6px}
+.ledger .row{display:flex; align-items:baseline; gap:12px; padding:8px 2px; border-bottom:2px dashed var(--cream2); font-size:13px}
+.ledger .k{color:var(--ink); opacity:.65; letter-spacing:.16em; text-transform:uppercase; font-size:10.5px; white-space:nowrap; font-weight:700}
+.ledger .dots{flex:1; border-bottom:2px dotted var(--cream2); transform:translateY(-4px)}
+.ledger .v{color:var(--ink); font-weight:700; text-align:right}
+.stamp{position:absolute; right:4px; top:-16px; width:112px; height:112px; border:3px solid var(--verm); border-radius:50%;
+  color:var(--verm); display:grid; place-items:center; text-align:center; transform:rotate(10deg);
+  font-size:8.5px; letter-spacing:.14em; text-transform:uppercase; font-weight:700; padding:10px; z-index:3; background:rgba(247,240,225,.7)}
+.stamp::after{content:""; position:absolute; inset:6px; border:1px solid var(--verm); border-radius:50%}
+.cover-due{margin-top:22px; font-size:11px; letter-spacing:.2em; text-transform:uppercase; font-weight:700; opacity:.75}
+.cover-due b{color:var(--verm)}
+
+/* ---------- HOME hero ---------- */
+.hero{padding:60px 4vw 40px; max-width:1400px; margin:0 auto}
+.hero-grid{display:grid; grid-template-columns:1.1fr .9fr; gap:56px; align-items:center}
+h1{font-size:clamp(52px,7vw,104px); line-height:1; margin:16px 0 6px; color:var(--cream); text-shadow:4px 4px 0 rgba(43,32,24,.5)}
+h1 .dev{color:var(--gold); font-size:.42em; vertical-align:.6em; margin-left:14px}
+.lede{max-width:56ch; color:var(--cream); opacity:.92; font-size:16.5px; margin:14px 0 30px}
+.lede em{color:var(--gold); font-style:normal; font-weight:700}
+.stats{display:flex; gap:26px; margin-bottom:34px; flex-wrap:wrap}
+.stat b{display:inline-block; font-family:var(--disp); font-size:36px; color:var(--ink); line-height:1;
+  background:var(--cream); border:3px solid var(--ink); padding:14px 22px 10px;
+  border-radius:255px 15px 225px 15px/15px 225px 15px 255px}
+.stat span{display:block; margin-top:8px; font-size:10.5px; letter-spacing:.22em; text-transform:uppercase; color:var(--gold); font-weight:700}
+.hero-cta{display:flex; align-items:center; gap:18px; flex-wrap:wrap}
+.hint{font-size:12px; opacity:.8}
+.hero-right{position:relative; display:flex; justify-content:center}
+.frame{position:relative; width:min(430px,90%); background:var(--cream); border:3px solid var(--ink); padding:14px 14px 16px;
+  box-shadow:12px 12px 0 rgba(43,32,24,.45); transform:rotate(1.5deg)}
+.frame::before,.frame::after{content:""; position:absolute; width:90px; height:26px; background:rgba(193,74,42,.55); top:-13px; z-index:3}
+.frame::before{left:24px; transform:rotate(-4deg)}
+.frame::after{right:24px; transform:rotate(3deg)}
+.frame img{width:100%; border:2px solid var(--ink)}
+.frame .cap{display:flex; justify-content:space-between; align-items:baseline; padding:10px 4px 0; color:var(--ink)}
+.frame .cap .t{font-family:var(--disp); font-size:16px}
+.frame .cap .d{font-size:11px; font-weight:600; opacity:.7}
+
+/* marquee */
+.mq{overflow:hidden; border-block:4px solid var(--ink); background:var(--cream); padding:12px 0}
+.mq-inner{display:flex; width:max-content; animation:marquee 40s linear infinite}
+.mq:hover .mq-inner{animation-play-state:paused}
+.mq-inner span{white-space:nowrap; font-family:var(--disp); font-size:16px; color:var(--ink); padding-right:8px}
+.mq-inner i{font-style:normal; color:var(--verm); margin:0 16px}
+@keyframes marquee{to{transform:translateX(-50%)}}
+
+/* about */
+.about{max-width:1240px; margin:64px auto 0; padding:0 4vw; display:grid; grid-template-columns:1fr 1fr 1fr; gap:30px}
+.about-col{background:var(--cream); color:var(--ink); border:3px solid var(--ink); padding:26px 24px 20px; position:relative;
+  box-shadow:8px 8px 0 rgba(43,32,24,.4); border-radius:15px 225px 15px 255px/255px 15px 225px 15px}
+.about-col::before{content:attr(data-no); position:absolute; top:-14px; left:20px; background:var(--indigo); color:var(--cream); font-size:9px; letter-spacing:.26em; text-transform:uppercase; font-weight:700; padding:4px 12px; border:2px solid var(--ink)}
+.about-col h4{font-family:var(--disp); font-size:20px; margin-bottom:10px}
+.about-col p,.about-col li{font-size:13.5px; opacity:.85}
+.about-col ul{list-style:none}
+.about-col li{padding:6px 0 6px 20px; position:relative}
+.about-col li::before{content:"✦"; position:absolute; left:0; top:7px; color:var(--verm); font-size:10px}
+.about-col b{color:var(--ink)}
+footer{margin-top:64px; border-top:4px solid var(--ink); background:var(--madder2); padding:34px 4vw 40px; display:flex; justify-content:space-between; gap:28px; flex-wrap:wrap}
+.f-brand{max-width:48ch}
+.f-brand .f-title{font-family:var(--disp); font-size:24px; color:var(--cream)}
+.f-brand p{font-size:12.5px; opacity:.8; margin-top:8px}
+.f-meta{text-align:right; font-size:12px; opacity:.85}
+.f-meta .due{display:inline-block; margin-bottom:10px; padding:7px 16px; border:2px dashed var(--cream); border-radius:999px; color:var(--cream); letter-spacing:.18em; text-transform:uppercase; font-size:10.5px; font-weight:700}
+.f-meta p{margin-top:4px}
+
+/* ---------- STYLES page ---------- */
+.sheet{padding:48px 4vw 40px; max-width:1400px; margin:0 auto}
+.sheet-head{display:flex; align-items:flex-end; justify-content:space-between; gap:20px; flex-wrap:wrap; margin-bottom:26px}
+.sheet-head h2{font-size:clamp(30px,3.6vw,48px); color:var(--cream); text-shadow:3px 3px 0 rgba(43,32,24,.5)}
+.sheet-head p{max-width:60ch; font-size:13.5px; opacity:.9}
+.style-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:28px}
+.scard{background:var(--cream); color:var(--ink); border:3px solid var(--ink); overflow:hidden;
+  box-shadow:8px 8px 0 rgba(43,32,24,.4); transition:transform .25s, box-shadow .25s;
+  border-radius:255px 15px 225px 15px/15px 225px 15px 255px}
+.scard:hover{transform:translate(-3px,-3px); box-shadow:11px 11px 0 rgba(43,32,24,.4)}
+.scard .im{height:230px; overflow:hidden; border-bottom:3px solid var(--ink)}
+.scard .im img{width:100%; height:100%; object-fit:cover; transition:transform .5s}
+.scard:hover .im img{transform:scale(1.05)}
+.scard .bd{padding:16px 18px 18px}
+.scard h3{font-size:22px}
+.scard .rg{font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:var(--verm); font-weight:700; margin-bottom:8px}
+.scard .sg{font-size:12.5px; opacity:.8; font-style:italic}
+.scard .tags{display:flex; gap:6px; flex-wrap:wrap; margin-top:10px}
+.scard .tags span{font-size:10px; font-weight:700; letter-spacing:.08em; border:2px solid var(--ink); padding:2px 9px; border-radius:999px; background:var(--cream2)}
+
+/* compare */
+.compare{margin-top:44px; background:var(--cream); color:var(--ink); border:4px solid var(--ink); box-shadow:10px 10px 0 rgba(43,32,24,.4); padding:26px clamp(18px,3vw,36px) 28px;
+  border-radius:15px 225px 15px 255px/255px 15px 225px 15px}
+.compare h3{font-size:26px; margin-bottom:6px}
+.compare .sub{font-size:13px; opacity:.75; margin-bottom:18px}
+.pickers{display:flex; gap:16px; align-items:center; flex-wrap:wrap; margin-bottom:20px}
+.pickers label{font-size:10.5px; letter-spacing:.2em; text-transform:uppercase; font-weight:700; opacity:.7}
+.pickers select{border:3px solid var(--ink); background:var(--cream); color:var(--ink); font-size:13px; font-weight:700; padding:8px 12px; border-radius:12px 4px 12px 4px}
+.pickers .vs{font-family:var(--disp); font-size:20px; color:var(--verm)}
+.cmp-grid{display:grid; grid-template-columns:1fr 1fr; gap:22px}
+.cmp-col{border:3px solid var(--ink); border-radius:4px 16px 4px 16px; overflow:hidden}
+.cmp-col header{background:var(--indigo); color:var(--cream); padding:10px 16px; font-family:var(--disp); font-size:19px; display:flex; justify-content:space-between; align-items:baseline; gap:10px}
+.cmp-col header small{font-family:var(--body); font-size:10px; letter-spacing:.16em; text-transform:uppercase; opacity:.8}
+.cmp-col .r{display:grid; grid-template-columns:96px 1fr; gap:10px; padding:9px 16px; border-top:2px dashed var(--cream2); font-size:12.5px}
+.cmp-col .r:first-of-type{border-top:0}
+.cmp-col .r b{font-size:10px; letter-spacing:.18em; text-transform:uppercase; color:var(--verm); padding-top:2px}
+.common{margin-top:22px; background:var(--indigo); color:var(--cream); border:3px solid var(--ink); padding:16px 20px; border-radius:16px 4px 16px 4px}
+.common h5{font-family:var(--disp); font-size:18px; margin-bottom:8px; color:var(--gold)}
+.common ul{list-style:none; columns:2; gap:30px}
+.common li{font-size:12.5px; padding:4px 0 4px 18px; position:relative; break-inside:avoid}
+.common li::before{content:"✦"; position:absolute; left:0; top:5px; color:var(--gold); font-size:9px}
+.cta-row{display:flex; justify-content:center; margin-top:36px}
+
+/* ---------- STUDIO ---------- */
+.studio-wrap{display:grid; grid-template-columns:minmax(0,560px) 1fr; gap:34px; align-items:start}
+.canvas-panel{background:var(--cream); border:4px solid var(--ink); box-shadow:12px 12px 0 rgba(43,32,24,.45); padding:16px; color:var(--ink);
+  border-radius:255px 15px 225px 15px/15px 225px 15px 255px}
+.canvas{position:relative; aspect-ratio:1/1; overflow:hidden; border:3px solid var(--ink); background:#a4502f}
+.canvas img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover}
+#layFusion,#layKal{opacity:0}
+.slider-row{padding:18px 6px 4px}
+.slider-row input[type=range]{width:100%; appearance:none; -webkit-appearance:none; height:12px; background:var(--ink); border-radius:8px; outline:none; cursor:pointer}
+.slider-row input[type=range]::-webkit-slider-thumb{appearance:none; -webkit-appearance:none; width:30px; height:30px; border-radius:50%; background:var(--gold); border:4px solid var(--ink); box-shadow:0 3px 0 rgba(43,32,24,.5); cursor:grab}
+.slider-row input[type=range]::-moz-range-thumb{width:24px; height:24px; border-radius:50%; background:var(--gold); border:4px solid var(--ink); cursor:grab}
+.stops{display:flex; justify-content:space-between; font-size:10.5px; letter-spacing:.22em; text-transform:uppercase; font-weight:700; padding:8px 2px 0}
+.stops span{opacity:.5; transition:all .3s}
+.stops span.on{opacity:1; color:var(--verm); transform:scale(1.08)}
+.readout{text-align:center; font-family:var(--disp); font-size:17px; color:var(--indigo); padding-top:8px}
+.studio-side h2{font-size:clamp(28px,3vw,42px); color:var(--cream); text-shadow:3px 3px 0 rgba(43,32,24,.5); margin-bottom:10px}
+.studio-side .intro{font-size:14.5px; opacity:.92; margin-bottom:20px; max-width:60ch}
+.proc{display:grid; grid-template-columns:1fr 1fr; gap:14px}
+.step{background:var(--cream); color:var(--ink); border:3px solid var(--ink); padding:12px 14px; box-shadow:5px 5px 0 rgba(43,32,24,.4); border-radius:4px 14px 4px 14px}
+.step .n{font-family:var(--disp); color:var(--verm); font-size:18px}
+.step h6{font-size:12px; letter-spacing:.14em; text-transform:uppercase; font-weight:700}
+.step p{font-size:12px; opacity:.8}
+.materials{margin-top:16px; font-size:12px; letter-spacing:.06em; border:2px dashed var(--cream); padding:10px 14px; opacity:.9; border-radius:10px}
+
+/* breakdown */
+.breakdown{margin-top:44px; display:grid; grid-template-columns:1fr 1.15fr 1fr; gap:24px}
+.bcol{background:var(--cream); color:var(--ink); border:3px solid var(--ink); padding:20px 20px 16px; box-shadow:8px 8px 0 rgba(43,32,24,.4); border-radius:15px 225px 15px 255px/255px 15px 225px 15px}
+.bcol h4{font-family:var(--disp); font-size:21px; margin-bottom:4px}
+.bcol .tag{display:inline-block; font-size:9.5px; letter-spacing:.2em; text-transform:uppercase; font-weight:700; color:var(--cream); background:var(--c); padding:3px 10px; margin-bottom:12px; border:2px solid var(--ink)}
+.bcol ul{list-style:none}
+.bcol li{font-size:13px; padding:7px 0 7px 20px; position:relative; border-top:2px dashed var(--cream2)}
+.bcol li:first-child{border-top:0}
+.bcol li::before{content:"✦"; position:absolute; left:0; top:8px; color:var(--c); font-size:10px}
+.bcol.mid{background:var(--indigo); color:var(--cream)}
+.bcol.mid p{font-size:13.5px; line-height:1.7}
+.bcol.mid .sig{margin-top:12px; font-family:var(--disp); font-size:16px; color:var(--gold)}
+
+@media (max-width:1100px){ .style-grid{grid-template-columns:1fr 1fr} .about{grid-template-columns:1fr} .breakdown{grid-template-columns:1fr} .common ul{columns:1} }
+@media (max-width:900px){
+  .cart-box{grid-template-columns:1fr; gap:26px}
+  .stamp{top:auto; bottom:-16px}
+  .hero-grid{grid-template-columns:1fr; gap:44px}
+  .style-grid{grid-template-columns:1fr}
+  .cmp-grid{grid-template-columns:1fr}
+  .studio-wrap{grid-template-columns:1fr}
+  .f-meta{text-align:left}
+  .proc{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- ================= PAGE 1 : HOME ================= -->
+<section class="screen" id="page-home">
+  <div class="ribbon">
+    <span class="r-left">Folk Painting Synthesis · Sheet <b>I</b> · Ed. 2026</span>
+    <nav class="pagenav" aria-label="Pages">
+      <button data-page="home">Home</button>
+      <button data-page="styles">Styles</button>
+      <button data-page="studio">Studio</button>
+    </nav>
+  </div>
+
+  <div class="cartouche">
+    <div class="cart-box">
+      <img class="cart-orn" src="https://image.qwenlm.ai/public_source/6c87be1b-829a-4fdc-8974-0709bd18cf94/152bac9ef-cb7d-430c-bafb-e89c1d24d493.png" alt="" aria-hidden="true">
+      <div class="cc-left">
+        <p class="cover-inst">A Creative Synthesis Exhibit</p>
+        <h2 class="cover-srm">SRM Institute of Science and Technology</h2>
+        <p class="cover-deem">Deemed to be University · India</p>
+        <div class="cover-rule"><i>❖</i></div>
+        <p class="cover-topic-label">Topic</p>
+        <p class="cover-topic">An Artwork Combining Elements from Two Regional Painting Styles — Warli × Kalamkari</p>
+      </div>
+      <div class="cc-right">
+        <div class="stamp">SRM IST · Indian Arts Form · Submitted 27·08·2026</div>
+        <div class="ledger">
+          <div class="row"><span class="k">Name</span><span class="dots"></span><span class="v">HARINISH S V</span></div>
+          <div class="row"><span class="k">Registration No</span><span class="dots"></span><span class="v">RA2411030010137</span></div>
+          <div class="row"><span class="k">Section</span><span class="dots"></span><span class="v">Y1</span></div>
+          <div class="row"><span class="k">Subject</span><span class="dots"></span><span class="v">INDIAN ARTS FORM</span></div>
+          <div class="row"><span class="k">Subject Code</span><span class="dots"></span><span class="v">21LEM301T</span></div>
+        </div>
+        <p class="cover-due">Submission date · <b>27 · 08 · 2026</b></p>
+      </div>
+    </div>
+  </div>
+
+  <section class="hero">
+    <div class="hero-grid">
+      <div>
+        <span class="eyebrow">Six idioms studied · two rivers fused</span>
+        <h1>SANGAMA<span class="dev">संगम</span></h1>
+        <p class="lede">Where two painting rivers meet. This exhibit studies six regional idioms of India,
+          sets <em>Warli's geometry</em> against <em>Kalamkari's pen</em>, and offers one original fusion
+          artwork — a dance circle that speaks two mother tongues at once.</p>
+        <div class="stats">
+          <div class="stat"><b data-n="6">0</b><span>Styles studied</span></div>
+          <div class="stat"><b data-n="2">0</b><span>Styles fused</span></div>
+          <div class="stat"><b data-n="1">0</b><span>Artwork</span></div>
+        </div>
+        <div class="hero-cta">
+          <button class="btn solid" data-go="studio">Enter the Studio →</button>
+          <button class="btn" data-go="styles">Study the Styles</button>
+        </div>
+      </div>
+      <div class="hero-right">
+        <figure class="frame">
+          <img src="https://image.qwenlm.ai/public_source/6c87be1b-829a-4fdc-8974-0709bd18cf94/132a4a78a-324b-44b4-bdbe-6172231c698c.png" alt="Sangama No.1 — the fusion artwork of Warli and Kalamkari styles">
+          <figcaption class="cap"><span class="t">Sangama No. 1</span><span class="d">Warli × Kalamkari · digital painting</span></figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <div class="mq" aria-hidden="true"><div class="mq-inner" id="mq"></div></div>
+
+  <section class="about">
+    <div class="about-col" data-no="Note I">
+      <h4>How to explore</h4>
+      <ul>
+        <li><b>Home</b> introduces the project; <b>Styles</b> surveys six regional idioms and compares any two.</li>
+        <li><b>Studio</b> holds the fusion artwork with a blend slider — slide from pure Warli through the Sangama to pure Kalamkari.</li>
+        <li>Read the <b>element breakdown</b> to see exactly which grammar came from which style.</li>
+      </ul>
+    </div>
+    <div class="about-col" data-no="Note II">
+      <h4>About the synthesis</h4>
+      <p>The assignment asks for creative synthesis, so the artwork keeps <b>Warli's composition</b> — triangle bodies, the dance circle, red geru ground — and borrows <b>Kalamkari's margins</b>: indigo-madder vines, flaming lotus, fish borders, pen-drawn foliage. All paintings and captions here are original work made for this submission.</p>
+    </div>
+    <div class="about-col" data-no="Note III">
+      <h4>Further reading</h4>
+      <ul>
+        <li>Warli — tribal art of the Sahyadri range, Maharashtra</li>
+        <li>Kalamkari — Srikalahasti pen work & Machilipatnam block prints</li>
+        <li>Madhubani of Mithila; Pattachitra of Odisha; Tanjore; Gond</li>
+        <li>National Crafts Museum & regional folk galleries</li>
+      </ul>
+    </div>
+  </section>
+
+  <footer>
+    <div class="f-brand">
+      <span class="f-title">SANGAMA <span style="color:var(--gold)">संगम</span></span>
+      <p>A fusion of regional painting styles — Warli geometry meeting Kalamkari's pen. By Harinish S V · RA2411030010137 · Section Y1 · 21LEM301T.</p>
+    </div>
+    <div class="f-meta">
+      <span class="due">Submission · 27 August 2026</span>
+      <p>SRM Institute of Science and Technology.</p>
+      <p>Original artwork & writing · digital painting tools.</p>
+    </div>
+  </footer>
+</section>
+
+<!-- ================= PAGE 2 : STYLES ================= -->
+<section class="screen" id="page-styles">
+  <div class="ribbon">
+    <span class="r-left">Folk Painting Synthesis · Sheet <b>II</b> · Six Idioms</span>
+    <nav class="pagenav" aria-label="Pages">
+      <button data-page="home">Home</button>
+      <button data-page="styles">Styles</button>
+      <button data-page="studio">Studio</button>
+    </nav>
+  </div>
+
+  <div class="sheet">
+    <div class="sheet-head">
+      <h2>Six Regional Idioms</h2>
+      <p>Each style is a grammar — of line, motif, palette and purpose. Study the six, then set any two side by side below to see where they agree and where they diverge.</p>
+    </div>
+    <div class="style-grid" id="styleGrid"></div>
+
+    <div class="compare">
+      <h3>Set Two Styles Side by Side</h3>
+      <p class="sub">Similarities and differences, drawn from each idiom's own grammar.</p>
+      <div class="pickers">
+        <label for="selA">Style A</label><select id="selA"></select>
+        <span class="vs">×</span>
+        <label for="selB">Style B</label><select id="selB"></select>
+      </div>
+      <div class="cmp-grid" id="cmpGrid"></div>
+      <div class="common">
+        <h5>Common ground — where the idioms agree</h5>
+        <ul id="commonList"></ul>
+      </div>
+    </div>
+
+    <div class="cta-row"><button class="btn solid" data-go="studio">See them fused in the Studio →</button></div>
+  </div>
+</section>
+
+<!-- ================= PAGE 3 : STUDIO ================= -->
+<section class="screen" id="page-studio">
+  <div class="ribbon">
+    <span class="r-left">Folk Painting Synthesis · Sheet <b>III</b> · The Artwork</span>
+    <nav class="pagenav" aria-label="Pages">
+      <button data-page="home">Home</button>
+      <button data-page="styles">Styles</button>
+      <button data-page="studio">Studio</button>
+    </nav>
+  </div>
+
+  <div class="sheet">
+    <div class="studio-wrap">
+      <div class="canvas-panel">
+        <div class="canvas">
+          <img id="layWarli" src="https://image.qwenlm.ai/public_source/6c87be1b-829a-4fdc-8974-0709bd18cf94/19f1ddd01-777d-4f41-a965-02bbc8b316b2.png" alt="Same composition painted purely in Warli style">
+          <img id="layFusion" src="https://image.qwenlm.ai/public_source/6c87be1b-829a-4fdc-8974-0709bd18cf94/132a4a78a-324b-44b4-bdbe-6172231c698c.png" alt="Sangama No.1 — fusion of Warli and Kalamkari">
+          <img id="layKal" src="https://image.qwenlm.ai/public_source/6c87be1b-829a-4fdc-8974-0709bd18cf94/1901a4517-cfc9-44d4-9e1a-6c65e1ff4457.png" alt="Same composition painted purely in Kalamkari style">
+        </div>
+        <div class="slider-row">
+          <input type="range" id="blend" min="0" max="100" value="50" aria-label="Blend between Warli and Kalamkari">
+          <div class="stops"><span id="stW" class="on">Warli</span><span id="stS">Sangama</span><span id="stK">Kalamkari</span></div>
+          <div class="readout" id="readout">Reading the Sangama — both hands in one picture</div>
+        </div>
+      </div>
+
+      <div class="studio-side">
+        <h2>Sangama No. 1 — the Tree that Dances</h2>
+        <p class="intro">One composition, painted three ways. The same tree of life, the same circle of dancers, the same fish-and-lotus border — rendered once in pure Warli, once in pure Kalamkari, and once as the fusion artwork submitted for this assignment. Drag the slider to watch one grammar hand the picture to the other.</p>
+        <div class="proc">
+          <div class="step"><span class="n">१</span><h6>Geru ground</h6><p>Red earth laid flat, as in a Warli marriage chauk.</p></div>
+          <div class="step"><span class="n">२</span><h6>Geometry</h6><p>Dance circle and triangle bodies chalked in white.</p></div>
+          <div class="step"><span class="n">३</span><h6>Kalam line</h6><p>Tree and birds drawn leaf-by-leaf with the pen.</p></div>
+          <div class="step"><span class="n">४</span><h6>Vine border</h6><p>Indigo-madder vines and fish close the frame.</p></div>
+        </div>
+        <p class="materials">Materials: digital painting tools · composition, paintings and captions original to this submission.</p>
+      </div>
+    </div>
+
+    <div class="breakdown">
+      <div class="bcol" style="--c:#8f3b22">
+        <span class="tag">From Warli</span>
+        <h4>The geometry</h4>
+        <ul>
+          <li>Bodies as two joined triangles; heads as circles; limbs as open strokes.</li>
+          <li>The tarpa dance circle as the engine of the composition.</li>
+          <li>White on red geru — one pigment, one ground, total contrast.</li>
+          <li>Sun, moon and palm standing as corner witnesses.</li>
+        </ul>
+      </div>
+      <div class="bcol mid" style="--c:#c99a3f">
+        <span class="tag" style="background:var(--verm)">The synthesis</span>
+        <h4 style="color:var(--gold)">One surface, two mother tongues</h4>
+        <p>Sangama No. 1 keeps Warli's grammar — the circle dance, the triangle bodies, the red earth — and lets Kalamkari write its margins: indigo vines, flaming lotus, fish that swim the border. The tree borrows Kalamkari's leaf-by-leaf patience while the figures stay stubbornly Warli. Neither style illustrates the other; they share one surface the way two rivers share a delta.</p>
+        <p class="sig">संगम — where the white line meets the indigo vine.</p>
+      </div>
+      <div class="bcol" style="--c:#274067">
+        <span class="tag">From Kalamkari</span>
+        <h4>The pen</h4>
+        <ul>
+          <li>The bamboo-pen line: continuous, flowing, black.</li>
+          <li>Flaming lotus and scrolling vine as the border logic.</li>
+          <li>Indigo + madder dye palette on cream cotton.</li>
+          <li>The fish-and-lotus border band of Machilipatnam trade cloth.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+const $ = s => document.querySelector(s);
+
+/* ============ DATA ============ */
+const STYLES = [
+{ id:"warli", name:"Warli", region:"Maharashtra · Konkan coast",
+  img:"https://image.qwenlm.ai/public_source/6c87be1b-829a-4fdc-8974-0709bd18cf94/1deaa5065-f53d-4833-bbff-afac61e73c9d.png",
+  line:"Rhythmic straight strokes; bodies built from two triangles",
+  motif:"Tarpa dance circles, palm trees, sun and moon",
+  palette:"White rice-paste on red geru earth",
+  surface:"House walls & marriage chauk; now handmade paper",
+  purpose:"Ritual — marriage, harvest, goddess worship",
+  sign:"The dance circle around a central tree.",
+  tags:["geometry","white-on-red","tribal"] },
+{ id:"madhubani", name:"Madhubani (Mithila)", region:"Bihar · Mithila",
+  img:"https://image.qwenlm.ai/public_source/6c87be1b-829a-4fdc-8974-0709bd18cf94/1e34f66f3-a71c-47a2-ae33-25f8ec234ebb.png",
+  line:"Sharp double-line nib; dense patterned fill",
+  motif:"Fish, peacock, lotus, tree of life; no empty space",
+  palette:"Vermilion, turmeric yellow, indigo, lamp-black",
+  surface:"Ritual walls & floors; now paper and cloth",
+  purpose:"Life-cycle rites — weddings, festivals",
+  sign:"Double-line borders and wide staring eyes.",
+  tags:["pattern","double-line","ritual"] },
+{ id:"kalamkari", name:"Kalamkari", region:"Andhra · Srikalahasti & Machilipatnam",
+  img:"https://image.qwenlm.ai/public_source/6c87be1b-829a-4fdc-8974-0709bd18cf94/1a2303441-bc07-4dbb-9cf3-db3694389114.png",
+  line:"Flowing bamboo-pen (kalam) line; fine black outline",
+  motif:"Flaming lotus vines, temple trees, mythic panels",
+  palette:"Indigo, madder, ochre on cream cotton",
+  surface:"Hand-painted or block-printed cloth",
+  purpose:"Temple hangings & story scrolls",
+  sign:"The flaming vine border drawn in one breath.",
+  tags:["pen-line","indigo-madder","scroll"] },
+{ id:"pattachitra", name:"Pattachitra", region:"Odisha · Puri & Raghurajpur",
+  img:"https://image.qwenlm.ai/public_source/6c87be1b-829a-4fdc-8974-0709bd18cf94/13776770b-5b43-4bde-a507-1f84fb60c140.png",
+  line:"Confident black outline; rounded sculptural forms",
+  motif:"Jagannath triad, Krishna-leela, floral frames",
+  palette:"Stone white, red, yellow, black; lacquer finish",
+  surface:"Patta — treated cloth or palm-leaf",
+  purpose:"Pilgrim scrolls & temple narrative",
+  sign:"The marble-ornament border framing every scene.",
+  tags:["outline","devotional","scroll"] },
+{ id:"tanjore", name:"Tanjore", region:"Tamil Nadu · Thanjavur",
+  img:"https://image.qwenlm.ai/public_source/6c87be1b-829a-4fdc-8974-0709bd18cf94/1de1ab90f-da29-48d0-831b-b0bb081a1f44.png",
+  line:"Smooth rounded modelling; broad serene faces",
+  motif:"Deities under gilded arches, pillars, curtains",
+  palette:"Deep red, green, gold leaf, glass beads",
+  surface:"Gesso on wooden board",
+  purpose:"Home-shrine devotional icons",
+  sign:"Raised gesso worked over with gold leaf.",
+  tags:["gilded","gesso","icon"] },
+{ id:"gond", name:"Gond", region:"Madhya Pradesh · Gondwana",
+  img:"https://image.qwenlm.ai/public_source/6c87be1b-829a-4fdc-8974-0709bd18cf94/14a9b4e41-b720-4021-a6c5-9624259b8b03.png",
+  line:"Shapes built from fine dots and dashes",
+  motif:"Animals, trees and gods shimmering with pattern",
+  palette:"Bright yellow, blue, green, red on cream",
+  surface:"Walls; now paper and canvas",
+  purpose:"Singing the world into being, daily & ritual",
+  sign:"The vibrating field of dots and dashes.",
+  tags:["dots","tribal","vibrant"] }
+];
+const COMMON = [
+"Colour from kitchen and field — rice paste, geru earth, indigo, madder, lamp-black.",
+"Painted first for ritual and story, not for a gallery wall.",
+"Flat perspective — every figure equal on the picture plane.",
+"Skill passed through families and communities, often mother to daughter.",
+"The border is meaning: it contains and protects the scene."
+];
+
+/* ============ router ============ */
+const PAGES = ["home","styles","studio"];
+function go(p){ if(PAGES.includes(p)) location.hash = "#/" + p; }
+function route(){
+  let h = location.hash.replace("#/","");
+  if(!PAGES.includes(h)) h = "home";
+  document.querySelectorAll(".screen").forEach(s => s.classList.toggle("active", s.id === "page-" + h));
+  document.querySelectorAll(".pagenav button").forEach(b => b.classList.toggle("active", b.dataset.page === h));
+  window.scrollTo(0,0);
+}
+window.addEventListener("hashchange", route);
+document.addEventListener("click", e => {
+  const g = e.target.closest("[data-go]");
+  if(g){ go(g.dataset.go); return; }
+  const n = e.target.closest(".pagenav button");
+  if(n) go(n.dataset.page);
+});
+
+/* ============ style cards ============ */
+$("#styleGrid").innerHTML = STYLES.map(s =>
+ '<article class="scard">'+
+   '<div class="im"><img src="'+s.img+'" alt="'+s.name+' painting sample" loading="lazy"></div>'+
+   '<div class="bd"><h3>'+s.name+'</h3><p class="rg">'+s.region+'</p>'+
+   '<p class="sg">'+s.sign+'</p>'+
+   '<div class="tags">'+ s.tags.map(t => "<span>"+t+"</span>").join("") +'</div></div>'+
+ '</article>').join("");
+
+/* ============ compare ============ */
+(function(){
+  const A = $("#selA"), B = $("#selB");
+  A.innerHTML = B.innerHTML = STYLES.map(s => '<option value="'+s.id+'">'+s.name+'</option>').join("");
+  A.value = "warli"; B.value = "kalamkari";
+  const FIELDS = [["region","Region"],["line","Line"],["motif","Motifs"],["palette","Palette"],["surface","Surface"],["purpose","Purpose"],["sign","Signature"]];
+  function col(s){
+    return '<div class="cmp-col"><header>'+s.name+'<small>'+s.region+'</small></header>'+
+      FIELDS.map(f => '<div class="r"><b>'+f[1]+'</b><span>'+s[f[0]]+'</span></div>').join("") + '</div>';
+  }
+  function render(){
+    const a = STYLES.find(x => x.id === A.value), b = STYLES.find(x => x.id === B.value);
+    $("#cmpGrid").innerHTML = col(a) + col(b);
+  }
+  A.addEventListener("change", render); B.addEventListener("change", render);
+  $("#commonList").innerHTML = COMMON.map(c => "<li>"+c+"</li>").join("");
+  render();
+})();
+
+/* ============ blend slider ============ */
+(function(){
+  const r = $("#blend"), W = $("#layWarli"), F = $("#layFusion"), K = $("#layKal");
+  const stW = $("#stW"), stS = $("#stS"), stK = $("#stK"), out = $("#readout");
+  function apply(){
+    const v = +r.value;
+    F.style.opacity = v <= 50 ? (v/50).toFixed(2) : (1-(v-50)/50).toFixed(2);
+    K.style.opacity = v <= 50 ? 0 : ((v-50)/50).toFixed(2);
+    stW.classList.toggle("on", v < 25);
+    stS.classList.toggle("on", v >= 25 && v <= 75);
+    stK.classList.toggle("on", v > 75);
+    out.textContent = v < 25 ? "Reading pure Warli — white geometry on red earth"
+      : v <= 75 ? "Reading the Sangama — both hands in one picture"
+      : "Reading pure Kalamkari — the pen and the dye";
+  }
+  r.addEventListener("input", apply);
+  apply();
+})();
+
+/* ============ marquee + counters ============ */
+(function(){
+  const seq = STYLES.map(s => s.name + "<i>✦</i>").join("");
+  $("#mq").innerHTML = "<span>"+seq+"</span><span>"+seq+"</span>";
+})();
+(function(){
+  document.querySelectorAll(".stat b").forEach(el => {
+    const target = +el.dataset.n;
+    const t0 = performance.now(), dur = 1100;
+    (function tick(t){
+      const k = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - k, 3);
+      el.textContent = Math.round(target * e);
+      if(k < 1) requestAnimationFrame(tick);
+    })(t0);
+  });
+})();
+
+route();
+</script>
+</body>
+</html>
