@@ -4,8 +4,775 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Kalākrama — An Interactive Timeline of Indian Art</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/rozha-one@5/index.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/work-sans@5/300.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/work-sans@5/400.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/work-sans@5/500.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/work-sans@5/600.css">
+<style>
+:root{
+  --bg:#0e1016; --bg2:#11141d; --panel:#151926; --panel2:#171b28;
+  --line:#262c3d; --line2:#333a4e;
+  --paper:#ece5d3; --muted:#98a0b3; --dim:#6b7285;
+  --gold:#d9b36a; --gold2:#f0d9a6;
+  --disp:'Rozha One', Georgia, serif;
+  --body:'Work Sans', system-ui, sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg); color:var(--paper); font-family:var(--body);
+  font-weight:300; line-height:1.6; overflow-x:hidden;
+  background-image:radial-gradient(circle at 1px 1px, rgba(217,179,106,.05) 1px, transparent 1.7px);
+  background-size:28px 28px;
+}
+body::before{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:0;
+  background:
+    radial-gradient(640px 420px at 10% -6%, rgba(217,179,106,.09), transparent 62%),
+    radial-gradient(720px 520px at 104% 88%, rgba(59,163,160,.08), transparent 62%),
+    radial-gradient(560px 400px at 88% 6%, rgba(211,79,109,.05), transparent 60%);
+}
+::selection{background:rgba(217,179,106,.35); color:#fff}
+img{display:block; max-width:100%}
+button{font-family:inherit; cursor:pointer}
+
+/* ---------- page switching ---------- */
+.screen{display:none; position:relative; z-index:1}
+.screen.active{display:block; animation:pageIn .55s ease}
+@keyframes pageIn{from{opacity:0; transform:translateY(16px)} to{opacity:1; transform:none}}
+
+/* ---------- page nav pill ---------- */
+.pagenav{
+  position:fixed; top:16px; right:18px; z-index:80; display:flex; gap:4px;
+  background:rgba(14,16,22,.8); backdrop-filter:blur(10px);
+  border:1px solid var(--line); border-radius:999px; padding:5px;
+  box-shadow:0 10px 30px rgba(0,0,0,.45);
+}
+.pagenav button{
+  padding:8px 18px; border-radius:999px; border:none; background:transparent;
+  color:var(--muted); font-size:10.5px; letter-spacing:.2em; text-transform:uppercase; font-weight:500;
+  transition:all .3s;
+}
+.pagenav button:hover{color:var(--paper)}
+.pagenav button.active{background:rgba(217,179,106,.16); color:var(--gold2)}
+
+/* ---------- shared ---------- */
+.btn{
+  display:inline-flex; align-items:center; gap:10px; padding:13px 28px; border-radius:999px;
+  border:1px solid rgba(217,179,106,.55); background:transparent; color:var(--gold2);
+  font-size:12px; letter-spacing:.22em; text-transform:uppercase; font-weight:500;
+  transition:background .3s, transform .3s, box-shadow .3s;
+}
+.btn:hover{background:rgba(217,179,106,.12); transform:translateY(-2px); box-shadow:0 10px 30px rgba(217,179,106,.15)}
+.btn.solid{background:linear-gradient(140deg, var(--gold2), var(--gold)); color:#141414; border:none; font-weight:600}
+.btn.solid:hover{box-shadow:0 14px 40px rgba(217,179,106,.35)}
+.eyebrow{display:inline-flex; align-items:center; gap:10px; font-size:11px; letter-spacing:.3em; text-transform:uppercase; color:var(--gold); font-weight:500}
+.eyebrow::before{content:""; width:34px; height:1px; background:var(--gold)}
+
+/* ============ HOME : merged cover band ============ */
+.coverband{max-width:1280px; margin:92px auto 0; padding:0 6vw}
+.cover-card{
+  position:relative; background:var(--panel); border:1px solid var(--line2);
+  padding:44px clamp(24px,4.5vw,54px) 40px;
+  display:grid; grid-template-columns:1.1fr .9fr; gap:44px;
+  box-shadow:0 40px 110px rgba(0,0,0,.55);
+}
+.cover-card::after{content:""; position:absolute; inset:9px; border:1px solid rgba(217,179,106,.3); pointer-events:none}
+.cover-orn{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:.16; pointer-events:none; mix-blend-mode:screen}
+.cc-left,.cc-right{position:relative; z-index:2}
+.cover-inst{font-size:10.5px; letter-spacing:.32em; text-transform:uppercase; color:var(--gold); font-weight:600}
+.cover-srm{font-family:var(--disp); font-weight:400; font-size:clamp(24px,3vw,36px); line-height:1.15; margin:10px 0 2px}
+.cover-deem{font-size:10.5px; letter-spacing:.22em; text-transform:uppercase; color:var(--muted)}
+.cover-rule{display:flex; align-items:center; gap:14px; margin:20px 0}
+.cover-rule::before,.cover-rule::after{content:""; flex:1; height:1px; background:linear-gradient(90deg, transparent, var(--gold))}
+.cover-rule::after{background:linear-gradient(90deg, var(--gold), transparent)}
+.cover-rule i{color:var(--gold); font-style:normal; font-size:12px}
+.cover-topic-label{font-size:10px; letter-spacing:.3em; text-transform:uppercase; color:var(--muted); font-weight:600}
+.cover-topic{font-family:var(--disp); font-weight:400; font-size:clamp(17px,2vw,23px); line-height:1.4; margin-top:6px}
+.ledger{text-align:left}
+.ledger .row{display:flex; align-items:baseline; gap:12px; padding:8px 2px; border-bottom:1px dashed #2a3040; font-size:13px}
+.ledger .k{color:var(--muted); letter-spacing:.16em; text-transform:uppercase; font-size:10.5px; white-space:nowrap; font-weight:500}
+.ledger .dots{flex:1; border-bottom:1px dotted #3a4156; transform:translateY(-4px)}
+.ledger .v{color:var(--paper); font-weight:500; letter-spacing:.05em; text-align:right}
+.cover-due{margin-top:18px; font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:var(--muted)}
+.cover-due b{color:var(--gold2); font-weight:500}
+
+/* ============ HOME : hero ============ */
+.hero{padding:56px 6vw 40px; max-width:1440px; margin:0 auto}
+.hero-grid{display:grid; grid-template-columns:1.15fr .85fr; gap:56px; align-items:center}
+h1{font-family:var(--disp); font-weight:400; font-size:clamp(46px,6.4vw,92px); line-height:1.02; margin:18px 0 6px; color:var(--paper)}
+h1 .dev{color:var(--gold); font-size:.42em; vertical-align:.5em; margin-left:14px; letter-spacing:0}
+.lede{max-width:56ch; color:var(--muted); font-size:16px; margin:14px 0 30px}
+.lede em{color:var(--paper); font-style:normal; font-weight:400}
+.stats{display:flex; gap:44px; margin-bottom:34px}
+.stat b{display:block; font-family:var(--disp); font-weight:400; font-size:40px; color:var(--gold2); line-height:1}
+.stat span{font-size:11px; letter-spacing:.22em; text-transform:uppercase; color:var(--muted)}
+.hero-cta{display:flex; align-items:center; gap:18px; flex-wrap:wrap}
+.hint{font-size:12px; color:var(--dim)}
+.hero-right{position:relative; display:flex; justify-content:center}
+.mandala{position:absolute; width:620px; height:620px; top:50%; left:50%; translate:-50% -50%; opacity:.13; animation:spin 90s linear infinite; pointer-events:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+.plate{position:relative; width:min(400px,86%); background:var(--panel); border:1px solid var(--line); padding:14px 14px 0; box-shadow:0 30px 80px rgba(0,0,0,.5)}
+.plate::after{content:""; position:absolute; inset:7px; border:1px solid rgba(217,179,106,.35); pointer-events:none}
+.plate-frame{position:relative; aspect-ratio:4/5; overflow:hidden; background:#0b0d12}
+.plate-frame img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:0; transition:opacity 1s ease, transform 8s ease; transform:scale(1.06)}
+.plate-frame img.on{opacity:1; transform:scale(1)}
+.plate-cap{display:flex; justify-content:space-between; align-items:center; gap:10px; padding:12px 4px}
+.plate-cap .t{font-family:var(--disp); font-size:15px; line-height:1.2}
+.plate-cap .d{font-size:11px; color:var(--muted); letter-spacing:.08em}
+.plate-idx{font-family:var(--disp); color:var(--gold); font-size:14px; white-space:nowrap}
+.plate-tag{position:absolute; top:-13px; left:50%; transform:translateX(-50%); background:var(--bg); border:1px solid var(--line); padding:3px 14px; font-size:10px; letter-spacing:.3em; text-transform:uppercase; color:var(--muted); z-index:2}
+.frieze{overflow:hidden; border-block:1px solid var(--line); background:var(--bg2)}
+.frieze-inner{display:flex; width:max-content; animation:marquee 46s linear infinite}
+.frieze:hover .frieze-inner{animation-play-state:paused}
+.frieze-inner span{display:flex; align-items:center; padding:12px 0; font-size:12px; letter-spacing:.34em; text-transform:uppercase; color:var(--muted); white-space:nowrap}
+.frieze-inner i{font-style:normal; color:var(--gold); margin:0 22px}
+@keyframes marquee{to{transform:translateX(-50%)}}
+.about{max-width:1240px; margin:70px auto 0; padding:0 6vw; display:grid; grid-template-columns:1fr 1fr 1fr; gap:34px}
+.about-col{background:var(--panel2); border:1px solid var(--line); border-radius:12px; padding:26px 26px 22px; position:relative; overflow:hidden}
+.about-col::before{content:""; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg, var(--gold), transparent)}
+.about-col h4{font-family:var(--disp); font-weight:400; font-size:20px; margin-bottom:12px; color:var(--gold2)}
+.about-col p, .about-col li{font-size:13.5px; color:var(--muted)}
+.about-col ul{list-style:none}
+.about-col li{padding:7px 0 7px 20px; position:relative; border-bottom:1px dashed #232a3b}
+.about-col li:last-child{border-bottom:0}
+.about-col li::before{content:"✦"; position:absolute; left:0; top:8px; color:var(--gold); font-size:10px}
+.about-col b{color:var(--paper); font-weight:500}
+footer{margin-top:70px; border-top:1px solid var(--line); background:var(--bg2); padding:34px 6vw 40px; display:flex; justify-content:space-between; gap:28px; flex-wrap:wrap; align-items:flex-start}
+.f-brand{max-width:46ch}
+.f-brand .f-title{font-family:var(--disp); font-size:22px}
+.f-brand p{font-size:12.5px; color:var(--muted); margin-top:8px}
+.f-meta{text-align:right; font-size:12px; color:var(--muted)}
+.f-meta .due{display:inline-block; margin-bottom:10px; padding:7px 16px; border:1px solid rgba(217,179,106,.5); border-radius:999px; color:var(--gold2); letter-spacing:.18em; text-transform:uppercase; font-size:10.5px}
+.f-meta p{margin-top:4px}
+
+/* ============ TIMELINE PAGE — compact hanging-tag layout ============ */
+.tl-page{padding:96px 0 40px}
+.tl-top{display:flex; align-items:center; padding:0 6vw}
+.backlink{background:transparent; border:1px solid var(--line2); color:var(--muted); border-radius:999px; padding:9px 18px; font-size:10.5px; letter-spacing:.2em; text-transform:uppercase; transition:all .3s}
+.backlink:hover{border-color:var(--gold); color:var(--gold2)}
+.tl-head{display:flex; align-items:flex-end; justify-content:space-between; gap:24px; padding:18px 6vw 0; flex-wrap:wrap}
+.tl-head h2{font-family:var(--disp); font-weight:400; font-size:clamp(28px,3.4vw,44px)}
+.tl-head p{color:var(--muted); font-size:13px; max-width:52ch}
+.era-chips{display:flex; gap:10px; flex-wrap:wrap; padding:22px 6vw 8px}
+.chip{display:inline-flex; align-items:center; gap:8px; padding:8px 16px; border-radius:999px; border:1px solid var(--line2); background:var(--panel); color:var(--muted); font-size:11px; letter-spacing:.14em; text-transform:uppercase; font-weight:500; transition:all .3s}
+.chip .dotc{width:8px; height:8px; border-radius:50%; background:var(--c)}
+.chip:hover{border-color:var(--c); color:var(--paper); transform:translateY(-2px)}
+.chip.active{background:color-mix(in srgb, var(--c) 22%, var(--panel)); border-color:var(--c); color:var(--paper)}
+.tl-progress{height:3px; margin:14px 6vw 0; background:#1a1f2d; border-radius:2px; overflow:hidden}
+.tl-progress i{display:block; height:100%; width:0%; background:linear-gradient(90deg, var(--gold), var(--gold2)); transition:width .15s linear}
+
+.tl-viewport{overflow-x:auto; height:auto; cursor:grab; touch-action:pan-y;
+  scrollbar-width:thin; scrollbar-color:var(--gold) #161a26; margin-top:10px}
+.tl-viewport.dragging{cursor:grabbing; user-select:none}
+.tl-viewport::-webkit-scrollbar{height:8px}
+.tl-viewport::-webkit-scrollbar-track{background:#161a26}
+.tl-viewport::-webkit-scrollbar-thumb{background:linear-gradient(90deg,var(--gold),#8a6c34); border-radius:4px}
+.tl-track{display:flex; position:relative; width:max-content; min-width:100%}
+
+.era{position:relative; padding:40px 64px 54px; flex:0 0 auto;
+  background:linear-gradient(90deg, transparent, color-mix(in srgb, var(--c) 5%, transparent) 14%, color-mix(in srgb, var(--c) 5%, transparent) 86%, transparent)}
+.era:first-child{padding-left:7vw}
+.era:last-child{padding-right:7vw}
+.era-plaque{display:flex; align-items:baseline; gap:16px; flex-wrap:wrap; margin-bottom:32px}
+.era-num{font-family:var(--disp); font-size:40px; line-height:1; color:var(--c); opacity:.9}
+.era-titles h3{font-family:var(--disp); font-weight:400; font-size:24px; line-height:1.1}
+.era-titles p{font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:var(--muted)}
+.era-note{font-size:12px; color:var(--dim); max-width:34ch; font-style:italic}
+
+/* line runs along the TOP; every exhibit hangs just below it — no empty halves */
+.nodes{position:relative; display:flex; gap:58px; align-items:flex-start}
+.nodes::before{content:""; position:absolute; left:-46px; right:-46px; top:7px; height:2px;
+  background:linear-gradient(90deg, transparent, var(--line2) 5%, var(--line2) 95%, transparent)}
+.node{position:relative; width:292px; flex:0 0 auto; display:flex; flex-direction:column; align-items:center}
+.node .dot{width:15px; height:15px; border-radius:50%; background:var(--c); z-index:2; flex:0 0 auto;
+  box-shadow:0 0 0 5px rgba(10,11,16,.6), 0 0 22px color-mix(in srgb, var(--c) 75%, transparent)}
+.node .year{margin-top:12px; font-size:10px; letter-spacing:.14em; padding:3px 11px; border-radius:999px;
+  background:#10131b; border:1px solid color-mix(in srgb, var(--c) 55%, var(--line)); color:var(--paper); white-space:nowrap}
+.node .stem{width:2px; height:26px; margin-top:10px; background:linear-gradient(to bottom, var(--c), transparent)}
+.node:nth-child(even) .stem{height:66px}   /* gentle stagger, still compact */
+.card{position:relative; width:100%; display:flex; flex-direction:column; text-align:left;
+  background:var(--panel); border:1px solid var(--line); border-top:3px solid var(--c);
+  border-radius:10px; overflow:hidden; color:var(--paper); padding:0;
+  opacity:0; translate:0 26px; transition:opacity .7s ease, translate .7s ease, transform .35s ease, box-shadow .35s ease, border-color .35s ease}
+.node.in .card{opacity:1; translate:0 0}
+.card:hover, .card:focus-visible{transform:translateY(-6px); box-shadow:0 22px 46px rgba(0,0,0,.5); border-color:color-mix(in srgb, var(--c) 60%, var(--line)); outline:none}
+.card-img{height:182px; overflow:hidden; position:relative; background:#0b0d12; flex:0 0 auto}
+.card-img img{width:100%; height:100%; object-fit:cover; transition:transform .7s ease; filter:saturate(.96)}
+.card:hover .card-img img{transform:scale(1.07)}
+.card-img::after{content:""; position:absolute; inset:0; background:linear-gradient(to top, rgba(11,13,18,.55), transparent 45%)}
+.card-body{display:flex; flex-direction:column; gap:8px; padding:14px 16px 16px; align-items:flex-start}
+.card-era{font-size:9.5px; letter-spacing:.2em; text-transform:uppercase; color:var(--c); font-weight:600; border:1px solid color-mix(in srgb, var(--c) 50%, transparent); padding:3px 9px; border-radius:3px}
+.card-title{font-family:var(--disp); font-weight:400; font-size:19px; line-height:1.18;
+  display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden}
+.card-meta{font-size:12px; color:var(--muted);
+  display:-webkit-box; -webkit-line-clamp:1; -webkit-box-orient:vertical; overflow:hidden}
+.card-cta{margin-top:4px; font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:var(--gold); display:flex; align-items:center; gap:7px; font-weight:500}
+.card-cta i{font-style:normal; transition:transform .3s}
+.card:hover .card-cta i{transform:translateX(5px)}
+.tl-hint{text-align:center; color:var(--dim); font-size:11px; letter-spacing:.22em; text-transform:uppercase; padding:10px 0 0}
+.tl-foot{text-align:center; margin-top:30px; color:var(--dim); font-size:11px; letter-spacing:.2em; text-transform:uppercase}
+
+/* ---------- modal ---------- */
+.modal{position:fixed; inset:0; z-index:100; display:grid; place-items:center; padding:22px; visibility:hidden; opacity:0; transition:opacity .35s ease, visibility .35s}
+.modal.open{visibility:visible; opacity:1}
+.modal-backdrop{position:absolute; inset:0; background:rgba(6,7,11,.82); backdrop-filter:blur(6px)}
+.modal-dialog{position:relative; width:min(1020px, 100%); max-height:88vh; display:grid; grid-template-columns:44% 56%;
+  background:var(--panel); border:1px solid var(--line2); border-radius:14px; overflow:hidden;
+  box-shadow:0 40px 120px rgba(0,0,0,.7); transform:translateY(26px) scale(.97); transition:transform .4s cubic-bezier(.2,.9,.3,1.2)}
+.modal.open .modal-dialog{transform:none}
+.modal-media{position:relative; background:#0b0d12; min-height:340px}
+.modal-media img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover}
+.modal-media::after{content:""; position:absolute; inset:0; background:linear-gradient(to top, rgba(11,13,18,.75), transparent 40%)}
+.modal-era-tag{position:absolute; left:18px; bottom:16px; z-index:2; display:flex; align-items:center; gap:9px; font-size:11px; letter-spacing:.2em; text-transform:uppercase; color:var(--paper)}
+.modal-era-tag i{width:10px; height:10px; border-radius:50%; background:var(--c); box-shadow:0 0 12px var(--c)}
+.modal-info{padding:30px 34px 24px; overflow-y:auto; scrollbar-width:thin; scrollbar-color:var(--line2) transparent}
+.m-eyebrow{font-size:10.5px; letter-spacing:.26em; text-transform:uppercase; color:var(--c); font-weight:600}
+.modal-info h3{font-family:var(--disp); font-weight:400; font-size:clamp(24px,2.6vw,34px); line-height:1.12; margin:8px 0 4px}
+.m-sub{font-size:12.5px; color:var(--muted); letter-spacing:.06em; margin-bottom:14px}
+.m-lead{font-size:15px; color:var(--paper); font-weight:400; border-left:3px solid var(--c); padding-left:14px; margin-bottom:14px}
+.m-story{font-size:13.5px; color:var(--muted); margin-bottom:16px}
+.m-block h5{font-size:10.5px; letter-spacing:.26em; text-transform:uppercase; color:var(--gold); margin-bottom:8px; font-weight:600}
+.m-context{font-size:13.5px; color:var(--muted); background:#121624; border:1px solid var(--line); border-radius:8px; padding:14px 16px; margin-bottom:16px}
+.m-specs{display:grid; grid-template-columns:1fr 1fr; gap:10px 18px; margin-bottom:16px}
+.m-specs div{border-bottom:1px dashed #232a3b; padding-bottom:8px}
+.m-specs dt{font-size:10px; letter-spacing:.22em; text-transform:uppercase; color:var(--dim)}
+.m-specs dd{font-size:12.5px; color:var(--paper); margin-top:2px}
+.m-facts{list-style:none; margin-bottom:20px}
+.m-facts li{font-size:12.5px; color:var(--muted); padding:6px 0 6px 20px; position:relative}
+.m-facts li::before{content:"✦"; position:absolute; left:0; top:7px; color:var(--c); font-size:10px}
+.m-nav{display:flex; align-items:center; justify-content:space-between; border-top:1px solid var(--line); padding-top:14px}
+.m-nav button{background:transparent; border:1px solid var(--line2); color:var(--paper); border-radius:999px; padding:8px 18px; font-size:11px; letter-spacing:.16em; text-transform:uppercase; transition:all .3s}
+.m-nav button:hover{border-color:var(--gold); color:var(--gold2)}
+.m-count{font-family:var(--disp); color:var(--gold); font-size:14px}
+.modal-close{position:absolute; top:14px; right:14px; z-index:5; width:38px; height:38px; border-radius:50%;
+  border:1px solid var(--line2); background:rgba(14,16,22,.7); color:var(--paper); font-size:15px; transition:all .3s}
+.modal-close:hover{border-color:var(--gold); color:var(--gold2); transform:rotate(90deg)}
+
+/* ---------- responsive ---------- */
+@media (max-width:1100px){ .era-note{display:none} .about{grid-template-columns:1fr} }
+@media (max-width:920px){
+  .cover-card{grid-template-columns:1fr; gap:26px}
+  .hero-grid{grid-template-columns:1fr; gap:44px}
+  .hero{padding-top:44px}
+  .stats{gap:30px}
+  .tl-viewport{overflow:visible; cursor:auto; padding:0 22px 0 26px}
+  .tl-track{flex-direction:column; width:auto; min-width:0}
+  .era{padding:26px 0 30px; background:none}
+  .era:first-child{padding-left:0}.era:last-child{padding-right:0}
+  .era-plaque{margin-bottom:22px}
+  .nodes{flex-direction:column; gap:30px; padding-left:36px}
+  .nodes::before{left:9px; right:auto; top:4px; bottom:4px; width:2px; height:auto; background:var(--line2)}
+  .node{width:100%; align-items:stretch}
+  .node .dot{position:absolute; left:-34px; top:2px}
+  .node .year{align-self:flex-start; margin:0 0 10px}
+  .node .stem{display:none}
+  .modal-dialog{grid-template-columns:1fr; display:block; overflow-y:auto}
+  .modal-media{min-height:280px; height:300px}
+  .modal-info{overflow:visible}
+  footer .f-meta{text-align:left}
+  .pagenav{top:auto; bottom:14px; right:50%; transform:translateX(50%)}
+}
+</style>
 </head>
 <body>
-<!-- Placeholder -->
+
+<nav class="pagenav" aria-label="Pages">
+  <button data-page="home">Home</button>
+  <button data-page="timeline">Timeline</button>
+</nav>
+
+<!-- ================= PAGE 1 : HOME (cover + home merged) ================= -->
+<section class="screen" id="page-home">
+
+  <div class="coverband">
+    <div class="cover-card">
+      <img class="cover-orn" src="https://image.qwenlm.ai/public_source/6c87be1b-829a-4fdc-8974-0709bd18cf94/1d834b584-b4d3-49ec-8811-c5c793935a60.png" alt="" aria-hidden="true">
+      <div class="cc-left">
+        <p class="cover-inst">An Interactive Educational Exhibit</p>
+        <h2 class="cover-srm">SRM Institute of Science and Technology</h2>
+        <p class="cover-deem">Deemed to be University · India</p>
+        <div class="cover-rule"><i>✦</i></div>
+        <p class="cover-topic-label">Topic</p>
+        <p class="cover-topic">Interactive Digital Timeline of Key Artifacts from Different Periods of Indian Art</p>
+      </div>
+      <div class="cc-right">
+        <div class="ledger">
+          <div class="row"><span class="k">Name</span><span class="dots"></span><span class="v">HARINISH S V</span></div>
+          <div class="row"><span class="k">Registration No</span><span class="dots"></span><span class="v">RA2411030010137</span></div>
+          <div class="row"><span class="k">Section</span><span class="dots"></span><span class="v">Y1</span></div>
+          <div class="row"><span class="k">Subject</span><span class="dots"></span><span class="v">INDIAN ARTS FORM</span></div>
+          <div class="row"><span class="k">Subject Code</span><span class="dots"></span><span class="v">21LEM301T</span></div>
+        </div>
+        <p class="cover-due">Submission date · <b>20 · 08 · 2026</b></p>
+      </div>
+    </div>
+  </div>
+
+  <section class="hero">
+    <div class="hero-grid">
+      <div>
+        <span class="eyebrow">An Interactive Museum · Eight Ages</span>
+        <h1>KALĀKRAMA<span class="dev">कलाक्रम</span></h1>
+        <p class="lede">Eleven masterworks, eight ages, five thousand years. Walk a single line from the
+          <em>bronze-casters of Mohenjo-daro</em> to the <em>moderns of the twentieth century</em> —
+          and open every exhibit along the way for its story and context.</p>
+        <div class="stats">
+          <div class="stat"><b data-n="5000" data-suf="+">0</b><span>Years of art</span></div>
+          <div class="stat"><b data-n="8">0</b><span>Periods</span></div>
+          <div class="stat"><b data-n="11">0</b><span>Exhibits</span></div>
+        </div>
+        <div class="hero-cta">
+          <button class="btn solid" data-go="timeline">Enter the Timeline →</button>
+          <span class="hint">the gallery opens on its own page</span>
+        </div>
+      </div>
+      <div class="hero-right">
+        <svg class="mandala" viewBox="0 0 200 200" aria-hidden="true">
+          <g fill="none" stroke="#d9b36a" stroke-width="0.7">
+            <circle cx="100" cy="100" r="96"/><circle cx="100" cy="100" r="78"/><circle cx="100" cy="100" r="34"/>
+            <g id="petals"></g>
+          </g>
+        </svg>
+        <figure class="plate">
+          <span class="plate-tag">Featured replica</span>
+          <div class="plate-frame" id="plateFrame"></div>
+          <figcaption class="plate-cap">
+            <span><span class="t" id="plateTitle">—</span><br><span class="d" id="plateDate">—</span></span>
+            <span class="plate-idx" id="plateIdx">01 / 04</span>
+          </figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <div class="frieze" aria-hidden="true"><div class="frieze-inner" id="frieze"></div></div>
+
+  <section class="about">
+    <div class="about-col">
+      <h4>How to explore</h4>
+      <ul>
+        <li>This <b>Home</b> page carries the cover details and introduction; the gallery lives on its own <b>Timeline</b> page.</li>
+        <li>On the timeline, <b>drag</b> the track sideways, swipe, use <b>Shift + scroll</b>, or press <b>←</b> <b>→</b>. Normal page scrolling is never blocked.</li>
+        <li><b>Click any card</b> to open the full exhibit: story, context, materials, museum.</li>
+        <li>Inside an exhibit, <b>←</b> <b>→</b> move between works, <b>Esc</b> closes.</li>
+      </ul>
+    </div>
+    <div class="about-col">
+      <h4>About the replicas</h4>
+      <p>Every object shown here is a <b>digitally rendered virtual replica</b> created for study — not a photograph of the original. Each exhibit lists the real artefact, its find-spot and the museum that holds it, so you can compare replica and original side by side. All interpretive text was written originally for this project.</p>
+    </div>
+    <div class="about-col">
+      <h4>Further reading</h4>
+      <ul>
+        <li>National Museum, New Delhi &amp; Sarnath Museum — collection galleries</li>
+        <li>Archaeological Survey of India — Sanchi, Ajanta, Khajuraho dossiers</li>
+        <li>V&amp;A / Metropolitan Museum — South Asian bronze &amp; miniature rooms</li>
+        <li>NGMA, New Delhi — modern masters, including Sher-Gil</li>
+      </ul>
+    </div>
+  </section>
+
+  <footer>
+    <div class="f-brand">
+      <span class="f-title">KALĀKRAMA <span style="color:var(--gold)">कलाक्रम</span></span>
+      <p>An educational, interactive timeline of Indian art — from Indus bronze to the modern canvas. By Harinish S V · RA2411030010137 · Section Y1 · 21LEM301T.</p>
+    </div>
+    <div class="f-meta">
+      <span class="due">Submission · 20 August 2026</span>
+      <p>SRM Institute of Science and Technology.</p>
+      <p>Original writing &amp; layout; replicas rendered digitally for study.</p>
+    </div>
+  </footer>
+</section>
+
+<!-- ================= PAGE 2 : TIMELINE ================= -->
+<section class="screen" id="page-timeline">
+  <div class="tl-page">
+    <div class="tl-top">
+      <button class="backlink" data-go="home">← Home</button>
+    </div>
+    <div class="tl-head">
+      <div><h2>The Long Walk of Indian Art</h2></div>
+      <p>A horizontal gallery in chronological order. Every exhibit hangs directly beneath its marker on the line — dot, date and card stay together, fully visible. Drag the track or jump to a period, then click any card to open its exhibit.</p>
+    </div>
+    <nav class="era-chips" id="eraChips" aria-label="Jump to period"></nav>
+    <div class="tl-progress"><i id="progBar"></i></div>
+    <div class="tl-viewport" id="viewport">
+      <div class="tl-track" id="track"></div>
+    </div>
+    <p class="tl-hint">drag sideways · shift + scroll · trackpad swipe · ← → keys</p>
+    <p class="tl-foot">Kalākrama · Harinish S V · RA2411030010137 · Y1 · 21LEM301T</p>
+  </div>
+</section>
+
+<!-- ================= MODAL ================= -->
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle">
+  <div class="modal-backdrop" id="mBackdrop"></div>
+  <div class="modal-dialog">
+    <button class="modal-close" id="mClose" aria-label="Close exhibit">✕</button>
+    <div class="modal-media">
+      <img id="mImg" src="" alt="">
+      <span class="modal-era-tag"><i></i><span id="mEraTag"></span></span>
+    </div>
+    <div class="modal-info">
+      <span class="m-eyebrow" id="mEyebrow"></span>
+      <h3 id="mTitle"></h3>
+      <p class="m-sub" id="mSub"></p>
+      <p class="m-lead" id="mLead"></p>
+      <p class="m-story" id="mStory"></p>
+      <div class="m-block"><h5>Historical context</h5><p class="m-context" id="mContext"></p></div>
+      <dl class="m-specs" id="mSpecs"></dl>
+      <div class="m-block"><h5>Key facts</h5><ul class="m-facts" id="mFacts"></ul></div>
+      <div class="m-nav">
+        <button id="mPrev">← Previous</button>
+        <span class="m-count" id="mCount"></span>
+        <button id="mNext">Next →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============ DATA ============ */
+const ERAS = [
+  {id:"indus",    num:"I",   name:"Indus Valley",            span:"c. 3300–1300 BCE", color:"#c06b3e", note:"Planned cities, seals and the first bronzes."},
+  {id:"maurya",   num:"II",  name:"Mauryan",                 span:"c. 322–185 BCE",   color:"#d5a44a", note:"Imperial pillars and mirror-polished stone."},
+  {id:"shunga",   num:"III", name:"Shunga & Kushan",         span:"c. 185 BCE–320 CE",color:"#5fae8e", note:"Stupa gateways; the Buddha takes human form."},
+  {id:"gupta",    num:"IV",  name:"Gupta Classical",         span:"c. 320–550 CE",    color:"#5578c9", note:"The classical idiom of serenity."},
+  {id:"medieval", num:"V",   name:"Chola & Chandela",        span:"c. 850–1150 CE",   color:"#b5502f", note:"Lost-wax bronzes and temple walls in motion."},
+  {id:"mughal",   num:"VI",  name:"Mughal",                  span:"1526–1857 CE",     color:"#3ba3a0", note:"Miniatures, gold and the courtly album."},
+  {id:"colonial", num:"VII", name:"Colonial & Bengal School",span:"c. 1850–1947 CE",  color:"#d34f6d", note:"Oil paint meets the epics; revival and debate."},
+  {id:"modern",   num:"VIII",name:"Modern India",            span:"c. 1900–1947 +",   color:"#e88b2f", note:"A new idiom between East and West."}
+];
+
+const ARTIFACTS = [
+{ era:"indus", title:"The Dancing Girl of Mohenjo-daro", date:"c. 2500 BCE",
+  material:"Bronze, lost-wax casting", origin:"Mohenjo-daro, Sindh (found 1926)",
+  museum:"National Museum, New Delhi", size:"10.5 cm high",
+  img:"https://image.qwenlm.ai/public_source/6c87be1b-829a-4fdc-8974-0709bd18cf94/1861d028f-a03c-4186-ab55-7c7c1481af8e.png",
+  lead:"A pocket-sized bronze dancer, cast four and a half millennia ago, still stands with a confidence that feels utterly modern.",
+  story:"She rests her weight on one leg, right hand on hip, left arm loaded with bangles from wrist to shoulder. The pose is so casual that scholars still argue over whether she is a dancer, a priestess or a palace maid. What is beyond dispute is the craft: she was modelled in wax, encased in clay and cast in bronze — the lost-wax method that Indian metalworkers have practised ever since.",
+  context:"The Indus cities left no grand temples or palace sculptures, so their artistic voice survives in small things — seals, toys and figures like this one. The Dancing Girl proves that Mohenjo-daro supported specialist artisans and, very likely, a living culture of music and performance, even though the Indus script that might describe it remains undeciphered.",
+  facts:["Among the earliest lost-wax (cire-perdue) castings known anywhere in the world","Her left arm carries more than two dozen bangles","The label 'dancing girl' is an interpretation — her true identity is still debated"] },
+
+{ era:"maurya", title:"The Lion Capital of Sarnath", date:"c. 250 BCE",
+  material:"Polished Chunar sandstone", origin:"Sarnath, Uttar Pradesh",
+  museum:"Sarnath Museum", size:"c. 2.1 m high",
+  img:"https://image.qwenlm.ai/public_source/6c87be1b-829a-4fdc-8974-0709bd18cf94/19c8f7cbd-fdde-4e12-81a4-d885077f3baf.png",
+  lead:"Four lions standing back-to-back on a mirror-polished capital became the emblem of the Republic of India.",
+  story:"The capital crowned an Ashokan pillar raised at the spot where the Buddha delivered his first sermon. Beneath the lions, the abacus carries an elephant, a galloping horse, a bull and a lion, separated by wheels — read either as the march of a righteous king or as the Buddha's own journey from birth to enlightenment.",
+  context:"After embracing Buddhism, Ashoka turned the empire's craft toward stone, raising polished pillars whose mirror finish echoes West Asian workshops while the imagery is wholly Indian. When India became a republic in 1950, the capital was adopted as the national emblem, with the motto Satyameva Jayate — 'truth alone triumphs' — set beneath it.",
+  facts:["Adopted as India's State Emblem on 26 January 1950","The polish is so fine that early visitors assumed it was metal","The wheel from its abacus became the Ashoka Chakra on the national flag"] },
+
+{ era:"shunga", title:"Yakshi on a Mango Branch, Sanchi", date:"c. 1st c. BCE",
+  material:"Sandstone bracket figure", origin:"East Gateway, Great Stupa, Sanchi",
+  museum:"In situ, Sanchi (UNESCO)", size:"c. 1 m high",
+  img:"https://image.qwenlm.ai/public_source/6c87be1b-829a-4fdc-8974-0709bd18cf94/1d2a9fc21-5ab8-4735-b44a-af9aba1da9fc.png",
+  lead:"A tree goddess swings from a flowering mango branch, foot reaching the trunk in an impossible, graceful bend.",
+  story:"Carved for the eastern gateway of the Great Stupa, this yakshi — a nature spirit older than Buddhism itself — hangs from a mango tree she seems to have forced into bloom. Her three-bend pose, the tribhanga, would become the grammar of the Indian figure for the next thousand years.",
+  context:"At Sanchi the Buddha is never shown as a person: he appears as footprints, an empty throne, a wheel. Yet the gateways teem with yakshis, symbols of abundance absorbed into the Buddhist monument as guardians of plenty. An inscription credits guilds of ivory carvers from nearby Vidisha, and the stone is indeed worked like ivory.",
+  facts:["She doubles as a structural bracket carrying part of the gateway's weight","Guild inscriptions credit ivory-workers of Vidisha — and the stone is carved like ivory","The 'woman-and-tree' (salabhanjika) motif recurs in Indian temple art for centuries"] },
+
+{ era:"shunga", title:"Standing Buddha of Gandhara", date:"c. 2nd c. CE",
+  material:"Grey schist", origin:"Gandhara, Peshawar valley",
+  museum:"Peshawar Museum (type example)", size:"c. 1 m high",
+  img:"https://image.qwenlm.ai/public_source/6c87be1b-829a-4fdc-8974-0709bd18cf94/18f7b3471-0e68-4e3d-a78a-a40585e43338.png",
+  lead:"A Buddha with the draped robe of a Roman senator — proof that the Silk Road carried style as well as silk.",
+  story:"Under the Kushan kings, sculptors in the north-west fused Greco-Roman naturalism — wavy hair, toga-like folds, heavy-lidded eyes — with Indian signs of enlightenment: the ushnisha cranial bump, the urna mark, the gesture of fearlessness. The result is one of the first human images of the Buddha.",
+  context:"For some four centuries the Buddha was represented only by symbols. The Kushan age broke that silence, producing two rival formulas almost at once: the Hellenising schist Buddhas of Gandhara and the robust red-sandstone Buddhas of Mathura. Along the trade routes, the robed Gandharan type travelled far, shaping sacred imagery across Central and East Asia.",
+  facts:["For centuries the Buddha was shown only through symbols, never in human form","Gandharan workshops later moved from schist to stucco and clay","The wavy topknot (ushnisha) became standard for Buddhas across Asia"] },
+
+{ era:"gupta", title:"The Preaching Buddha of Sarnath", date:"c. 475 CE",
+  material:"Chunar sandstone", origin:"Sarnath, Uttar Pradesh",
+  museum:"Sarnath Museum", size:"1.6 m high",
+  img:"https://image.qwenlm.ai/public_source/6c87be1b-829a-4fdc-8974-0709bd18cf94/1c7a94e36-3efe-4b98-aa03-0293f1a92509.png",
+  lead:"Serene, inward, teaching in silence — the Sarnath Buddha defines what people mean by the Gupta 'classical age'.",
+  story:"Seated in yogic posture, the Buddha turns the wheel of law with both hands — the gesture of the first sermon. His robe is so sheer that the carver suggests it only at the neckline and sleeve-edges, leaving the body a smooth, luminous calm. On the throne, two deer flank a wheel, fixing the scene at the Deer Park.",
+  context:"Gupta-era sculptors at Sarnath and Mathura distilled earlier Kushan energy into meditative stillness — an idiom of serenity that travelled with Buddhism to Sri Lanka and South-East Asia. Around the same courts flourished Kalidasa's poetry, Aryabhata's astronomy and the gold coinage that earned the age its title of 'golden'.",
+  facts:["The sheer robe is shown without a single carved fold across the body","The halo's rim carries an exquisitely carved creepers-and-flower band","This idiom shaped Buddhist imagery across Asia for centuries"] },
+
+{ era:"gupta", title:"Padmapani, Ajanta Cave 1", date:"c. 460–480 CE",
+  material:"Tempera mural on plaster", origin:"Cave 1, Ajanta, Maharashtra",
+  museum:"In situ (UNESCO World Heritage)", size:"Mural, figure c. 1.5 m",
+  img:"https://image.qwenlm.ai/public_source/6c87be1b-829a-4fdc-8974-0709bd18cf94/1076084a5-95a6-4856-aae6-d5f5ec0de0b4.png",
+  lead:"The lotus-bearing bodhisattva tilts his head with a tenderness that made this wall the poster-image of Indian painting.",
+  story:"Padmapani — 'lotus-bearer', an aspect of Avalokiteshvara, compassion personified — holds a blue lotus while his body bends in a soft triple curve. Around him, attendants, jewels and shadow are modelled with a subtlety that rivals any later fresco tradition in the world.",
+  context:"The caves were cut under the Vakataka kings, contemporaries of the Guptas, and abandoned by the seventh century. For some eight hundred years the murals slept in the dark until 1819, when a party of British officers tiger-hunting in the gorge stumbled on the arcaded scarp.",
+  facts:["Ajanta's murals were rediscovered by accident in 1819","Pigments — ochre, lapis, green earth, lamp-black — survive because the halls stayed dark","The tilted head is a deliberate device to evoke karuna, compassion"] },
+
+{ era:"medieval", title:"Nataraja, Lord of the Dance", date:"c. 10th–11th c. CE",
+  material:"Copper alloy, lost-wax (panchaloha)", origin:"Chola Tamil Nadu",
+  museum:"Govt. Museum, Chennai (type example)", size:"c. 80–100 cm high",
+  img:"https://image.qwenlm.ai/public_source/6c87be1b-829a-4fdc-8974-0709bd18cf94/1c16a4dbf-38c1-42b5-85ab-e5713b893e3c.png",
+  lead:"Shiva dances the universe into being and out of it inside a ring of flame — Chola bronze-casters cast cosmology itself.",
+  story:"Every element is a sentence of doctrine: the drum of creation in the upper right hand, the flame of destruction in the upper left, the lower right palm granting fearlessness, the lower left pointing to the raised foot that offers refuge. Beneath the heel writhes Apasmara, the dwarf of ignorance; the flaming arch is the cycle of time.",
+  context:"Chola kings and queens endowed temples with processional bronzes carried out for festivals, and the Nataraja form — centred on the shrine at Chidambaram — became their signature. It remains one of the few Indian icons equally at home in a temple and in a physics lecture: a Chola-style Nataraja stands at CERN as a symbol of the cosmic dance of particles.",
+  facts:["Cast in one pour by the lost-wax method, in a five-metal alloy called panchaloha","Every bronze is unique — the wax model is destroyed to release the casting","A Chola-style Nataraja stands at CERN, linking the cosmic dance to particle physics"] },
+
+{ era:"medieval", title:"Surasundari Adjusting Her Anklet", date:"c. 950–1050 CE",
+  material:"Sandstone", origin:"Khajuraho, Madhya Pradesh",
+  museum:"In situ (UNESCO World Heritage)", size:"c. 0.9 m high",
+  img:"https://image.qwenlm.ai/public_source/6c87be1b-829a-4fdc-8974-0709bd18cf94/13a914a4a-3016-45ca-928a-85c22c4c5fca.png",
+  lead:"A celestial maiden pauses to fix her anklet — an everyday gesture carved at monumental scale.",
+  story:"Chandela sculptors covered their temples with the whole spectrum of existence: gods, lovers, musicians, warriors, and maidens like this one absorbed in her toilet. Worldly delight — shringara — is treated not as a distraction from the sacred but as part of it.",
+  context:"Khajuraho was the Chandela capital, overgrown and forgotten for centuries until a British surveyor documented it in 1838. Of the eighty-five temples the inscriptions record, some twenty-five survive; their maiden figures are catalogued by pose and mood, dozens of distinct bhavas across a single wall.",
+  facts:["Khajuraho was documented in 1838 after centuries of obscurity","Only about 25 of the 85 temples recorded in inscriptions still stand","The soft buff sandstone is carved so finely it reads like skin"] },
+
+{ era:"mughal", title:"A Durbar Miniature of the Jahangiri Age", date:"c. 1615–1620 CE",
+  material:"Opaque watercolour & gold on paper", origin:"Imperial atelier (kitabkhana) of Jahangir",
+  museum:"Album folio (royal muraqqa type)", size:"c. 30 × 20 cm",
+  img:"https://image.qwenlm.ai/public_source/6c87be1b-829a-4fdc-8974-0709bd18cf94/1a7f25f23-515b-464e-9aa5-8f5ccb366173.png",
+  lead:"Court painters worked at hand-scale, packing an entire empire — throne, carpet, hierarchy — onto a single gilded page.",
+  story:"The Mughal atelier fused Persian refinement with Indian colour and close observation. Under Jahangir, painting turned to portraiture, natural history and allegory; European prints arrived and contributed halos, cherubs and globe-bearing angels, absorbed without ceremony.",
+  context:"Jahangir took painting personally, rewarding masters such as Abu'l Hasan — whom he titled 'Wonder of the Age' — and claiming he could name the artist of any brushstroke. Finished folios were mounted into lacquered muraqqa albums, passed hand to hand and judged like paintings in any later gallery.",
+  facts:["Jahangir claimed he could identify the painter of any miniature by sight","Pigments were ground in-house: lapis for blue, gold laid on leaf by leaf","The imperial halo borrows directly from European religious prints"] },
+
+{ era:"colonial", title:"A Heroine from the Epics (after Ravi Varma)", date:"c. 1896 CE",
+  material:"Oil on canvas", origin:"Travancore / Bombay studios",
+  museum:"Various museums & private collections", size:"c. 120 × 90 cm (type)",
+  img:"https://image.qwenlm.ai/public_source/6c87be1b-829a-4fdc-8974-0709bd18cf94/107b25823-8f18-46c4-ba28-7ad8a949f449.png",
+  lead:"European oil technique turned on Sanskrit poetry brought India's gods into the modern drawing room.",
+  story:"Self-trained in academic realism, Raja Ravi Varma aimed that technique at Sanskrit literature — Shakuntala, Damayanti, goddesses posed like Victorian portraits. In 1894 he founded a lithographic press that reproduced his canvases as oleographs, sending them into millions of homes.",
+  context:"Those cheap prints shaped how India pictured its deities for a century — calendar art is their direct descendant. Later nationalists, from Coomaraswamy to the Tagores, attacked Varma as too Western and offered a rival vision drawn from Mughal and Rajput miniatures; the quarrel between the two camps is arguably where 'modern Indian art' begins.",
+  facts:["His oleograph press became one of the largest in Asia","His paintings won medals at world fairs in Vienna and St. Louis","The debate over his legacy defined the next generation of Indian artists"] },
+
+{ era:"modern", title:"Three Women (after Amrita Sher-Gil)", date:"c. 1937 CE",
+  material:"Oil on canvas", origin:"Simla / Saraya period",
+  museum:"NGMA type collection", size:"c. 100 × 130 cm (type)",
+  img:"https://image.qwenlm.ai/public_source/6c87be1b-829a-4fdc-8974-0709bd18cf94/1d9b6a951-da73-4783-a1a5-f7c6bc5a7be8.png",
+  lead:"Back from Paris, Amrita Sher-Gil turned from the academy to the quiet lives of Indian women, in somber reds and greens.",
+  story:"A star pupil in Paris, Sher-Gil wrote that Europe belonged to Picasso and Matisse while her own destiny lay in India. At home she studied Ajanta's murals and Pahari miniatures, then built scenes of village women whose monumental stillness borrows from both — flat colour, sculptural bodies, unsentimental empathy.",
+  context:"She died in 1941, weeks before a major solo show, aged twenty-eight. In 1976 the Government of India declared her works national art treasures among the first such honours, and she is now routinely credited as the pioneer who gave Indian modernism its first confident voice.",
+  facts:["She declared India her true artistic destiny after leaving Paris","Her works were among the first declared national art treasures in 1976","She died at 28, weeks before a landmark solo exhibition"] }
+];
+
+/* ============ HELPERS ============ */
+const $ = s => document.querySelector(s);
+const eraOf = a => ERAS.find(e => e.id === a.era);
+const desktop = () => window.matchMedia("(min-width:921px)").matches;
+const timelineActive = () => document.getElementById("page-timeline").classList.contains("active");
+
+/* ============ PAGE ROUTER ============ */
+const PAGES = ["home","timeline"];
+function go(p){ if(PAGES.includes(p)) location.hash = "#/" + p; }
+function route(){
+  let h = location.hash.replace("#/","");
+  if(!PAGES.includes(h)) h = "home";
+  document.querySelectorAll(".screen").forEach(s => s.classList.toggle("active", s.id === "page-" + h));
+  document.querySelectorAll(".pagenav button").forEach(b => b.classList.toggle("active", b.dataset.page === h));
+  window.scrollTo({top:0});
+  if(h === "timeline") requestAnimationFrame(onScroll);
+}
+window.addEventListener("hashchange", route);
+document.addEventListener("click", e => {
+  const g = e.target.closest("[data-go]");
+  if(g){ go(g.dataset.go); return; }
+  const n = e.target.closest(".pagenav button");
+  if(n) go(n.dataset.page);
+});
+
+/* ============ FRIEZE ============ */
+(function(){
+  const words = ["Terracotta","शिल्प","Bronze","मूर्ति","Sandstone","चित्र","Mural","वास्तु","Miniature","कला","Oil & Canvas","सौन्दर्य"];
+  const seq = words.map(w => w + "<i>✦</i>").join("");
+  $("#frieze").innerHTML = "<span>"+seq+"</span><span>"+seq+"</span>";
+})();
+
+/* ============ MANDALA PETALS ============ */
+(function(){
+  let p = "";
+  for(let i=0;i<12;i++) p += '<ellipse cx="100" cy="52" rx="12" ry="30" transform="rotate('+(i*30)+' 100 100)"/>';
+  for(let i=0;i<24;i++) p += '<line x1="100" y1="22" x2="100" y2="10" transform="rotate('+(i*15)+' 100 100)"/>';
+  document.getElementById("petals").innerHTML = p;
+})();
+
+/* ============ BUILD TIMELINE (dot → date → stem → card, all together) ============ */
+(function(){
+  const track = $("#track");
+  ERAS.forEach(era => {
+    const arts = ARTIFACTS.map((a,i)=>({a,i})).filter(x => x.a.era === era.id);
+    const sec = document.createElement("section");
+    sec.className = "era"; sec.dataset.era = era.id; sec.style.setProperty("--c", era.color);
+    sec.innerHTML =
+      '<header class="era-plaque">'+
+        '<span class="era-num">'+era.num+'</span>'+
+        '<div class="era-titles"><h3>'+era.name+'</h3><p>'+era.span+'</p></div>'+
+        '<p class="era-note">'+era.note+'</p>'+
+      '</header>'+
+      '<div class="nodes">'+ arts.map(x => {
+        return '<article class="node">'+
+          '<span class="dot" aria-hidden="true"></span>'+
+          '<span class="year">'+x.a.date+'</span>'+
+          '<span class="stem" aria-hidden="true"></span>'+
+          '<button class="card" data-id="'+x.i+'" aria-haspopup="dialog" aria-label="Open exhibit: '+x.a.title+'">'+
+            '<span class="card-img"><img src="'+x.a.img+'" alt="'+x.a.title+' — digital replica" loading="lazy" draggable="false"></span>'+
+            '<span class="card-body">'+
+              '<span class="card-era">'+era.name+' · '+x.a.date+'</span>'+
+              '<span class="card-title">'+x.a.title+'</span>'+
+              '<span class="card-meta">'+x.a.material+'</span>'+
+              '<span class="card-cta">Open exhibit <i>→</i></span>'+
+            '</span>'+
+          '</button>'+
+        '</article>';
+      }).join("") + '</div>';
+    track.appendChild(sec);
+  });
+  const chips = $("#eraChips");
+  chips.innerHTML = ERAS.map(e =>
+    '<button class="chip" data-era="'+e.id+'" style="--c:'+e.color+'"><span class="dotc"></span>'+e.num+' · '+e.name+'</button>'
+  ).join("");
+  chips.addEventListener("click", ev => {
+    const c = ev.target.closest(".chip"); if(!c) return;
+    jumpTo(c.dataset.era);
+  });
+})();
+
+function jumpTo(id){
+  const el = document.querySelector('.era[data-era="'+id+'"]');
+  if(!el) return;
+  if(desktop()) $("#viewport").scrollTo({left: Math.max(0, el.offsetLeft - 24), behavior:"smooth"});
+  else el.scrollIntoView({behavior:"smooth", block:"start"});
+}
+
+/* ============ SCROLL: progress, active chip, drag, wheel ============ */
+const viewport = $("#viewport"), track = $("#track"), progBar = $("#progBar");
+function onScroll(){
+  if(!timelineActive()) return;
+  const max = track.scrollWidth - viewport.clientWidth;
+  progBar.style.width = (max > 0 ? (viewport.scrollLeft / max) * 100 : 0) + "%";
+  if(desktop()){
+    const center = viewport.scrollLeft + viewport.clientWidth / 2;
+    let active = ERAS[0].id;
+    document.querySelectorAll(".era").forEach(el => { if(el.offsetLeft <= center) active = el.dataset.era; });
+    document.querySelectorAll(".chip").forEach(c => c.classList.toggle("active", c.dataset.era === active));
+  }
+}
+viewport.addEventListener("scroll", () => requestAnimationFrame(onScroll), {passive:true});
+window.addEventListener("resize", onScroll);
+
+let dragging = false, dragMoved = 0, startX = 0, startL = 0, suppress = false;
+viewport.addEventListener("pointerdown", e => {
+  if(!desktop() || e.pointerType !== "mouse") return;
+  dragging = true; dragMoved = 0; startX = e.clientX; startL = viewport.scrollLeft;
+  viewport.classList.add("dragging");
+});
+window.addEventListener("pointermove", e => {
+  if(!dragging) return;
+  const dx = e.clientX - startX; dragMoved = Math.max(dragMoved, Math.abs(dx));
+  viewport.scrollLeft = startL - dx;
+});
+window.addEventListener("pointerup", () => {
+  if(!dragging) return;
+  dragging = false; viewport.classList.remove("dragging");
+  if(dragMoved > 8){ suppress = true; setTimeout(() => suppress = false, 60); }
+});
+viewport.addEventListener("wheel", e => {
+  if(!desktop()) return;
+  if(e.shiftKey && Math.abs(e.deltaY) > Math.abs(e.deltaX)){
+    e.preventDefault(); viewport.scrollLeft += e.deltaY;
+  } else if(Math.abs(e.deltaX) > Math.abs(e.deltaY)){
+    e.preventDefault(); viewport.scrollLeft += e.deltaX;
+  }
+}, {passive:false});
+window.addEventListener("keydown", e => {
+  if($("#modal").classList.contains("open")) return;
+  if(!timelineActive()) return;
+  if(e.key === "ArrowRight" && desktop()) viewport.scrollLeft += 340;
+  if(e.key === "ArrowLeft"  && desktop()) viewport.scrollLeft -= 340;
+});
+
+/* ============ REVEAL ============ */
+const io = new IntersectionObserver(es => es.forEach(en => {
+  if(en.isIntersecting){ en.target.classList.add("in"); io.unobserve(en.target); }
+}), {threshold:.15});
+document.querySelectorAll(".node").forEach(n => io.observe(n));
+
+/* ============ COUNTERS ============ */
+(function(){
+  document.querySelectorAll(".stat b").forEach(el => {
+    const target = +el.dataset.n, suf = el.dataset.suf || "";
+    const t0 = performance.now(), dur = 1400;
+    (function tick(t){
+      const k = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - k, 3);
+      el.textContent = Math.round(target * e).toLocaleString("en-IN") + suf;
+      if(k < 1) requestAnimationFrame(tick);
+    })(t0);
+  });
+})();
+
+/* ============ HERO ROTATOR ============ */
+(function(){
+  const picks = [0, 4, 6, 8];
+  const frame = $("#plateFrame");
+  const imgA = new Image(), imgB = new Image();
+  let shown = imgA, hidden = imgB, idx = 0;
+  frame.append(imgA, imgB);
+  function show(i){
+    const a = ARTIFACTS[picks[i]];
+    hidden.src = a.img; hidden.alt = a.title + " — digital replica";
+    hidden.classList.add("on"); shown.classList.remove("on");
+    [shown, hidden] = [hidden, shown];
+    $("#plateTitle").textContent = a.title;
+    $("#plateDate").textContent = a.date + " · " + eraOf(a).name;
+    $("#plateIdx").textContent = String(i+1).padStart(2,"0") + " / " + String(picks.length).padStart(2,"0");
+  }
+  show(0);
+  setInterval(() => { idx = (idx + 1) % picks.length; show(idx); }, 4200);
+})();
+
+/* ============ MODAL ============ */
+const modal = $("#modal");
+let cur = 0, lastFocus = null;
+function openModal(i){
+  cur = i;
+  const a = ARTIFACTS[i], e = eraOf(a);
+  modal.style.setProperty("--c", e.color);
+  $("#mImg").src = a.img; $("#mImg").alt = a.title + " — digital replica";
+  $("#mEraTag").textContent = e.num + " · " + e.name;
+  $("#mEyebrow").textContent = "Exhibit " + String(i+1).padStart(2,"0") + " — " + e.name;
+  $("#mEyebrow").style.color = e.color;
+  $("#mTitle").textContent = a.title;
+  $("#mSub").textContent = a.date + " · " + a.material;
+  $("#mLead").textContent = a.lead;
+  $("#mStory").textContent = a.story;
+  $("#mContext").textContent = a.context;
+  $("#mSpecs").innerHTML =
+    "<div><dt>Material & technique</dt><dd>"+a.material+"</dd></div>"+
+    "<div><dt>Origin / find-spot</dt><dd>"+a.origin+"</dd></div>"+
+    "<div><dt>Held at</dt><dd>"+a.museum+"</dd></div>"+
+    "<div><dt>Dimensions</dt><dd>"+a.size+"</dd></div>";
+  $("#mFacts").innerHTML = a.facts.map(f => "<li>"+f+"</li>").join("");
+  $("#mCount").textContent = (i+1) + " / " + ARTIFACTS.length;
+  lastFocus = document.activeElement;
+  modal.classList.add("open");
+  document.body.style.overflow = "hidden";
+  $("#mClose").focus();
+}
+function closeModal(){
+  modal.classList.remove("open");
+  document.body.style.overflow = "";
+  if(lastFocus) lastFocus.focus();
+}
+track.addEventListener("click", e => {
+  const card = e.target.closest(".card");
+  if(!card || suppress) return;
+  openModal(+card.dataset.id);
+});
+$("#mClose").addEventListener("click", closeModal);
+$("#mBackdrop").addEventListener("click", closeModal);
+$("#mPrev").addEventListener("click", () => openModal((cur - 1 + ARTIFACTS.length) % ARTIFACTS.length));
+$("#mNext").addEventListener("click", () => openModal((cur + 1) % ARTIFACTS.length));
+window.addEventListener("keydown", e => {
+  if(!modal.classList.contains("open")) return;
+  if(e.key === "Escape") closeModal();
+  if(e.key === "ArrowRight") openModal((cur + 1) % ARTIFACTS.length);
+  if(e.key === "ArrowLeft") openModal((cur - 1 + ARTIFACTS.length) % ARTIFACTS.length);
+});
+
+/* ============ INIT ============ */
+route();
+</script>
 </body>
 </html>
