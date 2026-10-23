@@ -208,15 +208,13 @@ h2.st em{font-style:normal; color:var(--gold)}
 <div id="prog"></div>
 <div class="top">
   <div class="top-l">
-    <span>21LEM301T Â· Indian Art Form</span>
-    <b>Assignment 5 Â· CO2</b>
-    <span class="top-badge">10 Marks</span>
+    <span>21LEM301T · Indian Art Form</span>
+    <b>Mahabalipuram · Assignment 5</b>
+    <span class="top-badge">CO2 · 10 Marks</span>
   </div>
   <div class="top-r">
-    <button class="tbtn on" id="mDeck">Presentation</button>
-    <button class="tbtn" id="mSite">3D Realistic Site Walk</button>
-    <button class="tbtn" id="mRep">Report (6 pp)</button>
-    <a href="Sculpture_Thematic_Analysis_Mahabalipuram_Harinish.pdf" download="Sculpture_Thematic_Analysis_Mahabalipuram_Harinish.pdf" class="tbtn pdf">Download PDF</a>
+    <button class="tbtn on" id="mSite">3D Temple Site Walk</button>
+    <button class="tbtn" id="mDeck">Sculpture Thematic Analysis</button>
   </div>
 </div>
 
@@ -435,9 +433,8 @@ deck.innerHTML = SLIDES.map(function(s,i){
         '<div class="row"><span class="k">Subject Code</span><span class="dots"></span><span class="v">21LEM301T</span></div>'+
       '</div><p class="abs">'+s.abs+'</p>'+
       '<div class="cta-row">'+
-        '<button class="tbtn on" onclick="setMode(\'site\')">Start 3D Site Walk â†’</button>'+
-        '<button class="tbtn" onclick="setMode(\'rep\')">Read Academic Paper (6 pp)</button>'+
-        '<a href="Sculpture_Thematic_Analysis_Mahabalipuram_Harinish.pdf" download class="tbtn pdf">Download Official PDF</a>'+
+        '<button class="tbtn on" onclick="setMode(\'site\')">Enter 3D Temple Site Walk →</button>'+
+        '<button class="tbtn" onclick="show(1)">Explore Thematic Analysis →</button>'+
       '</div></div></section>';
   }
   var tags = (s.tags||[]).map(function(t){
@@ -518,22 +515,21 @@ var rio = new IntersectionObserver(function(es){ es.forEach(function(en){ if(en.
 document.querySelectorAll(".sheet").forEach(function(s){ rio.observe(s); });
 
 /* ================= ROUTING MODES ================= */
+/* ================= ROUTING MODES ================= */
 function setMode(m){
   $("#site").classList.toggle("on", m==="site");
-  $("#report").classList.toggle("on", m==="rep");
   $("#deck").style.display = (m==="deck") ? "" : "none";
   $("#dnav").style.display = (m==="deck") ? "" : "none";
   $("#prog").style.display = (m==="deck") ? "" : "none";
   $("#mDeck").classList.toggle("on", m==="deck");
   $("#mSite").classList.toggle("on", m==="site");
-  $("#mRep").classList.toggle("on", m==="rep");
   document.body.classList.toggle("cavelock", m==="site");
   if(m==="site") initRealisticSite();
-  if(m==="rep") $("#report").scrollTop = 0;
 }
 $("#mDeck").onclick = function(){ setMode("deck"); };
 $("#mSite").onclick = function(){ setMode("site"); };
-$("#mRep").onclick  = function(){ setMode("rep"); };
+// Default to 3D Temple Site Walk
+setTimeout(function(){ setMode("site"); }, 50);
 
 /* ================= WEB AUDIO API AMBIENCE (PROCEDURAL OCEAN WAVES & WIND) ================= */
 var audioCtx = null, audioRunning = false;
@@ -659,84 +655,415 @@ function initRealisticSite(){
     return a[0];
   }
 
-  // Relief heightmap for Descent of the Ganges
-  function makeGangaReliefMap(){
-    var w = 1024, h = 512, a = createCanvas(w,h), ctx = a[1];
-    ctx.fillStyle = "#808080"; ctx.fillRect(0,0,w,h); // Mid gray base
+  // Generates Color and Bump Canvases for Descent of the Ganges (Arjuna's Penance)
+  function generateGangesCarvingCanvases(){
+    var w = 2048, h = 1024;
+    var cCol = createCanvas(w, h), ctx = cCol[1];
+    var cBmp = createCanvas(w, h), bCtx = cBmp[1];
 
-    // Central geological cleft (deep trench)
+    // Base granite texture on color canvas
+    ctx.fillStyle = "#9c8261"; ctx.fillRect(0,0,w,h);
+    // Mineral flecks & chisel tooth grooves
+    var imgData = ctx.getImageData(0,0,w,h), d = imgData.data;
+    for(var i=0; i<d.length; i+=4){
+      var n = (Math.random() - 0.5) * 45;
+      d[i]   = Math.max(0, Math.min(255, d[i] + n + 15));
+      d[i+1] = Math.max(0, Math.min(255, d[i+1] + n + 5));
+      d[i+2] = Math.max(0, Math.min(255, d[i+2] + n - 15));
+    }
+    ctx.putImageData(imgData, 0, 0);
+
+    // Bump canvas base (neutral mid gray)
+    bCtx.fillStyle = "#808080"; bCtx.fillRect(0,0,w,h);
+
+    // 1. Central Cosmic Cleft (River Ganges cleft)
     ctx.save();
-    ctx.filter = "blur(8px)";
-    ctx.fillStyle = "#2a2a2a";
+    var cleftGrad = ctx.createLinearGradient(w/2 - 60, 0, w/2 + 60, 0);
+    cleftGrad.addColorStop(0, "#2c2016");
+    cleftGrad.addColorStop(0.3, "#1a323d");
+    cleftGrad.addColorStop(0.7, "#284b59");
+    cleftGrad.addColorStop(1, "#2c2016");
+    ctx.fillStyle = cleftGrad;
     ctx.beginPath();
-    ctx.moveTo(w/2 - 24, 0);
-    ctx.bezierCurveTo(w/2 - 10, h*0.3, w/2 + 20, h*0.6, w/2 - 6, h);
-    ctx.lineTo(w/2 + 20, h);
-    ctx.bezierCurveTo(w/2 + 40, h*0.6, w/2 + 10, h*0.3, w/2 + 18, 0);
+    ctx.moveTo(w/2 - 45, 0);
+    ctx.bezierCurveTo(w/2 - 20, h*0.35, w/2 + 35, h*0.65, w/2 - 15, h);
+    ctx.lineTo(w/2 + 45, h);
+    ctx.bezierCurveTo(w/2 + 75, h*0.65, w/2 + 25, h*0.35, w/2 + 35, 0);
     ctx.closePath();
     ctx.fill();
+
+    // Cascading water ripples inside cleft
+    ctx.strokeStyle = "rgba(180,225,240,0.6)";
+    ctx.lineWidth = 3.5;
+    for(var wy=20; wy<h; wy+=18){
+      var wx = w/2 + Math.sin(wy*0.06)*22;
+      ctx.beginPath();
+      ctx.moveTo(wx - 28, wy);
+      ctx.quadraticCurveTo(wx, wy + 8, wx + 28, wy);
+      ctx.stroke();
+    }
     ctx.restore();
 
-    // Serpentine Nagas in cleft
+    // In bump map: cleft is deep negative
+    bCtx.save();
+    bCtx.filter = "blur(6px)";
+    bCtx.fillStyle = "#1a1a1a";
+    bCtx.beginPath();
+    bCtx.moveTo(w/2 - 45, 0);
+    bCtx.bezierCurveTo(w/2 - 20, h*0.35, w/2 + 35, h*0.65, w/2 - 15, h);
+    bCtx.lineTo(w/2 + 45, h);
+    bCtx.bezierCurveTo(w/2 + 75, h*0.65, w/2 + 25, h*0.35, w/2 + 35, 0);
+    bCtx.closePath();
+    bCtx.fill();
+    bCtx.restore();
+
+    // 2. Colossal Carved Nagas (Serpent King & Queen) inside cleft
+    function drawNaga(cx, cy, scale, hoods){
+      ctx.save();
+      // Serpentine tail
+      ctx.strokeStyle = "#eedcb7";
+      ctx.lineWidth = 22 * scale;
+      ctx.beginPath();
+      ctx.moveTo(cx, cy + 180*scale);
+      ctx.bezierCurveTo(cx - 30*scale, cy + 120*scale, cx + 30*scale, cy + 60*scale, cx, cy);
+      ctx.stroke();
+      ctx.strokeStyle = "#2b1f15"; ctx.lineWidth = 4; ctx.stroke();
+
+      // Human torso & anjali mudra
+      ctx.fillStyle = "#f3e1c2";
+      ctx.beginPath();
+      ctx.ellipse(cx, cy - 25*scale, 20*scale, 35*scale, 0, 0, Math.PI*2);
+      ctx.fill();
+      ctx.stroke();
+      // Head
+      ctx.beginPath(); ctx.arc(cx, cy - 70*scale, 16*scale, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+      // Flaring cobra hoods
+      ctx.fillStyle = "#eed5a5";
+      for(var hi=-hoods; hi<=hoods; hi++){
+        ctx.beginPath();
+        var hx = cx + hi * 12 * scale;
+        var hy = cy - 90*scale - Math.abs(hi)*4*scale;
+        ctx.ellipse(hx, hy, 9*scale, 20*scale, hi*0.18, 0, Math.PI*2);
+        ctx.fill();
+        ctx.stroke();
+      }
+      ctx.restore();
+
+      // Bump representation
+      bCtx.save();
+      bCtx.fillStyle = "#e0e0e0";
+      bCtx.beginPath();
+      bCtx.arc(cx, cy - 50*scale, 35*scale, 0, Math.PI*2);
+      bCtx.fill();
+      bCtx.restore();
+    }
+    drawNaga(w/2 + 4, h*0.32, 1.1, 3);
+    drawNaga(w/2 + 8, h*0.68, 0.85, 2);
+
+    // 3. Left Wing (Northern Rock) - Shiva & Bhagiratha/Arjuna Tapas
+    function drawShivaAndAscetic(){
+      var sx = w * 0.32, sy = h * 0.44;
+      ctx.save();
+      ctx.fillStyle = "#f7e7c9";
+      ctx.strokeStyle = "#261a10";
+      ctx.lineWidth = 3;
+      // Tall Jatamukuta Crown
+      ctx.beginPath(); ctx.rect(sx - 14, sy - 145, 28, 45); ctx.fill(); ctx.stroke();
+      // Head & face
+      ctx.beginPath(); ctx.ellipse(sx, sy - 90, 22, 28, 0, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+      // Athletic torso
+      ctx.beginPath(); ctx.ellipse(sx, sy - 30, 42, 55, 0, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+      // Four arms holding Trishula and granting Varada boon
+      ctx.lineWidth = 14; ctx.strokeStyle = "#f0dfbc";
+      ctx.beginPath();
+      ctx.moveTo(sx - 35, sy - 40); ctx.lineTo(sx - 80, sy - 85);
+      ctx.moveTo(sx + 35, sy - 40); ctx.lineTo(sx + 85, sy - 90);
+      ctx.moveTo(sx - 35, sy - 10); ctx.lineTo(sx - 70, sy + 30);
+      ctx.moveTo(sx + 35, sy - 10); ctx.lineTo(sx + 75, sy + 25);
+      ctx.stroke();
+      // Trishula staff
+      ctx.lineWidth = 4; ctx.strokeStyle = "#38281b";
+      ctx.beginPath(); ctx.moveTo(sx - 80, sy - 130); ctx.lineTo(sx - 80, sy + 90); ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(sx - 96, sy - 120); ctx.lineTo(sx - 80, sy - 140); ctx.lineTo(sx - 64, sy - 120);
+      ctx.stroke();
+      // Legs in tribhanga
+      ctx.lineWidth = 18; ctx.strokeStyle = "#f3e2bf";
+      ctx.beginPath();
+      ctx.moveTo(sx - 16, sy + 25); ctx.lineTo(sx - 25, sy + 140);
+      ctx.moveTo(sx + 16, sy + 25); ctx.lineTo(sx + 32, sy + 135);
+      ctx.stroke();
+      ctx.restore();
+
+      // Ascetic (Bhagiratha / Arjuna) doing Penance
+      var ax = w * 0.385, ay = h * 0.46;
+      ctx.save();
+      ctx.fillStyle = "#eeddbd";
+      ctx.strokeStyle = "#261a10";
+      ctx.lineWidth = 2.5;
+      // Head & ascetic beard
+      ctx.beginPath(); ctx.ellipse(ax, ay - 60, 12, 16, 0, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+      // Slender emaciated ribcage (arduous penance)
+      ctx.beginPath(); ctx.ellipse(ax, ay - 18, 14, 30, 0, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+      // Arms raised high above head clasped in Urdhva Bahu prayer
+      ctx.lineWidth = 8; ctx.strokeStyle = "#ebd8b4";
+      ctx.beginPath();
+      ctx.moveTo(ax - 12, ay - 40); ctx.lineTo(ax - 10, ay - 95); ctx.lineTo(ax, ay - 105);
+      ctx.moveTo(ax + 12, ay - 40); ctx.lineTo(ax + 10, ay - 95); ctx.lineTo(ax, ay - 105);
+      ctx.stroke();
+      // Standing on ONE leg (ekapada tapas)
+      ctx.lineWidth = 10;
+      ctx.beginPath();
+      ctx.moveTo(ax, ay + 12); ctx.lineTo(ax, ay + 95);
+      ctx.moveTo(ax, ay + 20); ctx.lineTo(ax - 22, ay + 48); ctx.lineTo(ax - 2, ay + 48);
+      ctx.stroke();
+      ctx.restore();
+
+      // Small monolithic temple shrine below Bhagiratha
+      var tx = w * 0.37, ty = h * 0.76;
+      ctx.save();
+      ctx.fillStyle = "#ebd8b5"; ctx.strokeStyle = "#261a10"; ctx.lineWidth = 2.5;
+      ctx.beginPath(); ctx.rect(tx - 32, ty, 64, 75); ctx.fill(); ctx.stroke();
+      ctx.beginPath(); ctx.rect(tx - 18, ty + 15, 36, 60); ctx.fillStyle = "#2a1e15"; ctx.fill();
+      ctx.fillStyle = "#ebd8b5";
+      ctx.beginPath(); ctx.moveTo(tx - 40, ty); ctx.lineTo(tx, ty - 45); ctx.lineTo(tx + 40, ty); ctx.closePath(); ctx.fill(); ctx.stroke();
+      ctx.beginPath(); ctx.arc(tx + 55, ty + 42, 10, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+      ctx.beginPath(); ctx.ellipse(tx + 55, ty + 62, 14, 18, 0, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+      ctx.restore();
+
+      bCtx.save();
+      bCtx.fillStyle = "#d8d8d8";
+      bCtx.beginPath(); bCtx.arc(sx, sy - 20, 65, 0, Math.PI*2); bCtx.fill();
+      bCtx.beginPath(); bCtx.arc(ax, ay - 10, 35, 0, Math.PI*2); bCtx.fill();
+      bCtx.restore();
+    }
+    drawShivaAndAscetic();
+
+    // 4. Right Wing (Southern Rock) - Monumental Life-Sized Elephant Herd
+    function drawElephantHerd(){
+      var ex = w * 0.72, ey = h * 0.65;
+      ctx.save();
+      ctx.fillStyle = "#f0dfbe";
+      ctx.strokeStyle = "#24180f";
+      ctx.lineWidth = 3.5;
+
+      // Colossal Patriarch Bull Elephant
+      ctx.beginPath(); ctx.ellipse(ex, ey, 185, 130, 0, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+      ctx.beginPath(); ctx.arc(ex - 150, ey - 40, 85, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+      ctx.beginPath(); ctx.ellipse(ex - 95, ey - 45, 38, 65, 0.2, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+      // Curved Ivory Tusks
+      ctx.fillStyle = "#fffbf0";
+      ctx.beginPath();
+      ctx.moveTo(ex - 170, ey + 10);
+      ctx.quadraticCurveTo(ex - 225, ey + 45, ex - 195, ey + 80);
+      ctx.quadraticCurveTo(ex - 210, ey + 45, ex - 165, ey + 18);
+      ctx.fill(); ctx.stroke();
+      // Trunk drinking from cleft
+      ctx.fillStyle = "#f0dfbe";
+      ctx.lineWidth = 35; ctx.strokeStyle = "#eeddbb";
+      ctx.beginPath();
+      ctx.moveTo(ex - 175, ey + 5);
+      ctx.quadraticCurveTo(ex - 240, ey + 85, ex - 215, ey + 175);
+      ctx.stroke();
+      ctx.lineWidth = 3.5; ctx.strokeStyle = "#24180f";
+      ctx.beginPath();
+      ctx.moveTo(ex - 160, ey + 5);
+      ctx.quadraticCurveTo(ex - 225, ey + 85, ex - 200, ey + 175);
+      ctx.stroke();
+      // Columnar legs
+      ctx.lineWidth = 42; ctx.strokeStyle = "#eeddbb";
+      ctx.beginPath();
+      ctx.moveTo(ex - 100, ey + 100); ctx.lineTo(ex - 100, ey + 220);
+      ctx.moveTo(ex + 80, ey + 95); ctx.lineTo(ex + 80, ey + 220);
+      ctx.stroke();
+      ctx.restore();
+
+      // Mother Elephant & Two Calves tucked under
+      ctx.save();
+      ctx.fillStyle = "#eedab7"; ctx.strokeStyle = "#24180f"; ctx.lineWidth = 2.5;
+      var bx1 = ex - 75, by1 = ey + 145;
+      ctx.beginPath(); ctx.ellipse(bx1, by1, 44, 32, 0, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+      ctx.beginPath(); ctx.arc(bx1 - 38, by1 - 10, 20, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+      var bx2 = ex + 155, by2 = ey + 130;
+      ctx.beginPath(); ctx.ellipse(bx2, by2, 55, 38, 0, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+      ctx.beginPath(); ctx.arc(bx2 - 45, by2 - 12, 24, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+      ctx.restore();
+
+      // Satirical Ascetic Cat & Mice
+      var cx = w * 0.555, cy = h * 0.85;
+      ctx.save();
+      ctx.fillStyle = "#f5e6cc"; ctx.strokeStyle = "#261a10"; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.ellipse(cx, cy, 14, 28, 0, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+      ctx.beginPath(); ctx.arc(cx, cy - 35, 12, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(cx - 10, cy - 44); ctx.lineTo(cx - 6, cy - 54); ctx.lineTo(cx - 2, cy - 44); ctx.fill(); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(cx + 2, cy - 44); ctx.lineTo(cx + 6, cy - 54); ctx.lineTo(cx + 10, cy - 44); ctx.fill(); ctx.stroke();
+      ctx.lineWidth = 5; ctx.strokeStyle = "#eedab7";
+      ctx.beginPath(); ctx.moveTo(cx - 8, cy - 20); ctx.lineTo(cx - 12, cy - 55); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(cx + 8, cy - 20); ctx.lineTo(cx + 12, cy - 55); ctx.stroke();
+      for(var mi=0; mi<4; mi++){
+        var mx = cx - 35 + mi * 22;
+        if(Math.abs(mx - cx) < 10) continue;
+        ctx.fillStyle = "#e0cfaf";
+        ctx.beginPath(); ctx.ellipse(mx, cy + 24, 7, 5, 0, 0, Math.PI*2); ctx.fill();
+        ctx.beginPath(); ctx.arc(mx, cy + 18, 3.5, 0, Math.PI*2); ctx.fill();
+      }
+      ctx.restore();
+
+      bCtx.save();
+      bCtx.fillStyle = "#f2f2f2";
+      bCtx.beginPath(); bCtx.ellipse(ex, ey, 185, 130, 0, 0, Math.PI*2); bCtx.fill();
+      bCtx.beginPath(); bCtx.arc(ex - 150, ey - 40, 85, 0, Math.PI*2); bCtx.fill();
+      bCtx.restore();
+    }
+    drawElephantHerd();
+
+    // 5. Celestial Vidyadharas & Gandharvas
     ctx.save();
-    ctx.filter = "blur(4px)";
-    ctx.fillStyle = "#d0d0d0";
-    ctx.strokeStyle = "#d0d0d0";
-    ctx.lineWidth = 14;
+    ctx.fillStyle = "#faebd2"; ctx.strokeStyle = "#291d12"; ctx.lineWidth = 2;
+    for(var vi=0; vi<14; vi++){
+      var vx = 110 + vi * 135;
+      if(Math.abs(vx - w/2) < 90) continue;
+      var vy = 80 + (vi % 3) * 35;
+      var dir = vx < w/2 ? 1 : -1;
+      ctx.beginPath(); ctx.ellipse(vx, vy, 26, 12, dir * 0.25, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+      ctx.beginPath(); ctx.arc(vx + dir * 24, vy - 10, 10, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+      ctx.strokeStyle = "rgba(235,215,180,0.85)"; ctx.lineWidth = 4;
+      ctx.beginPath(); ctx.moveTo(vx - dir * 25, vy); ctx.quadraticCurveTo(vx - dir * 45, vy - 20, vx - dir * 65, vy - 10); ctx.stroke();
+    }
+    ctx.restore();
+
+    return [cCol[0], cBmp[0]];
+  }
+
+  // Relief for Varaha Mandapa (Bhu-Varaha lifting Bhudevi)
+  function generateVarahaReliefCanvas(){
+    var w = 1024, h = 1024, a = createCanvas(w, h), ctx = a[1];
+    ctx.fillStyle = "#987d5b"; ctx.fillRect(0,0,w,h);
+    // Granite texture & frame
+    ctx.strokeStyle = "#24180e"; ctx.lineWidth = 14; ctx.strokeRect(30,30,w-60,h-60);
+    // Bhu-Varaha
+    var vx = w*0.48, vy = h*0.52;
+    ctx.fillStyle = "#f5e4c4"; ctx.strokeStyle = "#24180e"; ctx.lineWidth = 4;
+    // Massive Torso
+    ctx.beginPath(); ctx.ellipse(vx, vy, 110, 150, 0, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+    // Boar Head & Snout
+    ctx.beginPath(); ctx.ellipse(vx - 70, vy - 160, 80, 55, -0.2, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(vx - 145, vy - 165); ctx.lineTo(vx - 185, vy - 150); ctx.lineTo(vx - 145, vy - 135); ctx.fill(); ctx.stroke(); // Snout
+    // Bhudevi seated tenderly on lifted right forearm
+    ctx.fillStyle = "#faebd2";
+    ctx.beginPath(); ctx.ellipse(vx + 45, vy - 110, 42, 60, 0.15, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+    ctx.beginPath(); ctx.arc(vx + 45, vy - 185, 26, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+    // Lotus halo & Adisesha serpent base
+    ctx.strokeStyle = "#eed7ad"; ctx.lineWidth = 16;
+    ctx.beginPath(); ctx.arc(vx, vy + 280, 240, Math.PI*0.8, Math.PI*0.2, true); ctx.stroke();
+    return a[0];
+  }
+
+  // Relief for Mahishasuramardini Cave (Durga charging Mahishasura)
+  function generateDurgaReliefCanvas(){
+    var w = 1024, h = 1024, a = createCanvas(w, h), ctx = a[1];
+    ctx.fillStyle = "#947957"; ctx.fillRect(0,0,w,h);
+    ctx.strokeStyle = "#24180e"; ctx.lineWidth = 14; ctx.strokeRect(30,30,w-60,h-60);
+    // Roaring Lion vahana leaping forward
+    ctx.fillStyle = "#eed4a3"; ctx.strokeStyle = "#26190f"; ctx.lineWidth = 4;
+    ctx.beginPath(); ctx.ellipse(w*0.35, h*0.62, 160, 95, 0.25, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+    ctx.beginPath(); ctx.arc(w*0.50, h*0.52, 65, 0, Math.PI*2); ctx.fill(); ctx.stroke(); // Lion head
+    // Eight-armed Durga
+    ctx.fillStyle = "#fbeed6";
+    ctx.beginPath(); ctx.ellipse(w*0.38, h*0.40, 55, 85, -0.1, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+    ctx.beginPath(); ctx.arc(w*0.38, h*0.25, 34, 0, Math.PI*2); ctx.fill(); ctx.stroke(); // Head
+    // Radiating arms with bow, trident, sword
+    ctx.lineWidth = 8; ctx.strokeStyle = "#f3e0bc";
+    for(var ai=0; ai<8; ai++){
+      var ang = -Math.PI*0.7 + ai*0.22;
+      ctx.beginPath(); ctx.moveTo(w*0.38, h*0.36);
+      ctx.lineTo(w*0.38 + Math.cos(ang)*140, h*0.36 + Math.sin(ang)*140);
+      ctx.stroke();
+    }
+    // Trishula spearing toward Mahishasura
+    ctx.lineWidth = 5; ctx.strokeStyle = "#382516";
+    ctx.beginPath(); ctx.moveTo(w*0.32, h*0.32); ctx.lineTo(w*0.75, h*0.48); ctx.stroke();
+    // Buffalo-headed Titan Mahishasura recoiling
+    ctx.fillStyle = "#705b45";
+    ctx.beginPath(); ctx.ellipse(w*0.78, h*0.56, 85, 125, -0.2, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+    ctx.beginPath(); ctx.arc(w*0.75, h*0.38, 48, 0, Math.PI*2); ctx.fill(); ctx.stroke(); // Buffalo head
+    // Buffalo horns
+    ctx.lineWidth = 14; ctx.strokeStyle = "#2b1e15";
+    ctx.beginPath(); ctx.arc(w*0.75, h*0.32, 65, Math.PI*1.2, Math.PI*1.8); ctx.stroke();
+    return a[0];
+  }
+
+  // Relief for Krishna Mandapa (Govardhana Pastoral Scene)
+  function generateKrishnaReliefCanvas(){
+    var w = 1024, h = 1024, a = createCanvas(w, h), ctx = a[1];
+    ctx.fillStyle = "#987d5b"; ctx.fillRect(0,0,w,h);
+    ctx.strokeStyle = "#24180e"; ctx.lineWidth = 14; ctx.strokeRect(30,30,w-60,h-60);
+    // Mount Govardhana stone canopy roof
+    ctx.fillStyle = "#7e6648"; ctx.strokeStyle = "#24180e"; ctx.lineWidth = 5;
+    ctx.beginPath(); ctx.moveTo(60, 160); ctx.quadraticCurveTo(w/2, 60, w-60, 160); ctx.lineTo(w-80, 240); ctx.quadraticCurveTo(w/2, 170, 80, 240); ctx.closePath(); ctx.fill(); ctx.stroke();
+    // Lord Krishna holding mountain on little finger
+    ctx.fillStyle = "#faebd2";
+    ctx.beginPath(); ctx.ellipse(w*0.42, h*0.52, 45, 95, 0, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+    ctx.beginPath(); ctx.arc(w*0.42, h*0.36, 28, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+    // Left arm raised high supporting mount
+    ctx.lineWidth = 12; ctx.strokeStyle = "#f3e0bc";
+    ctx.beginPath(); ctx.moveTo(w*0.42, h*0.48); ctx.lineTo(w*0.44, h*0.22); ctx.stroke();
+    // Mother cow licking nursing calf
+    ctx.fillStyle = "#ebd8b5";
+    ctx.beginPath(); ctx.ellipse(w*0.72, h*0.68, 95, 65, 0, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+    ctx.beginPath(); ctx.arc(w*0.60, h*0.64, 38, 0, Math.PI*2); ctx.fill(); ctx.stroke(); // Head turned backward
+    // Calf
+    ctx.beginPath(); ctx.ellipse(w*0.75, h*0.79, 38, 26, 0, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+    return a[0];
+  }
+
+  // Generates Lush Temple Lawn & Courtyard Grass Texture
+  function generateTempleGroundCanvas(w, h){
+    var a = createCanvas(w, h), ctx = a[1];
+    // Rich coastal temple lawn base green
+    ctx.fillStyle = "#4a6d36"; ctx.fillRect(0,0,w,h);
+    var imgData = ctx.getImageData(0,0,w,h), d = imgData.data;
+    for(var i=0; i<d.length; i+=4){
+      var noise = (Math.random() - 0.5) * 40;
+      var blade = Math.random();
+      if(blade > 0.85){ // Lush sunny grass blade highlight
+        d[i]   = Math.min(255, 105 + noise);
+        d[i+1] = Math.min(255, 160 + noise);
+        d[i+2] = Math.min(255, 65 + noise);
+      } else if(blade < 0.15){ // Deep fertile loam shadow
+        d[i]   = Math.max(0, 45 + noise);
+        d[i+1] = Math.max(0, 75 + noise);
+        d[i+2] = Math.max(0, 25 + noise);
+      } else {
+        d[i]   = Math.max(0, Math.min(255, 75 + noise));
+        d[i+1] = Math.max(0, Math.min(255, 115 + noise));
+        d[i+2] = Math.max(0, Math.min(255, 48 + noise));
+      }
+    }
+    ctx.putImageData(imgData, 0, 0);
+
+    // Weathered granite flagstone pathway criss-cross
+    ctx.strokeStyle = "rgba(165,145,115,0.45)";
+    ctx.lineWidth = 32;
     ctx.beginPath();
-    for(var ny=80; ny<h-40; ny+=10){
-      var nx = w/2 + Math.sin(ny*0.05)*14;
-      if(ny===80) ctx.moveTo(nx, ny); else ctx.lineTo(nx, ny);
-    }
+    ctx.moveTo(w*0.5, 0); ctx.lineTo(w*0.5, h);
+    ctx.moveTo(0, h*0.4); ctx.lineTo(w, h*0.4);
     ctx.stroke();
-    // Naga hoods
-    ctx.beginPath(); ctx.arc(w/2, 85, 20, 0, Math.PI*2); ctx.fill();
-    ctx.restore();
-
-    // Giant Elephant Herd (Right bank)
-    ctx.save();
-    ctx.filter = "blur(6px)";
-    ctx.fillStyle = "#e0e0e0";
-    // Matriarch bull elephant
-    ctx.beginPath(); ctx.ellipse(w*0.75, h*0.7, 110, 80, 0, 0, Math.PI*2); ctx.fill();
-    ctx.beginPath(); ctx.arc(w*0.64, h*0.62, 50, 0, Math.PI*2); ctx.fill(); // Head
-    // Trunk
-    ctx.lineWidth = 20; ctx.strokeStyle = "#e0e0e0";
-    ctx.beginPath(); ctx.moveTo(w*0.62, h*0.65); ctx.quadraticCurveTo(w*0.58, h*0.82, w*0.60, h*0.9); ctx.stroke();
-    // Two Baby elephants tucked under
-    ctx.beginPath(); ctx.ellipse(w*0.62, h*0.82, 35, 26, 0, 0, Math.PI*2); ctx.fill();
-    ctx.beginPath(); ctx.ellipse(w*0.88, h*0.8, 45, 32, 0, 0, Math.PI*2); ctx.fill();
-    ctx.restore();
-
-    // Flying Vidyadharas & Gandharvas (Upper heavens)
-    ctx.save();
-    ctx.filter = "blur(4px)";
-    ctx.fillStyle = "#dedede";
-    for(var vi=0; vi<10; vi++){
-      var vx = 80 + vi*95;
-      if(Math.abs(vx - w/2) < 60) continue;
-      var vy = 70 + (vi%2)*30;
-      ctx.beginPath(); ctx.ellipse(vx, vy, 24, 14, vi>5?-0.3:0.3, 0, Math.PI*2); ctx.fill();
-      ctx.beginPath(); ctx.arc(vx + (vi>5?-16:16), vy-10, 8, 0, Math.PI*2); ctx.fill();
-    }
-    // Ascetic (Bhagiratha / Arjuna) standing on one leg
-    ctx.beginPath(); ctx.ellipse(w*0.38, h*0.5, 12, 35, 0, 0, Math.PI*2); ctx.fill();
-    ctx.beginPath(); ctx.arc(w*0.38, h*0.42, 9, 0, Math.PI*2); ctx.fill();
-    // Four-armed Shiva adjacent
-    ctx.beginPath(); ctx.ellipse(w*0.34, h*0.48, 20, 48, 0, 0, Math.PI*2); ctx.fill();
-    ctx.beginPath(); ctx.arc(w*0.34, h*0.38, 12, 0, Math.PI*2); ctx.fill();
-    // Cat & mice (satirical relief at bottom right)
-    ctx.beginPath(); ctx.ellipse(w*0.56, h*0.88, 10, 18, 0, 0, Math.PI*2); ctx.fill();
-    ctx.beginPath(); ctx.arc(w*0.54, h*0.92, 4, 0, Math.PI*2); ctx.fill();
-    ctx.beginPath(); ctx.arc(w*0.58, h*0.93, 4, 0, Math.PI*2); ctx.fill();
-    ctx.restore();
 
     return a[0];
   }
 
+  var gangesCanvases = generateGangesCarvingCanvases();
+  var gangesReliefCanvas = gangesCanvases[0];
+  var gangesBumpCanvas = gangesCanvases[1];
+
+  var varahaCanvas = generateVarahaReliefCanvas();
+  var durgaCanvas = generateDurgaReliefCanvas();
+  var krishnaCanvas = generateKrishnaReliefCanvas();
+
   var graniteCanvas = generateGranite(1024, 1024, "#a18765", "#c4af8c", "#3b3123");
   var graniteDarkCanvas = generateGranite(1024, 1024, "#7a6346", "#9a805f", "#261f16");
-  var sandCanvas = generateGranite(1024, 1024, "#cbaf81", "#dec499", "#8e734c");
+  var templeGroundCanvas = generateTempleGroundCanvas(1024, 1024);
 
   function makeTex(c, rep){
     var t = new THREE.CanvasTexture(c);
@@ -748,7 +1075,7 @@ function initRealisticSite(){
 
   var graniteTex = makeTex(graniteCanvas, 4);
   var graniteDarkTex = makeTex(graniteDarkCanvas, 2);
-  var sandTex = makeTex(sandCanvas, 12);
+  var lawnTex = makeTex(templeGroundCanvas, 8);
 
   /* ---------- THREE.JS SCENE SETUP ---------- */
   var host = $("#gl");
@@ -924,15 +1251,13 @@ function initRealisticSite(){
     var cliffGroup = new THREE.Group();
     cliffGroup.position.set(0, 0, -26);
 
-    // High-resolution relief photograph texture
-    var texLoader = new THREE.TextureLoader();
-    texLoader.setCrossOrigin("anonymous");
-    var gangaReliefTex = texLoader.load(IMG.ganga);
-    gangaReliefTex.colorSpace = THREE.SRGBColorSpace;
+    // High-resolution procedural bas-relief textures (guaranteed visible, zero black screens)
+    var gangaReliefTex = new THREE.CanvasTexture(gangesReliefCanvas);
     gangaReliefTex.anisotropy = 16;
+    gangaReliefTex.colorSpace = THREE.SRGBColorSpace;
 
-    var gangaHMap = new THREE.CanvasTexture(makeGangaReliefMap());
-    gangaHMap.anisotropy = 8;
+    var gangaBumpTex = new THREE.CanvasTexture(gangesBumpCanvas);
+    gangaBumpTex.anisotropy = 16;
     
     // Left Wing (Northern Boulder - Shiva & Ascetic Bhagiratha/Arjuna)
     var leftGeo = new THREE.PlaneGeometry(14, 12, 120, 70);
@@ -942,10 +1267,8 @@ function initRealisticSite(){
     }
     var leftMat = new THREE.MeshStandardMaterial({
       map: gangaReliefTex,
-      bumpMap: makeTex(graniteCanvas, 4),
-      bumpScale: 0.12,
-      displacementMap: gangaHMap,
-      displacementScale: 0.35,
+      bumpMap: gangaBumpTex,
+      bumpScale: 0.22,
       roughness: 0.88,
       metalness: 0.04
     });
@@ -965,10 +1288,8 @@ function initRealisticSite(){
     }
     var rightMat = new THREE.MeshStandardMaterial({
       map: gangaReliefTex,
-      bumpMap: makeTex(graniteCanvas, 4),
-      bumpScale: 0.12,
-      displacementMap: gangaHMap,
-      displacementScale: 0.35,
+      bumpMap: gangaBumpTex,
+      bumpScale: 0.22,
       roughness: 0.88,
       metalness: 0.04
     });
@@ -1214,16 +1535,14 @@ function initRealisticSite(){
     }
 
     // High-resolution sculpted relief panel in interior sanctum wall
-    var texLoader = new THREE.TextureLoader();
-    texLoader.setCrossOrigin("anonymous");
-    var reliefTex = texLoader.load(reliefImgUrl || IMG.varaha);
+    var reliefTex = new THREE.CanvasTexture(reliefCanvas || varahaCanvas);
     reliefTex.colorSpace = THREE.SRGBColorSpace;
     reliefTex.anisotropy = 8;
 
     var panelMat = new THREE.MeshStandardMaterial({
       map: reliefTex,
       bumpMap: makeTex(graniteCanvas, 4),
-      bumpScale: 0.1,
+      bumpScale: 0.14,
       roughness: 0.85,
       metalness: 0.04
     });
@@ -1236,7 +1555,7 @@ function initRealisticSite(){
     mg.add(reliefBack);
 
     // Warm sanctuary torchlight illuminating the rock relief
-    var torchLight = new THREE.PointLight(0xffa24c, 1.8, 12);
+    var torchLight = new THREE.PointLight(0xffa24c, 2.2, 14);
     torchLight.position.set(0, 3.6, 2.0);
     torchLight.castShadow = false;
     mg.add(torchLight);
@@ -1246,11 +1565,11 @@ function initRealisticSite(){
   }
 
   // Varaha Mandapa (West) - Bhu-Varaha lifting the Earth Goddess
-  createMandapaCave(-20, -10, 0.6, 1, "Varaha Mandapa", IMG.varaha);
+  createMandapaCave(-20, -10, 0.6, 1, "Varaha Mandapa", varahaCanvas);
   // Mahishasuramardini Cave (North-West) - Durga slaying Mahishasura
-  createMandapaCave(-26, 8, 1.2, 2, "Mahishasuramardini Cave", IMG.durga);
+  createMandapaCave(-26, 8, 1.2, 2, "Mahishasuramardini Cave", durgaCanvas);
   // Krishna Mandapa (South-West) - Krishna lifting Mount Govardhana
-  createMandapaCave(-12, 18, 0.2, 3, "Krishna Mandapa", IMG.krishna);
+  createMandapaCave(-12, 18, 0.2, 3, "Krishna Mandapa", krishnaCanvas);
 
   /* 5. KRISHNA'S BUTTERBALL (Vaan Irai Kal) & REALISTIC CHARNOCKITE BOULDERS */
 
@@ -1364,6 +1683,207 @@ function initRealisticSite(){
     scene.add(bMesh);
     colliders.push({x: b.pos[0], z: b.pos[1], r: Math.max(b.rx, b.rz) * 0.95});
   });
+
+  /* 6. REALISTIC TEMPLE LANDSCAPE: COCONUT PALMS, SACRED BANYAN TREES, DEEPASTAMBHA & GRASS */
+  (function buildTempleEnvironment(){
+    var envGroup = new THREE.Group();
+
+    var palmBarkMat = new THREE.MeshStandardMaterial({ color: 0x6e5843, roughness: 0.95, metalness: 0.02 });
+    var frondMat = new THREE.MeshStandardMaterial({ color: 0x3d702e, roughness: 0.75, metalness: 0.05, side: THREE.DoubleSide });
+    var coconutMat = new THREE.MeshStandardMaterial({ color: 0x5a452d, roughness: 0.85 });
+
+    function createCoconutPalm(px, pz, scale, rotY, leanAngle){
+      var palm = new THREE.Group();
+      palm.position.set(px, 0, pz);
+      palm.scale.set(scale, scale, scale);
+      palm.rotation.y = rotY || 0;
+
+      var trunkGroup = new THREE.Group();
+      var segH = 2.4;
+      var curLean = leanAngle || 0.12;
+      for(var s=0; s<4; s++){
+        var rBottom = 0.42 - s*0.04;
+        var rTop = 0.38 - s*0.04;
+        var seg = new THREE.Mesh(new THREE.CylinderGeometry(rTop, rBottom, segH, 10), palmBarkMat);
+        seg.position.set(s * curLean * 1.2, s * segH + segH*0.5, 0);
+        seg.rotation.z = -curLean * 0.45;
+        seg.castShadow = true;
+        trunkGroup.add(seg);
+      }
+      palm.add(trunkGroup);
+
+      var crownApex = new THREE.Group();
+      crownApex.position.set(3.5 * curLean * 1.2, 4 * segH, 0);
+
+      for(var ci=0; ci<5; ci++){
+        var cMesh = new THREE.Mesh(new THREE.SphereGeometry(0.24, 8, 8), coconutMat);
+        var cang = ci * Math.PI * 0.4;
+        cMesh.position.set(Math.cos(cang)*0.35, -0.2, Math.sin(cang)*0.35);
+        crownApex.add(cMesh);
+      }
+
+      for(var fi=0; fi<12; fi++){
+        var frond = new THREE.Group();
+        var fang = fi * (Math.PI*2 / 12);
+        frond.rotation.y = fang;
+
+        var rib = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.08, 3.8, 6), frondMat);
+        rib.position.set(1.6, 0.2, 0);
+        rib.rotation.z = Math.PI*0.35;
+        frond.add(rib);
+
+        var leaf = new THREE.Mesh(new THREE.PlaneGeometry(3.4, 0.85), frondMat);
+        leaf.position.set(1.8, 0.15, 0);
+        leaf.rotation.x = Math.PI*0.45;
+        leaf.rotation.z = Math.PI*0.35;
+        leaf.castShadow = true;
+        frond.add(leaf);
+
+        crownApex.add(frond);
+      }
+
+      palm.add(crownApex);
+      envGroup.add(palm);
+      colliders.push({x: px, z: pz, r: 0.9});
+    }
+
+    var banyanBarkMat = new THREE.MeshStandardMaterial({ color: 0x544738, roughness: 0.92 });
+    var banyanLeafMat = new THREE.MeshStandardMaterial({ color: 0x2b5224, roughness: 0.82 });
+
+    function createBanyanTree(px, pz, scale){
+      var tree = new THREE.Group();
+      tree.position.set(px, 0, pz);
+      tree.scale.set(scale, scale, scale);
+
+      var trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.85, 1.4, 4.2, 12), banyanBarkMat);
+      trunk.position.y = 2.1;
+      trunk.castShadow = true;
+      tree.add(trunk);
+
+      for(var ri=0; ri<4; ri++){
+        var rang = ri * Math.PI*0.5 + 0.3;
+        var rMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.28, 3.8, 8), banyanBarkMat);
+        rMesh.position.set(Math.cos(rang)*1.6, 1.9, Math.sin(rang)*1.6);
+        rMesh.rotation.z = (Math.random()-0.5)*0.2;
+        tree.add(rMesh);
+      }
+
+      var canopyOffsets = [
+        [0, 5.2, 0, 3.2],
+        [-2.0, 4.6, 1.2, 2.4],
+        [2.2, 4.8, -1.0, 2.5],
+        [0.8, 5.5, 2.0, 2.2],
+        [-1.4, 5.0, -1.8, 2.3]
+      ];
+      canopyOffsets.forEach(function(co){
+        var foliage = new THREE.Mesh(new THREE.SphereGeometry(co[3], 12, 10), banyanLeafMat);
+        foliage.position.set(co[0], co[1], co[2]);
+        foliage.scale.set(1.2, 0.75, 1.1);
+        foliage.castShadow = true;
+        tree.add(foliage);
+      });
+
+      envGroup.add(tree);
+      colliders.push({x: px, z: pz, r: 2.2});
+    }
+
+    // Monolithic Deepastambha (Sacred Stone Lamp Tower)
+    (function createDeepastambha(){
+      var dst = new THREE.Group();
+      dst.position.set(2, 0, 2);
+
+      var p1 = new THREE.Mesh(new THREE.BoxGeometry(2.4, 0.6, 2.4), graniteStandardMat);
+      p1.position.y = 0.3; dst.add(p1);
+      var p2 = new THREE.Mesh(new THREE.BoxGeometry(1.8, 0.5, 1.8), graniteStandardMat);
+      p2.position.y = 0.85; dst.add(p2);
+
+      var col = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.46, 7.8, 8), graniteStandardMat);
+      col.position.y = 4.75; col.castShadow = true; dst.add(col);
+
+      for(var di=0; di<3; di++){
+        var bracket = new THREE.Mesh(new THREE.CylinderGeometry(0.65 - di*0.08, 0.45, 0.35, 8), graniteStandardMat);
+        bracket.position.y = 6.2 + di * 1.0;
+        dst.add(bracket);
+      }
+
+      var bowl = new THREE.Mesh(new THREE.CylinderGeometry(0.7, 0.4, 0.5, 12), graniteDarkMat);
+      bowl.position.y = 8.85; dst.add(bowl);
+
+      var flameMesh = new THREE.Mesh(new THREE.ConeGeometry(0.22, 0.65, 8), new THREE.MeshBasicMaterial({ color: 0xffaa33 }));
+      flameMesh.position.y = 9.35; dst.add(flameMesh);
+
+      var lampLight = new THREE.PointLight(0xffa83b, 2.2, 28);
+      lampLight.position.set(0, 9.5, 0);
+      lampLight.castShadow = true;
+      dst.add(lampLight);
+
+      envGroup.add(dst);
+      colliders.push({x: 2, z: 2, r: 1.5});
+    })();
+
+    // Paved Granite Flagstone Processional Path (Prakara)
+    (function createTemplePathways(){
+      var pathMat = new THREE.MeshStandardMaterial({
+        map: graniteTex,
+        bumpMap: graniteDarkTex,
+        bumpScale: 0.12,
+        roughness: 0.92
+      });
+      var mainPath = new THREE.Mesh(new THREE.PlaneGeometry(5.2, 48), pathMat);
+      mainPath.rotateX(-Math.PI/2);
+      mainPath.position.set(0, 0.06, -2);
+      mainPath.receiveShadow = true;
+      envGroup.add(mainPath);
+
+      var crossPath = new THREE.Mesh(new THREE.PlaneGeometry(36, 4.2), pathMat);
+      crossPath.rotateX(-Math.PI/2);
+      crossPath.position.set(12, 0.05, 12);
+      crossPath.receiveShadow = true;
+      envGroup.add(crossPath);
+    })();
+
+    // 3D Grass Blade Clumps along pathways & rock perimeters
+    (function createGrassTufts(){
+      var tuftGeo = new THREE.ConeGeometry(0.35, 0.75, 5);
+      var tuftMat = new THREE.MeshStandardMaterial({ color: 0x487a32, roughness: 0.8 });
+      for(var gi=0; gi<45; gi++){
+        var gx = (Math.random()-0.5)*50;
+        var gz = (Math.random()-0.5)*50;
+        if(Math.abs(gx) < 3.5 && gz > -24 && gz < 20) continue;
+        var tuft = new THREE.Mesh(tuftGeo, tuftMat);
+        tuft.position.set(gx, 0.35, gz);
+        tuft.scale.set(1 + Math.random()*0.8, 0.8 + Math.random()*0.6, 1 + Math.random()*0.8);
+        envGroup.add(tuft);
+      }
+    })();
+
+    // Plant 12 Coconut Palms around temple complex
+    var palmPositions = [
+      [-14, 12, 1.1, 0.4, 0.14],
+      [-18, 22, 1.2, 1.2, 0.12],
+      [-6, 26, 1.0, 2.1, 0.15],
+      [14, 2, 1.2, 0.8, 0.11],
+      [18, -12, 1.15, 1.6, 0.16],
+      [24, 24, 1.25, 0.2, 0.13],
+      [34, 14, 1.1, 2.8, 0.15],
+      [42, -10, 1.3, 0.5, 0.18],
+      [46, -28, 1.2, 1.9, 0.16],
+      [38, -32, 1.1, 1.1, 0.14],
+      [-24, -22, 1.0, 2.5, 0.12],
+      [-28, -2, 1.15, 0.9, 0.15]
+    ];
+    palmPositions.forEach(function(pp){
+      createCoconutPalm(pp[0], pp[1], pp[2], pp[3], pp[4]);
+    });
+
+    // Plant 4 Spreading Sacred Banyan / Neem Trees for shade
+    createBanyanTree(-16, -16, 1.2);
+    createBanyanTree(12, -26, 1.3);
+    createBanyanTree(-4, -34, 1.15);
+    createBanyanTree(30, 2, 1.25);
+
+    scene.add(envGroup);
+  })();
 
   /* ---------- PLAYER NAVIGATION & CAMERA ---------- */
   var px = 0, py = 1.7, pz = 10;
