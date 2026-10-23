@@ -126,7 +126,7 @@ h2.st em{font-style:normal; color:var(--gold)}
 .s-bl{position:absolute; left:16px; bottom:14px; font-size:10px; letter-spacing:.14em; opacity:.85; line-height:1.9; text-shadow:0 2px 6px rgba(0,0,0,.9)}
 .s-bl b{color:var(--gold)}
 .hudbtn{position:absolute; right:176px; pointer-events:auto; padding:9px 16px; border:1px solid var(--line); background:rgba(20,16,10,.75); color:var(--ink); font-size:10px; letter-spacing:.2em; text-transform:uppercase; font-weight:600}
-#sSun{bottom:90px} #sTour{bottom:52px} #sLamp{bottom:14px}
+#sDrone{bottom:128px} #sSun{bottom:90px} #sTour{bottom:52px} #sLamp{bottom:14px}
 .hudbtn:hover{border-color:var(--gold); color:var(--gold)}
 .hudbtn.on{background:var(--gold); color:#241a08; border-color:var(--gold)}
 #minimap{position:absolute; right:14px; bottom:14px; width:150px; height:150px; border:2px solid rgba(217,164,65,.5); background:rgba(20,16,10,.6); border-radius:6px}
@@ -205,6 +205,15 @@ h2.st em{font-style:normal; color:var(--gold)}
     <div class="s-tr">Monuments examined<br><b id="sFound">0 / 8</b></div>
     <button id="sSet" title="Settings">⚙</button>
     <div id="sPanel">
+      <h6>Camera Views</h6>
+      <div class="row" id="pViews">
+        <button data-v="walk" class="on">Walk</button>
+        <button data-v="drone">Drone</button>
+        <button data-v="aerial">Aerial</button>
+        <button data-v="shore">Shore</button>
+        <button data-v="ganga">Ganges</button>
+        <button data-v="rathas">Rathas</button>
+      </div>
       <h6>Time of day</h6>
       <div class="row" id="pTime">
         <button data-t="dawn">Dawn</button><button data-t="day">Day</button><button data-t="golden" class="on">Golden</button><button data-t="dusk">Dusk</button><button data-t="night">Night</button>
@@ -225,7 +234,8 @@ h2.st em{font-style:normal; color:var(--gold)}
     <div id="sCross"></div>
     <div id="sPrompt"></div>
     <div id="sToast"></div>
-    <div class="s-bl"><b>move mouse</b> = look 360° · <b>W A S D / arrows</b> = walk · <b>shift</b> run · <b>click / E</b> examine · <b>L</b> raking · <b>T</b> tour · <b>N</b> night</div>
+    <div class="s-bl"><b>move mouse</b> = look 360° · <b>W A S D / arrows</b> = walk · <b>shift</b> run · <b>click / E</b> examine · <b>L</b> raking · <b>V</b> drone · <b>T</b> tour · <b>N</b> night</div>
+    <button class="hudbtn" id="sDrone">🚁 Drone view</button>
     <button class="hudbtn on" id="sSun">Raking light · on</button>
     <button class="hudbtn" id="sTour">Guided tour · off</button>
     <button class="hudbtn" id="sLamp">Head-lamp · off</button>
@@ -883,6 +893,30 @@ function initSite(){
   var labels=[]; var labelsOn=true;
   MON.forEach(function(m){ var s=labelSprite(m.name); s.position.set(m.pos[0], m.ly, m.pos[2]); scene.add(s); labels.push(s); });
 
+  
+  var VIEWS = {
+    walk:   { p:[0, 1.7, 16],  yaw:0,     pitch:0,     name:"WALK VIEW" },
+    drone:  { p:[0, 22, 38],   yaw:0,     pitch:-0.52, name:"DRONE OVERVIEW" },
+    aerial: { p:[0, 52, 10],   yaw:0,     pitch:-1.38, name:"TOP-DOWN AERIAL" },
+    shore:  { p:[-14, 9, -15], yaw:-2.1,  pitch:-0.28, name:"SHORE TEMPLE CINEMATIC" },
+    ganga:  { p:[0, 4.2, -7],  yaw:0,     pitch:-0.05, name:"GANGES RELIEF CLOSEUP" },
+    rathas: { p:[18, 7, -6],   yaw:1.2,   pitch:-0.32, name:"PANCHA RATHAS PERSPECTIVE" }
+  };
+  var currentView = "walk";
+  function switchView(k){
+    if(!VIEWS[k]) return;
+    currentView = k;
+    stopTour();
+    var v = VIEWS[k];
+    px = v.p[0]; py = v.p[1]; pz = v.p[2];
+    yaw = v.yaw; pitch = v.pitch;
+    lastX = null; lastY = null;
+    $("#sDrone").classList.toggle("on", k==="drone");
+    $("#sDrone").textContent = k==="drone" ? "🚁 Drone view · on" : "🚁 Drone view";
+    document.querySelectorAll("#pViews button").forEach(function(b){ b.classList.toggle("on", b.dataset.v === k); });
+    toast(v.name);
+  }
+
   var TIMES={
     dawn:  {elev:10, az:95,  sun:0xffb088, int:1.1, hemi:.6, top:0x7a86b8, bot:0xf0b088, fog:0xd8b8a0, far:150, night:.15},
     day:   {elev:58, az:140, sun:0xfff0d0, int:1.5, hemi:.9, top:0x6fa8d0, bot:0xd8e4e8, fog:0xcfd6d2, far:230, night:0},
@@ -967,6 +1001,7 @@ function initSite(){
     if($("#site").classList.contains("on") && k==="enter" && !started){ begin(); return; }
     keys[k]=true;
     if(k==="e") tryExamine();
+    if(k==="v") switchView(currentView==="drone" ? "walk" : "drone");
     if(k==="l") setRake(!rakeOn);
     if(k==="t") toggleTour();
     if(k==="n") setTime(envT.night>0.5 ? "golden" : "night");
@@ -975,6 +1010,8 @@ function initSite(){
   });
   window.addEventListener("keyup", function(e){ keys[e.key.toLowerCase()]=false; });
 
+  $("#sDrone").addEventListener("click", function(){ switchView(currentView==="drone" ? "walk" : "drone"); });
+  $("#pViews").addEventListener("click", function(e){ var b=e.target.closest("button[data-v]"); if(b) switchView(b.dataset.v); });
   $("#sSun").addEventListener("click", function(){ setRake(!rakeOn); });
   $("#sLamp").addEventListener("click", function(){ setLamp(!lampOn); });
   $("#sTour").addEventListener("click", toggleTour);
