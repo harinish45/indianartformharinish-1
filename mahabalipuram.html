@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -919,47 +919,122 @@ function initRealisticSite(){
     metalness: 0.02
   });
 
-  /* 1. THE GREAT DESCENT OF THE GANGES CLIFF (Central Outcrop) */
+  /* 1. THE GREAT DESCENT OF THE GANGES CLIFF (Colossal Open-Air Rock Relief) */
   (function buildGangesRelief(){
     var cliffGroup = new THREE.Group();
     cliffGroup.position.set(0, 0, -26);
 
-    // Main 30m x 12m rock facade
-    var cliffGeo = new THREE.PlaneGeometry(28, 12, 160, 80);
+    // High-resolution relief photograph texture
+    var texLoader = new THREE.TextureLoader();
+    texLoader.setCrossOrigin("anonymous");
+    var gangaReliefTex = texLoader.load(IMG.ganga);
+    gangaReliefTex.colorSpace = THREE.SRGBColorSpace;
+    gangaReliefTex.anisotropy = 16;
+
     var gangaHMap = new THREE.CanvasTexture(makeGangaReliefMap());
     gangaHMap.anisotropy = 8;
     
-    var cliffMat = new THREE.MeshStandardMaterial({
-      map: makeTex(graniteCanvas, 2),
-      displacementMap: gangaHMap,
-      displacementScale: 1.15,
+    // Left Wing (Northern Boulder - Shiva & Ascetic Bhagiratha/Arjuna)
+    var leftGeo = new THREE.PlaneGeometry(14, 12, 120, 70);
+    var leftUV = leftGeo.attributes.uv;
+    for(var u=0; u<leftUV.count; u++){
+      leftUV.setX(u, leftUV.getX(u) * 0.48);
+    }
+    var leftMat = new THREE.MeshStandardMaterial({
+      map: gangaReliefTex,
       bumpMap: makeTex(graniteCanvas, 4),
-      bumpScale: 0.1,
-      roughness: 0.94
+      bumpScale: 0.12,
+      displacementMap: gangaHMap,
+      displacementScale: 0.35,
+      roughness: 0.88,
+      metalness: 0.04
     });
-    var cliffMesh = new THREE.Mesh(cliffGeo, cliffMat);
-    cliffMesh.position.set(0, 6, 0);
-    cliffMesh.castShadow = true;
-    cliffMesh.receiveShadow = true;
-    cliffMesh.userData.infoIndex = 0;
-    examineObjects.push(cliffMesh);
-    cliffGroup.add(cliffMesh);
+    var leftMesh = new THREE.Mesh(leftGeo, leftMat);
+    leftMesh.position.set(-7.2, 6, 0);
+    leftMesh.rotation.y = 0.05;
+    leftMesh.castShadow = true; leftMesh.receiveShadow = true;
+    leftMesh.userData.infoIndex = 0;
+    examineObjects.push(leftMesh);
+    cliffGroup.add(leftMesh);
+
+    // Right Wing (Southern Boulder - Elephant Family & Vidhyadharas)
+    var rightGeo = new THREE.PlaneGeometry(14, 12, 120, 70);
+    var rightUV = rightGeo.attributes.uv;
+    for(var u=0; u<rightUV.count; u++){
+      rightUV.setX(u, 0.52 + rightUV.getX(u) * 0.48);
+    }
+    var rightMat = new THREE.MeshStandardMaterial({
+      map: gangaReliefTex,
+      bumpMap: makeTex(graniteCanvas, 4),
+      bumpScale: 0.12,
+      displacementMap: gangaHMap,
+      displacementScale: 0.35,
+      roughness: 0.88,
+      metalness: 0.04
+    });
+    var rightMesh = new THREE.Mesh(rightGeo, rightMat);
+    rightMesh.position.set(7.2, 6, 0);
+    rightMesh.rotation.y = -0.05;
+    rightMesh.castShadow = true; rightMesh.receiveShadow = true;
+    rightMesh.userData.infoIndex = 0;
+    examineObjects.push(rightMesh);
+    cliffGroup.add(rightMesh);
+
+    // Natural 3D Central Geological Cleft (Cosmic River Ganga Chasm)
+    var cleftGutter = new THREE.Mesh(new THREE.CylinderGeometry(0.8, 1.2, 12.2, 16, 1, true, -Math.PI*0.5, Math.PI), graniteDarkMat);
+    cleftGutter.position.set(0, 6, -0.6);
+    cliffGroup.add(cleftGutter);
+
+    // Carved Nagas (Serpent Deities) ascending inside the cleft
+    var nagaGroup = new THREE.Group();
+    nagaGroup.position.set(0, 2, -0.3);
+    for(var ni=0; ni<3; ni++){
+      var nBody = new THREE.Mesh(new THREE.TorusGeometry(0.45 - ni*0.08, 0.12, 12, 24, Math.PI*1.4), graniteStandardMat);
+      nBody.position.set(0, ni * 2.2, 0);
+      nBody.rotation.x = Math.PI/2;
+      nBody.rotation.z = ni % 2 === 0 ? 0.3 : -0.3;
+      nagaGroup.add(nBody);
+      // Multi-headed Cobra Hood (Naga King)
+      var nHood = new THREE.Mesh(new THREE.ConeGeometry(0.35, 0.6, 7), graniteStandardMat);
+      nHood.position.set(0, ni * 2.2 + 0.5, 0.1);
+      nHood.rotation.x = -0.3;
+      nagaGroup.add(nHood);
+    }
+    cliffGroup.add(nagaGroup);
+
+    // Life-Sized Monolithic Matriarch Elephant & Calves carved at the base
+    var elephantBase = new THREE.Group();
+    elephantBase.position.set(5.5, 0, 1.8);
+    var eBody = new THREE.Mesh(new THREE.SphereGeometry(2.2, 20, 16), graniteStandardMat);
+    eBody.scale.set(1.4, 1.1, 0.9);
+    eBody.position.set(0, 2.2, 0);
+    eBody.castShadow = true; elephantBase.add(eBody);
+    var eHead = new THREE.Mesh(new THREE.SphereGeometry(1.0, 16, 12), graniteStandardMat);
+    eHead.position.set(-1.8, 2.7, 0.1);
+    elephantBase.add(eHead);
+    var eTrunk = new THREE.Mesh(new THREE.CylinderGeometry(0.25, 0.45, 2.2, 12), graniteStandardMat);
+    eTrunk.position.set(-2.5, 1.4, 0.1);
+    eTrunk.rotation.z = -0.35;
+    elephantBase.add(eTrunk);
+    var eBaby = new THREE.Mesh(new THREE.SphereGeometry(1.0, 14, 10), graniteStandardMat);
+    eBaby.position.set(2.0, 1.0, 0.4);
+    eBaby.castShadow = true; elephantBase.add(eBaby);
+    cliffGroup.add(elephantBase);
 
     // Supporting outcrop bedrock backing
-    var rockBack = new THREE.Mesh(new THREE.BoxGeometry(30, 13, 10), graniteDarkMat);
+    var rockBack = new THREE.Mesh(new THREE.BoxGeometry(32, 13, 10), graniteDarkMat);
     rockBack.position.set(0, 6, -5);
-    rockBack.castShadow = true;
-    rockBack.receiveShadow = true;
+    rockBack.castShadow = true; rockBack.receiveShadow = true;
     cliffGroup.add(rockBack);
 
-    // Ancient Cistern reservoir rim atop cliff
-    var cistern = new THREE.Mesh(new THREE.CylinderGeometry(4.5, 4.5, 1.6, 18), graniteDarkMat);
+    // Ancient Cistern reservoir atop cliff
+    var cistern = new THREE.Mesh(new THREE.BoxGeometry(10, 2.0, 6), graniteDarkMat);
     cistern.position.set(0, 13, -3);
     cistern.castShadow = true;
     cliffGroup.add(cistern);
 
     scene.add(cliffGroup);
-    colliders.push({x:0, z:-26, r:15});
+    colliders.push({x:0, z:-26, r:16});
   })();
 
   /* 2. PANCHA RATHAS (Monolithic Shrines on the South-East) */
@@ -1100,7 +1175,7 @@ function initRealisticSite(){
   })();
 
   /* 4. ROCK-CUT MANDAPAS (Varaha, Mahishasuramardini, Krishna) */
-  function createMandapaCave(x, z, rotY, infoIdx, labelName){
+  function createMandapaCave(x, z, rotY, infoIdx, labelName, reliefImgUrl){
     var mg = new THREE.Group();
     mg.position.set(x, 0, z);
     mg.rotation.y = rotY;
@@ -1110,15 +1185,20 @@ function initRealisticSite(){
     caveRock.position.set(0, 3.75, -2);
     caveRock.castShadow = true; caveRock.receiveShadow = true; mg.add(caveRock);
 
-    // Cut-out interior veranda
-    var porchPlinth = new THREE.Mesh(new THREE.BoxGeometry(10, 0.6, 4), graniteStandardMat);
+    // Cut-out interior veranda plinth
+    var porchPlinth = new THREE.Mesh(new THREE.BoxGeometry(10, 0.6, 4.5), graniteStandardMat);
     porchPlinth.position.set(0, 0.3, 1.5);
     porchPlinth.receiveShadow = true; mg.add(porchPlinth);
+
+    // Overhanging rock cornice (Kapota)
+    var cornice = new THREE.Mesh(new THREE.BoxGeometry(11, 0.8, 1.8), graniteDarkMat);
+    cornice.position.set(0, 7.1, 2.5);
+    cornice.castShadow = true; mg.add(cornice);
 
     // 4 Vyala (Lion-base) pillars along portico
     for(var pi=-3.6; pi<=3.6; pi+=2.4){
       var pg = new THREE.Group();
-      pg.position.set(pi, 0.6, 2.4);
+      pg.position.set(pi, 0.6, 2.6);
 
       // Crouching Lion base
       var lBase = new THREE.Mesh(new THREE.BoxGeometry(0.85, 0.95, 0.85), graniteDarkMat);
@@ -1126,49 +1206,163 @@ function initRealisticSite(){
       // Fluted shaft
       var shaft = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.32, 2.6, 12), graniteStandardMat);
       shaft.position.y = 2.25; shaft.castShadow = true; pg.add(shaft);
-      // Cushion capital
+      // Cushion capital (Kumbha)
       var cap = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.4, 0.4, 12), graniteStandardMat);
       cap.position.y = 3.65; cap.castShadow = true; pg.add(cap);
 
       mg.add(pg);
     }
 
-    // High relief narrative icon in back wall
-    var reliefBack = new THREE.Mesh(new THREE.PlaneGeometry(4.8, 4.2), graniteStandardMat);
-    reliefBack.position.set(0, 3.2, 0.8);
+    // High-resolution sculpted relief panel in interior sanctum wall
+    var texLoader = new THREE.TextureLoader();
+    texLoader.setCrossOrigin("anonymous");
+    var reliefTex = texLoader.load(reliefImgUrl || IMG.varaha);
+    reliefTex.colorSpace = THREE.SRGBColorSpace;
+    reliefTex.anisotropy = 8;
+
+    var panelMat = new THREE.MeshStandardMaterial({
+      map: reliefTex,
+      bumpMap: makeTex(graniteCanvas, 4),
+      bumpScale: 0.1,
+      roughness: 0.85,
+      metalness: 0.04
+    });
+    var reliefBack = new THREE.Mesh(new THREE.PlaneGeometry(5.8, 4.4), panelMat);
+    reliefBack.position.set(0, 3.2, 0.85);
+    reliefBack.castShadow = true;
+    reliefBack.receiveShadow = true;
     reliefBack.userData.infoIndex = infoIdx;
     examineObjects.push(reliefBack);
     mg.add(reliefBack);
 
+    // Warm sanctuary torchlight illuminating the rock relief
+    var torchLight = new THREE.PointLight(0xffa24c, 1.8, 12);
+    torchLight.position.set(0, 3.6, 2.0);
+    torchLight.castShadow = false;
+    mg.add(torchLight);
+
     scene.add(mg);
-    colliders.push({x:x, z:z, r:5.2});
+    colliders.push({x:x, z:z, r:5.6});
   }
 
-  // Varaha Mandapa (West)
-  createMandapaCave(-20, -10, 0.6, 1, "Varaha Mandapa");
-  // Mahishasuramardini Cave (North-West)
-  createMandapaCave(-26, 8, 1.2, 2, "Mahishasuramardini Cave");
-  // Krishna Mandapa (South-West)
-  createMandapaCave(-12, 18, 0.2, 3, "Krishna Mandapa");
+  // Varaha Mandapa (West) - Bhu-Varaha lifting the Earth Goddess
+  createMandapaCave(-20, -10, 0.6, 1, "Varaha Mandapa", IMG.varaha);
+  // Mahishasuramardini Cave (North-West) - Durga slaying Mahishasura
+  createMandapaCave(-26, 8, 1.2, 2, "Mahishasuramardini Cave", IMG.durga);
+  // Krishna Mandapa (South-West) - Krishna lifting Mount Govardhana
+  createMandapaCave(-12, 18, 0.2, 3, "Krishna Mandapa", IMG.krishna);
 
-  /* 5. SCATTERED CHARNOCKITE WEATHERED BOULDERS */
-  var boulderGeo = new THREE.DodecahedronGeometry(2.4, 1);
-  var bPos = boulderGeo.attributes.position;
-  for(var bi=0; bi<bPos.count; bi++){
-    bPos.setXYZ(bi, bPos.getX(bi)*(1 + Math.sin(bi*3)*0.2), bPos.getY(bi)*(0.9 + Math.cos(bi*4)*0.15), bPos.getZ(bi)*(1 + Math.sin(bi*5)*0.2));
+  /* 5. KRISHNA'S BUTTERBALL (Vaan Irai Kal) & REALISTIC CHARNOCKITE BOULDERS */
+
+  // Procedural Weathered Granite Boulder Geometry Generator
+  // Deforms strictly based on 3D spatial coordinates so shared/adjacent vertices never separate!
+  function createWeatheredBoulderGeo(radiusX, radiusY, radiusZ, seed){
+    var geo = new THREE.SphereGeometry(1.0, 36, 28);
+    var pos = geo.attributes.position;
+    var v = new THREE.Vector3();
+    for(var i=0; i<pos.count; i++){
+      v.fromBufferAttribute(pos, i);
+      
+      // Smooth continuous 3D noise
+      var nx = v.x * 2.2 + seed;
+      var ny = v.y * 2.4;
+      var nz = v.z * 2.2 + seed * 0.7;
+      var n1 = Math.sin(nx)*Math.cos(ny)*Math.sin(nz);
+      var n2 = Math.sin(nx*2.2 + nz*1.8)*Math.cos(ny*2.1)*0.35;
+      var n3 = Math.cos(nx*4.0 + ny*3.5)*0.12;
+      var displacement = (n1 + n2 + n3) * 0.22;
+      
+      // Scale by axes
+      v.x *= radiusX * (1.0 + displacement);
+      v.y *= radiusY * (1.0 + displacement);
+      v.z *= radiusZ * (1.0 + displacement);
+      
+      // Flatten bottom where rock sits on bedrock/sand
+      if(v.y < 0){
+        v.y *= 0.85;
+      }
+      pos.setXYZ(i, v.x, v.y, v.z);
+    }
+    geo.computeVertexNormals();
+    return geo;
   }
-  boulderGeo.computeVertexNormals();
 
-  var boulderPositions = [
-    [-6, 6], [8, -8], [-2, 12], [28, -8], [16, -24], [-15, -28], [38, 4]
+  // --- KRISHNA'S BUTTERBALL: The Iconic 250-ton Monolithic Balanced Rock ---
+  (function buildKrishnasButterball(){
+    var kbGroup = new THREE.Group();
+    kbGroup.position.set(-8, 0, 6);
+
+    // Sloping granite bedrock hillock (the slippery 45-degree slope it rests on)
+    var hillGeo = new THREE.CylinderGeometry(7.0, 9.5, 2.8, 32);
+    var hPos = hillGeo.attributes.position;
+    for(var hi=0; hi<hPos.count; hi++){
+      var hx = hPos.getX(hi), hy = hPos.getY(hi), hz = hPos.getZ(hi);
+      hPos.setXYZ(hi, hx*(1 + Math.sin(hz*0.4)*0.15), hy, hz*(1 + Math.cos(hx*0.4)*0.15));
+    }
+    hillGeo.computeVertexNormals();
+    var hillMesh = new THREE.Mesh(hillGeo, graniteDarkMat);
+    hillMesh.position.set(0, 0.9, 0);
+    hillMesh.rotation.z = 0.22; // Sloping rock face
+    hillMesh.receiveShadow = true;
+    kbGroup.add(hillMesh);
+
+    // The iconic boulder: ~5.5m high, semi-spherical with shaved sheer backside
+    var butterGeo = new THREE.SphereGeometry(2.8, 44, 34);
+    var bpos = butterGeo.attributes.position;
+    var v = new THREE.Vector3();
+    for(var bi=0; bi<bpos.count; bi++){
+      v.fromBufferAttribute(bpos, bi);
+      var bn = Math.sin(v.x*0.9)*Math.cos(v.y*1.0)*0.18 + Math.cos(v.z*1.2)*0.12;
+      if(v.z < -1.1){
+        v.z = -1.1 + (v.z + 1.1) * 0.35;
+      }
+      if(v.y < -2.2){
+        v.y = -2.2 + (v.y + 2.2) * 0.3;
+      }
+      v.multiplyScalar(1.0 + bn * 0.14);
+      bpos.setXYZ(bi, v.x, v.y, v.z);
+    }
+    butterGeo.computeVertexNormals();
+
+    var butterMat = new THREE.MeshStandardMaterial({
+      map: makeTex(graniteCanvas, 3),
+      bumpMap: makeTex(graniteDarkCanvas, 5),
+      bumpScale: 0.16,
+      roughness: 0.92,
+      metalness: 0.04
+    });
+    var butterMesh = new THREE.Mesh(butterGeo, butterMat);
+    butterMesh.position.set(0.6, 4.3, 0.4);
+    butterMesh.rotation.set(0.15, 0.35, -0.18);
+    butterMesh.castShadow = true; butterMesh.receiveShadow = true;
+    butterMesh.userData.infoIndex = 3; // Krishna theme
+    examineObjects.push(butterMesh);
+    kbGroup.add(butterMesh);
+
+    scene.add(kbGroup);
+    colliders.push({x:-8, z:6, r:4.2});
+  })();
+
+  // --- SCATTERED WEATHERED METAMORPHIC GRANITE BOULDERS (Watertight & Solid) ---
+  var boulderData = [
+    { pos: [6, -8], rx: 2.5, ry: 2.1, rz: 2.3, seed: 1.2 },
+    { pos: [-4, 14], rx: 3.1, ry: 2.4, rz: 2.8, seed: 2.7 },
+    { pos: [26, -6], rx: 2.8, ry: 2.2, rz: 2.5, seed: 3.9 },
+    { pos: [18, -22], rx: 3.4, ry: 2.6, rz: 3.0, seed: 4.5 },
+    { pos: [-16, -26], rx: 3.2, ry: 2.5, rz: 2.9, seed: 5.8 },
+    { pos: [36, 6], rx: 2.4, ry: 1.9, rz: 2.2, seed: 6.3 },
+    { pos: [-24, -2], rx: 2.9, ry: 2.3, rz: 2.7, seed: 7.1 },
+    { pos: [8, 18], rx: 2.2, ry: 1.8, rz: 2.1, seed: 8.4 }
   ];
-  boulderPositions.forEach(function(bp){
-    var bMesh = new THREE.Mesh(boulderGeo, graniteDarkMat);
-    bMesh.position.set(bp[0], 1.5, bp[1]);
-    bMesh.rotation.set(Math.random()*3, Math.random()*3, Math.random()*3);
+
+  boulderData.forEach(function(b, idx){
+    var bGeo = createWeatheredBoulderGeo(b.rx, b.ry, b.rz, b.seed);
+    var bMesh = new THREE.Mesh(bGeo, graniteDarkMat);
+    bMesh.position.set(b.pos[0], b.ry * 0.78, b.pos[1]);
+    bMesh.rotation.set(0.1 * (idx % 3), 0.4 * idx, 0.08 * (idx % 2));
     bMesh.castShadow = true; bMesh.receiveShadow = true;
     scene.add(bMesh);
-    colliders.push({x:bp[0], z:bp[1], r:2.8});
+    colliders.push({x: b.pos[0], z: b.pos[1], r: Math.max(b.rx, b.rz) * 0.95});
   });
 
   /* ---------- PLAYER NAVIGATION & CAMERA ---------- */
