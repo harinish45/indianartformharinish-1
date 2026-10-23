@@ -2,6 +2,7 @@
   "cleanUrls": true,
   "rewrites": [
     { "source": "/", "destination": "/index.html" },
-    { "source": "/ajanta", "destination": "/ajanta.html" }
+    { "source": "/mahabalipuram", "destination": "/mahabalipuram.html" },
+    { "source": "/report.pdf", "destination": "/Sculpture_Thematic_Analysis_Mahabalipuram_Harinish.pdf" }
   ]
 }

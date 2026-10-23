@@ -1,0 +1,1359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stone That Speaks — Mahabalipuram · Assignment 5</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%2326262a' stroke='%23d9a441' stroke-width='4'/%3E%3Ccircle cx='50' cy='50' r='30' fill='none' stroke='%233aa6a0' stroke-width='2'/%3E%3Ctext x='50' y='64' font-size='34' text-anchor='middle' fill='%23d9a441' font-family='Georgia, serif'%3Eम%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/marcellus@5/index.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/alegreya-sans@5/400.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/alegreya-sans@5/500.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/alegreya-sans@5/700.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/alegreya-sans@5/400-italic.css">
+<script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
+<style>
+:root{
+  --gran:#212124; --gran2:#2a2a2f; --slab:#323238; --line:#46464d;
+  --ink:#eeeae2; --dim:#aba89f; --teal:#3aa6a0; --gold:#d9a441; --gold2:#f3c467; --rust:#b0563f;
+  --disp:'Marcellus', Georgia, serif; --body:'Alegreya Sans', system-ui, sans-serif;
+  --paper:#f4f1e8; --pink:#2b2b2e;
+  --noise:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.55 0 0 0 0 0.55 0 0 0 0 0.52 0 0 0 0.06 0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--gran); color:var(--ink); font-family:var(--body); font-weight:400; line-height:1.6; overflow:hidden}
+body::before{content:""; position:fixed; inset:0; background:var(--noise); pointer-events:none; z-index:0}
+body.cavelock{overflow:hidden}
+::selection{background:rgba(58,166,160,.4)}
+img{display:block; max-width:100%}
+button{font-family:inherit; cursor:pointer}
+
+/* ---------- TOP NAVBAR ---------- */
+.top{position:fixed; top:0; left:0; right:0; z-index:60; display:flex; justify-content:space-between; align-items:center; gap:12px;
+  padding:10px 2.5vw; background:rgba(33,33,36,.94); backdrop-filter:blur(10px); border-bottom:1px solid var(--line)}
+.top-l{font-size:10.5px; letter-spacing:.24em; text-transform:uppercase; color:var(--dim); font-weight:500; display:flex; align-items:center; gap:8px}
+.top-l b{color:var(--gold)}
+.top-badge{background:rgba(58,166,160,.18); color:var(--teal); border:1px solid rgba(58,166,160,.4); padding:2px 8px; border-radius:4px; font-size:9px; letter-spacing:.14em}
+.top-r{display:flex; gap:6px; align-items:center}
+.tbtn{padding:7px 14px; border:1px solid var(--line); background:transparent; color:var(--ink); font-size:10px; letter-spacing:.18em; text-transform:uppercase; font-weight:600; transition:all .25s; border-radius:2px}
+.tbtn:hover{border-color:var(--teal); color:var(--teal); transform:translateY(-1px)}
+.tbtn.on{background:var(--teal); border-color:var(--teal); color:#0c1a19; font-weight:700; box-shadow:0 0 14px rgba(58,166,160,.35)}
+.tbtn.pdf{background:linear-gradient(135deg,#d9a441,#b0563f); border-color:var(--gold); color:#171105; font-weight:700}
+.tbtn.pdf:hover{background:linear-gradient(135deg,#f3c467,#c5644c); transform:translateY(-1px); box-shadow:0 0 18px rgba(217,164,65,.45)}
+#prog{position:fixed; top:0; left:0; height:3px; width:0%; background:linear-gradient(90deg,var(--teal),var(--gold)); z-index:70; transition:width .4s ease; box-shadow:0 0 12px rgba(58,166,160,.8)}
+
+/* ---------- PRESENTATION DECK ---------- */
+#deck{position:fixed; inset:0; padding:52px 0 64px; z-index:1}
+.slide{position:absolute; inset:52px 0 64px; display:none; padding:2vh 4vw; overflow:auto}
+.slide.active{display:grid; grid-template-columns:1.02fr .98fr; gap:4vw; align-items:center; animation:chisel .6s ease both}
+@keyframes chisel{from{opacity:0; clip-path:inset(0 100% 0 0)} to{opacity:1; clip-path:inset(0 0 0 0)}}
+.slide .txt > *{animation:up .5s ease both}
+.slide .txt > *:nth-child(2){animation-delay:.08s}.slide .txt > *:nth-child(3){animation-delay:.16s}
+.slide .txt > *:nth-child(4){animation-delay:.24s}
+@keyframes up{from{opacity:0; transform:translateY(18px)} to{opacity:1; transform:none}}
+.kick{display:flex; align-items:center; gap:10px; font-size:10.5px; letter-spacing:.3em; text-transform:uppercase; color:var(--teal); font-weight:700; margin-bottom:14px}
+.kick::before{content:""; width:30px; height:2px; background:var(--teal)}
+.tags{display:flex; gap:6px; margin-left:auto}
+.tags span{font-size:9px; letter-spacing:.16em; text-transform:uppercase; font-weight:700; padding:3px 10px; border:1px solid; border-radius:999px}
+.tags span.rel{color:var(--teal); border-color:var(--teal); background:rgba(58,166,160,.1)}
+.tags span.cul{color:var(--gold); border-color:var(--gold); background:rgba(217,164,65,.1)}
+.tags span.art{color:var(--rust); border-color:var(--rust); background:rgba(176,86,63,.1)}
+h2.st{font-family:var(--disp); font-weight:400; font-size:clamp(30px,4.2vw,56px); line-height:1.08; margin-bottom:18px; position:relative; padding-bottom:12px}
+h2.st::after{content:""; position:absolute; left:0; bottom:0; height:3px; width:64%; background:linear-gradient(90deg,var(--gold),transparent); animation:underline .9s .25s ease both}
+@keyframes underline{from{width:0} to{width:64%}}
+h2.st em{font-style:normal; color:var(--gold)}
+.pts{list-style:none; display:flex; flex-direction:column; gap:12px; margin-bottom:18px}
+.pts li{position:relative; padding-left:26px; font-size:clamp(14px,1.25vw,17px); opacity:.93}
+.pts li::before{content:""; position:absolute; left:0; top:.5em; width:12px; height:12px; background:var(--teal); clip-path:polygon(0 0,100% 0,100% 60%,60% 100%,0 100%); animation:bul 2.4s ease-in-out infinite alternate}
+@keyframes bul{from{transform:scale(1)} to{transform:scale(1.25)}}
+.pts li b{color:var(--gold); font-weight:700}
+.notebox{border-left:3px solid var(--gold); background:rgba(217,164,65,.08); padding:12px 16px; font-size:13.5px; color:var(--dim)}
+.notebox b{color:var(--gold); letter-spacing:.18em; text-transform:uppercase; font-size:10px; display:block; margin-bottom:4px}
+.fig{position:relative; background:var(--slab); border:1px solid var(--line); padding:12px; box-shadow:0 30px 80px rgba(0,0,0,.5); perspective:900px}
+.slide.active .fig{animation:figIn .9s .15s cubic-bezier(.2,.8,.3,1) both}
+@keyframes figIn{from{opacity:0; transform:perspective(900px) rotateY(20deg) translateX(70px)} to{opacity:1; transform:none}}
+.fig::before,.fig::after{content:""; position:absolute; width:22px; height:22px; border:2px solid var(--gold); opacity:.7}
+.fig::before{top:-6px; left:-6px; border-right:0; border-bottom:0}
+.fig::after{bottom:-6px; right:-6px; border-left:0; border-top:0}
+.fig .im{position:relative; overflow:hidden; aspect-ratio:4/3; background:#1a1a1d; transform:translate3d(var(--px,0),var(--py,0),0); transition:transform .2s ease-out}
+.fig img{width:100%; height:100%; object-fit:cover; filter:contrast(1.05) saturate(.92); animation:kburns 22s ease-in-out infinite alternate}
+@keyframes kburns{from{transform:scale(1)} to{transform:scale(1.09) translate(-1.5%,-1%)}}
+.fig .cap{padding:10px 4px 2px; font-size:12px; color:var(--dim); font-style:italic}
+.fig .cap b{color:var(--teal); font-style:normal; letter-spacing:.14em; text-transform:uppercase; font-size:9.5px; margin-right:8px}
+
+.slide.coverS.active{display:flex; align-items:center; justify-content:center}
+.cwrap{max-width:920px; width:100%; text-align:center; border:1px solid var(--line); background:rgba(42,42,47,.75); padding:40px clamp(20px,4vw,60px); position:relative; box-shadow:0 30px 100px rgba(0,0,0,.7)}
+.cwrap::before{content:""; position:absolute; inset:8px; border:1px solid rgba(217,164,65,.35); pointer-events:none}
+.cwrap .inst{font-size:10px; letter-spacing:.32em; text-transform:uppercase; color:var(--teal); font-weight:700}
+.cwrap h1{font-family:var(--disp); font-size:clamp(36px,5.4vw,70px); line-height:1.05; margin:14px 0 6px}
+.cwrap h1 span{color:var(--gold)}
+.cwrap .sub{font-style:italic; color:var(--dim); font-size:clamp(14px,1.6vw,18px); max-width:58ch; margin:0 auto 20px}
+.ledger{max-width:520px; margin:0 auto; text-align:left}
+.ledger .row{display:flex; gap:12px; align-items:baseline; padding:6px 2px; border-bottom:1px dashed var(--line); font-size:13px}
+.ledger .k{color:var(--dim); font-size:10px; letter-spacing:.18em; text-transform:uppercase; white-space:nowrap; font-weight:700}
+.ledger .dots{flex:1; border-bottom:1px dotted var(--line); transform:translateY(-4px)}
+.ledger .v{font-weight:700}
+.cwrap .abs{margin:18px auto 0; font-size:13px; color:var(--dim); max-width:66ch; line-height:1.7}
+.cwrap .cta-row{margin-top:22px; display:flex; gap:12px; justify-content:center; flex-wrap:wrap}
+
+.dnav{position:fixed; left:0; right:0; bottom:0; z-index:60; display:flex; align-items:center; justify-content:space-between; gap:14px; padding:10px 3vw; background:rgba(33,33,36,.96); border-top:1px solid var(--line)}
+.dnav button{padding:9px 20px; border:1px solid var(--line); background:transparent; color:var(--ink); font-size:10.5px; letter-spacing:.2em; text-transform:uppercase; font-weight:600; transition:all .25s}
+.dnav button:hover{border-color:var(--teal); color:var(--teal)}
+.dnav button:disabled{opacity:.3; cursor:not-allowed}
+#dots{display:flex; gap:8px; flex-wrap:wrap; justify-content:center}
+#dots button{width:10px; height:10px; padding:0; border-radius:50%; border:1px solid var(--teal); background:transparent; transition:all .25s}
+#dots button.on{background:var(--teal); transform:scale(1.35)}
+#ctr{font-family:var(--disp); font-size:15px; color:var(--gold); min-width:64px; text-align:center}
+
+/* ---------- 3D REALISTIC SITE ---------- */
+#site{position:fixed; inset:0; z-index:1; display:none; background:#0b0a08}
+#site.on{display:block}
+#gl{position:absolute; inset:0}
+#gl canvas{display:block; width:100%; height:100%}
+
+.shud{position:absolute; inset:0; pointer-events:none; z-index:5}
+.shud-vig{position:absolute; inset:0; background:radial-gradient(ellipse 120% 95% at 50% 45%, transparent 52%, rgba(14,12,10,.65))}
+#sCross{position:absolute; left:50%; top:50%; width:18px; height:18px; translate:-50% -50%; opacity:.85; transition:transform .2s}
+#sCross::before,#sCross::after{content:""; position:absolute; background:var(--gold2); box-shadow:0 0 8px rgba(0,0,0,.9)}
+#sCross::before{left:8px; top:0; width:2px; height:18px}
+#sCross::after{top:8px; left:0; height:2px; width:18px}
+#sCross.hot{transform:scale(1.45)}
+#sCross.hot::before,#sCross.hot::after{background:#fff8db; box-shadow:0 0 12px #f3c467}
+#sPrompt{position:absolute; left:50%; bottom:16%; translate:-50% 0; background:rgba(20,16,12,.92); border:1.5px solid var(--gold); padding:10px 24px; font-size:11px; letter-spacing:.22em; text-transform:uppercase; font-weight:700; color:var(--gold2); opacity:0; transition:opacity .25s; white-space:nowrap; box-shadow:0 8px 30px rgba(0,0,0,.7)}
+#sPrompt.on{opacity:1}
+#sToast{position:absolute; left:50%; top:18%; translate:-50% 0; font-family:var(--disp); font-size:clamp(18px,2.6vw,30px); letter-spacing:.12em; color:var(--gold2); text-shadow:0 2px 24px rgba(0,0,0,.95); opacity:0; transition:opacity .4s}
+#sToast.on{opacity:1}
+.s-tl{position:absolute; top:52px; left:16px; font-size:10px; letter-spacing:.26em; text-transform:uppercase; color:var(--gold2); font-weight:700; text-shadow:0 2px 8px rgba(0,0,0,.9)}
+.s-tl small{display:block; color:var(--ink); opacity:.75; letter-spacing:.2em; margin-top:3px}
+.s-tr{position:absolute; top:52px; right:16px; text-align:right; font-size:10px; letter-spacing:.22em; text-transform:uppercase; font-weight:700; text-shadow:0 2px 8px rgba(0,0,0,.9)}
+.s-tr b{color:var(--gold2); font-family:var(--disp); font-size:18px}
+.s-bl{position:absolute; left:16px; bottom:14px; font-size:10px; letter-spacing:.14em; opacity:.85; line-height:1.9; text-shadow:0 2px 6px rgba(0,0,0,.9)}
+.s-bl b{color:var(--gold2)}
+
+/* Controls toolbar bottom right */
+.s-ctrls{position:absolute; right:16px; bottom:14px; pointer-events:auto; display:flex; gap:8px; flex-wrap:wrap}
+.s-btn{padding:8px 14px; border:1px solid var(--line); background:rgba(23,20,16,.85); backdrop-filter:blur(6px); color:var(--ink); font-size:10px; letter-spacing:.18em; text-transform:uppercase; font-weight:600; border-radius:3px; transition:all .2s}
+.s-btn:hover{border-color:var(--gold); color:var(--gold2); transform:translateY(-1px)}
+.s-btn.active{background:var(--gold); color:#171105; border-color:var(--gold); font-weight:700}
+
+#sComp{position:absolute; top:52px; left:50%; translate:-50% 0; width:min(340px,50vw); height:24px; overflow:hidden;
+  -webkit-mask:linear-gradient(90deg,transparent,#000 18% 82%,transparent); mask:linear-gradient(90deg,transparent,#000 18% 82%,transparent)}
+#sComp .strip{position:absolute; top:0; left:0; height:100%; display:flex; align-items:center; will-change:transform}
+#sComp .tick{width:20px; flex:0 0 20px; text-align:center; font-size:9px; color:var(--ink); opacity:.75; position:relative}
+#sComp .tick::before{content:""; position:absolute; top:0; left:50%; width:1px; height:5px; background:var(--gold)}
+#sComp .tick.card{font-family:var(--disp); font-size:12px; color:var(--gold2); opacity:1; font-weight:700}
+#sComp .mid{position:absolute; left:50%; top:0; width:2px; height:10px; background:var(--gold2); translate:-50% 0; box-shadow:0 0 6px #f3c467}
+
+/* Overlay start modal */
+#sEnter{position:absolute; inset:0; z-index:9; display:grid; place-items:center; text-align:center; padding:20px; cursor:pointer;
+  background:radial-gradient(ellipse at 50% 45%, rgba(35,28,18,.75), rgba(11,10,8,.97))}
+#sEnter h3{font-family:var(--disp); font-size:clamp(26px,4vw,50px); letter-spacing:.12em; color:var(--gold2); text-shadow:0 0 44px rgba(217,164,65,.6)}
+#sEnter p{font-size:13px; opacity:.85; max-width:62ch; margin:12px auto 20px; line-height:1.7}
+#sEnter .keys{display:flex; gap:10px; justify-content:center; flex-wrap:wrap; font-size:10px; letter-spacing:.18em; text-transform:uppercase; opacity:.9}
+#sEnter .keys span{border:1px solid rgba(217,164,65,.55); padding:6px 14px; background:rgba(20,16,10,.6)}
+#sEnter .keys span.enter{background:var(--gold); color:#1a1306; border-color:var(--gold); font-weight:700; animation:pulseK 1.6s infinite}
+@keyframes pulseK{0%,100%{box-shadow:0 0 0 0 rgba(217,164,65,.6)}50%{box-shadow:0 0 0 12px rgba(217,164,65,0)}}
+#sEnter.hide{display:none}
+
+/* DECODE MODAL */
+#decode{position:fixed; inset:0; z-index:80; display:none; place-items:center; background:rgba(10,9,7,.94); backdrop-filter:blur(8px); padding:20px}
+#decode.on{display:grid}
+.dcard{width:min(940px,96vw); max-height:92%; overflow:auto; background:var(--gran2); border:1.5px solid var(--gold); box-shadow:0 40px 140px #000; display:grid; grid-template-columns:1.05fr .95fr}
+.dcard .dim{position:relative; min-height:340px; background:#18181b}
+.dcard .dim img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; filter:contrast(1.06) saturate(.95)}
+.dcard .dim::after{content:""; position:absolute; inset:0; background:linear-gradient(90deg, transparent 65%, rgba(42,42,47,.95))}
+.dbody{padding:28px 28px 24px; display:flex; flex-direction:column}
+.dbody .dk{font-size:10px; letter-spacing:.3em; text-transform:uppercase; color:var(--teal); font-weight:700}
+.dbody h3{font-family:var(--disp); font-size:26px; margin:8px 0 10px; line-height:1.15; color:var(--gold2)}
+.dbody .dsig{font-size:13px; color:var(--dim); font-style:italic; margin-bottom:14px; line-height:1.6}
+.dbody h5{font-size:10px; letter-spacing:.24em; text-transform:uppercase; color:var(--gold); margin:12px 0 8px}
+.dattrs{list-style:none}
+.dattrs li{display:flex; gap:10px; align-items:baseline; padding:7px 0; border-bottom:1px dashed var(--line); font-size:12.5px}
+.dattrs li b{color:var(--teal); font-weight:700; min-width:130px}
+.dbody .dclose{margin-top:auto; padding-top:16px; align-self:flex-start}
+@media (max-width:860px){ .dcard{grid-template-columns:1fr} .dcard .dim{min-height:220px} }
+
+/* ---------- REPORT (A4 PAPER VIEW) ---------- */
+#report{position:fixed; inset:0; overflow:auto; padding:64px 4vw 60px; background:#2e2e33; display:none; z-index:1}
+#report.on{display:block}
+.sheet{width:min(860px,94vw); margin:0 auto 34px; background:var(--paper); color:var(--pink); padding:54px clamp(28px,5vw,64px) 46px; position:relative;
+  box-shadow:0 24px 80px rgba(0,0,0,.6); opacity:0; transform:translateY(36px); transition:opacity .8s ease, transform .8s ease}
+.sheet.in{opacity:1; transform:none}
+.sheet::before{content:""; position:absolute; inset:12px; border:1px solid rgba(43,43,46,.25); pointer-events:none}
+.rhead{display:flex; justify-content:space-between; font-size:9.5px; letter-spacing:.24em; text-transform:uppercase; color:#7a776e; border-bottom:1.5px solid var(--pink); padding-bottom:8px; margin-bottom:22px}
+.sheet h3{font-family:var(--disp); font-size:clamp(20px,2.4vw,28px); margin:18px 0 8px; line-height:1.2; color:#18181b}
+.sheet h3:first-of-type{margin-top:0}
+.sheet h4{font-size:11px; letter-spacing:.24em; text-transform:uppercase; color:var(--rust); margin:16px 0 6px; font-weight:700}
+.sheet p{font-size:13.5px; line-height:1.75; margin-bottom:10px; text-align:justify}
+.sheet p.abs{font-style:italic; color:#4c4a44; font-size:13px; line-height:1.7}
+.rfig{margin:14px 0; border:1px solid rgba(43,43,46,.4); padding:8px; background:#fff}
+.rfig img{width:100%; max-height:290px; object-fit:cover; filter:contrast(1.04) saturate(.94)}
+.rfig .rc{font-size:11px; font-style:italic; color:#5c5a52; padding-top:6px; text-align:center}
+.rledg{margin:14px 0; font-size:12.5px; background:rgba(0,0,0,.03); padding:8px 12px; border:1px solid rgba(43,43,46,.15)}
+.rledg div{display:flex; gap:10px; padding:4px 0; border-bottom:1px dotted rgba(43,43,46,.3)}
+.rledg div:last-child{border-bottom:none}
+.rledg b{min-width:150px; font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:#6a675e}
+.refs{font-size:12px; line-height:1.7}
+.refs li{margin-left:18px; margin-bottom:6px}
+.pnum{position:absolute; bottom:16px; left:0; right:0; text-align:center; font-size:10px; letter-spacing:.3em; color:#7a776e}
+
+@media (max-width:900px){
+  .slide.active{grid-template-columns:1fr; gap:20px; align-content:start; padding-top:10px}
+  .fig .im{aspect-ratio:16/10}
+  .top-l{display:none}
+}
+</style>
+</head>
+<body>
+
+<div id="prog"></div>
+<div class="top">
+  <div class="top-l">
+    <span>21LEM301T · Indian Art Form</span>
+    <b>Assignment 5 · CO2</b>
+    <span class="top-badge">10 Marks</span>
+  </div>
+  <div class="top-r">
+    <button class="tbtn on" id="mDeck">Presentation</button>
+    <button class="tbtn" id="mSite">3D Realistic Site Walk</button>
+    <button class="tbtn" id="mRep">Report (6 pp)</button>
+    <a href="Sculpture_Thematic_Analysis_Mahabalipuram_Harinish.pdf" download="Sculpture_Thematic_Analysis_Mahabalipuram_Harinish.pdf" class="tbtn pdf">Download PDF</a>
+  </div>
+</div>
+
+<!-- ============ DECK ============ -->
+<div id="deck"></div>
+<div class="dnav" id="dnav">
+  <button id="prev">← Prev</button>
+  <div id="dots"></div>
+  <span id="ctr">01 / 10</span>
+  <button id="next">Next →</button>
+</div>
+
+<!-- ============ 3D REALISTIC SITE ============ -->
+<div id="site">
+  <div id="gl"></div>
+  <div class="shud">
+    <div class="shud-vig"></div>
+    <div id="sComp"><div class="strip" id="sStrip"></div><div class="mid"></div></div>
+    <div class="s-tl">Mamallapuram · Archaeological Coastal Site<small>UNESCO World Heritage · Pallava 7th–8th c. CE</small></div>
+    <div class="s-tr">Monuments examined<br><b id="sFound">0 / 8</b></div>
+    <div id="sCross"></div>
+    <div id="sPrompt"></div>
+    <div id="sToast"></div>
+    <div class="s-bl"><b>mouse</b> look 360° · <b>W A S D</b> walk · <b>shift</b> sprint · <b>E / click</b> examine carving · <b>L</b> raking light · <b>T</b> time of day · <b>M</b> audio</div>
+    
+    <div class="s-ctrls">
+      <button class="s-btn" id="btnRake">Raking Light: Off</button>
+      <button class="s-btn" id="btnTime">Time: Golden Hour</button>
+      <button class="s-btn" id="btnOrbit">Drone View</button>
+      <button class="s-btn" id="btnSound">🔊 Ambient Audio</button>
+    </div>
+  </div>
+  <div id="sEnter">
+    <div>
+      <h3>ENTER THE PALLAVA WORKSHOP</h3>
+      <p>A physically based 3D reconstruction of the Mamallapuram coastal outcrop on the Bay of Bengal: examine the colossal Great Ganges Relief, the Five Monolithic Rathas, Varaha and Mahishasuramardini rock-cut caves, and the twin-vimana Shore Temple. Walk with real sunlight, raking shadows, ocean waves, and procedural stone displacement.</p>
+      <div class="keys"><span class="enter">press ENTER to walk</span><span>or click anywhere</span><span>W A S D walk</span><span>E examine</span><span>L raking light</span><span>T time of day</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ DECODE MODAL ============ -->
+<div id="decode">
+  <div class="dcard">
+    <div class="dim"><img id="dImg" src="" alt=""></div>
+    <div class="dbody">
+      <span class="dk" id="dKick"></span>
+      <h3 id="dTitle"></h3>
+      <p class="dsig" id="dSig"></p>
+      <h5>Iconography decode</h5>
+      <ul class="dattrs" id="dAttrs"></ul>
+      <button class="tbtn dclose" id="dClose">Return to the outcrop</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ REPORT ============ -->
+<div id="report"></div>
+
+<script>
+"use strict";
+var $ = function(s){ return document.querySelector(s); };
+var B = "https://image.qwenlm.ai/public_source/6c87be1b-829a-4fdc-8974-0709bd18cf94/";
+var IMG = {
+  shore:  B+"05ead0c5a-5e02-4867-b527-2a24ec786b337208.png",
+  rathas: B+"45ead0c5a-5e02-4867-b527-2a24ec786b338463.png",
+  lion:   B+"15ead0c5a-5e02-4867-b527-2a24ec786b338045.png",
+  ganga:  B+"25ead0c5a-5e02-4867-b527-2a24ec786b332494.png",
+  varaha: B+"55ead0c5a-5e02-4867-b527-2a24ec786b333261.png",
+  krishna:B+"15ead0c5a-5e02-4867-b527-2a24ec786b336339.png",
+  durga:  B+"45ead0c5a-5e02-4867-b527-2a24ec786b334701.png",
+  bhima:  B+"05ead0c5a-5e02-4867-b527-2a24ec786b335274.png",
+  gaja:   B+"65ead0c5a-5e02-4867-b527-2a24ec786b339903.png",
+  arch:   B+"35ead0c5a-5e02-4867-b527-2a24ec786b338432.png",
+  gable:  B+"45ead0c5a-5e02-4867-b527-2a24ec786b339098.png"
+};
+
+var SLIDES = [
+{ cover:true, img:IMG.shore, cap:"Shore Temple, Mamallapuram",
+  title:'Stone That <em>Speaks</em>',
+  sub:"A thematic and iconographic analysis of the rock-cut sculptures of Mahabalipuram (Mamallapuram), Tamil Nadu — Pallava, 7th–8th century CE.",
+  abs:"This research analyzes the open-air reliefs, cave shrines, and monolithic rathas of Mahabalipuram as one legible theological program, identifying four recurring themes — the descent of divine grace, gods in heroic action, the sanctification of everyday life, and royal dynastic piety — and examining the iconographic language of scale, register, attribute, and gesture through which those themes are communicated." },
+{ kick:"Context", title:"One Outcrop, One Century, <em>One Workshop</em>", tags:["art","cul"], img:IMG.rathas,
+  cap:"Pancha Rathas — five monoliths cut top-down from single boulders",
+  pts:["Mamallapuram, the premier Pallava port on the Coromandel coast, was carved <b>c. 630–730 CE</b> almost entirely from one outcrop of charnockite granite.",
+       "Three architectural formats speak one unified visual language here: <b>open-air bas-reliefs</b>, <b>cave shrines (mandapas)</b>, and <b>monolithic rathas</b>.",
+       "Inscribed as a UNESCO World Heritage Site in 1984, it stands as the clearest primary text of early South Indian Dravidian iconography."],
+  note:"Subtractive epistemology: the sculptor removes and never adds — every form was already latent within the metamorphic boulder.",
+  paper:"Because the entire complex rises from one granite outcrop, stylistic evolution across the site can be read stratigraphically: earlier soft Mahendra-period modeling crystallizes into the crisp, monumental articulation of the Mamalla workshops." },
+{ kick:"Patronage", title:"The <em>Lion</em> of the Pallavas", tags:["cul","rel"], img:IMG.lion,
+  cap:"Lion-base (vyala) pillars under a mandapa porch — dynastic emblem as structure",
+  pts:["Under <b>Narasimhavarman I 'Mamalla'</b> and his royal successors, sculptural iconography was weaponized as state theology.",
+       "The seated Simha-vyala (horned lion) at pillar bases is simultaneously <b>structural support, apotropaic guardian, and dynastic signature</b>.",
+       "Port wealth funded multi-generational workshops that transformed the coastal landscape into an open-air imperial manifesto."],
+  note:"Heraldic insignia as architecture: the lion signs Pallava authorship as incontrovertibly as a royal copper-plate grant.",
+  paper:"The vyala pillar is the site's most recognizable signature: an imperial heraldic beast converted into a load-bearing column, forcing every visitor to cross beneath the body of the king's totemic protector." },
+{ kick:"Theme I · The Sacred Descends", title:"The <em>Descent</em> of the Ganges", tags:["rel"], img:IMG.ganga,
+  cap:"The colossal open-air relief (c. 29 × 13 m): all creation converges on the cleft",
+  pts:["A natural vertical cleft in the granite cliff <b>becomes the celestial river Ganga</b>: raw geology recruited directly into sacred narrative.",
+       "Ascending Nagas and Naginis undulate inside the water cleft, while celestial Gandharvas and Vidyadharas soar weightlessly in the ether.",
+       "The double reading (<b>Arjuna's penance</b> for the Pashupatastra / <b>Bhagiratha's penance</b> to bring Ganga down) is deliberate theological shlesha (polysemy)."],
+  note:"Directionality is meaning: universal movement toward the vertical cleft is movement toward cosmic grace (anugraha).",
+  paper:"The relief's genius is hydrological: an ancient masonry cistern above the cleft released water during festivals, physically cascading down the rock to literally animate the sculpted river." },
+{ kick:"Theme II · Gods in Action", title:"Vishnu <em>Raises</em> the Earth", tags:["rel"], img:IMG.varaha,
+  cap:"Varaha mandapa: the boar-headed Vishnu lifts Bhudevi with profound tenderness",
+  pts:["<b>Bhu-Varaha rescuing Mother Earth</b>: cosmic protection (rakshana) rendered somatic — the boar snout tenderly nuzzling the rescued goddess.",
+       "In the same rock-cut mandapa, <b>Trivikrama</b> measures the cosmos in three cosmic strides, while Lakshmi is bathed by elephants (Gajalakshmi).",
+       "Adjacent, <b>Durga as Mahishasuramardini</b> attacks the buffalo demon Mahishasura in eight-armed militant grandeur."],
+  note:"Iconographic attributes identify avataras: boar head + hoisted Bhudevi = Varaha; disc held edgewise + cosmic stride = Trivikrama.",
+  paper:"The Varaha panel synthesizes titanic power with intimacy: the god's massive shoulder cradles Bhudevi with an organic sensitivity rarely matched in world sculpture." },
+{ kick:"Theme III · The Everyday Sanctified", title:"Cowherds, Cats and <em>Milkmaids</em>", tags:["cul"], img:IMG.krishna,
+  cap:"Krishna mandapa: the herd sheltered under Mount Govardhana",
+  pts:["<b>Krishna lifting Govardhana</b> shelters pastoral society: cowherds, cattle, and milkmaids under a stone canopy.",
+       "Empirical observation of life: a cowherd milks a cow while the mother turns to tenderly lick her nursing calf.",
+       "On the Great Relief, a <b>cat stands in mock ascetic penance</b> while mice dance at its feet — ethical satire inside sacred stone."],
+  note:"Empirical naturalism: the real world is not an illusion to be discarded, but the vessel through which the divine is witnessed.",
+  paper:"The pastoral reliefs in Krishna Mandapa represent an unprecedented triumph of observational realism in Indian art: bovine anatomy, rope tension, and pot-balancing postures are studied directly from Tamil coastal life." },
+{ kick:"Method · Reading the Language", title:"How the Stone <em>Says</em> It", tags:["art"], img:IMG.durga,
+  cap:"Mahishasuramardini panel: attributes, mudras, and scale carry the sentence",
+  pts:["<b>Hierarchy of scale</b>: deities are carved monumental; attendant humans and retinue step down proportionally.",
+       "<b>Ayudhas and mudras are visual grammar</b>: the early Pallava discus held edgewise (prayoga), abhaya mudra, and the bow in tension.",
+       "<b>Spatial directionality</b>: Durga charges from left to right; the retreating demon shrinks toward the right border in moral collapse."],
+  note:"Semiotic formula: Iconography = Vocabulary (attributes) + Syntax (scale, posture, register, gaze).",
+  paper:"Once this visual grammar is mastered, even weathered and salt-eroded granite reliefs remain fully legible to the trained viewer." },
+{ kick:"Artistic Significance", title:"Thinking in <em>Subtraction</em>", tags:["art"], img:IMG.bhima,
+  cap:"Bhima ratha: a barrel-vaulted sala shrine cut top-down from a single boulder",
+  pts:["The Pancha Rathas are <b>scale architectural prototypes</b>: translating perishable timber, thatch, and brick traditions into eternal stone.",
+       "<b>Unfinished faces preserve the workshop sequence</b>: quarry trenching, wedge-splitting, volumetric blocking, and detail chiseling.",
+       "Pallava mastery over hard charnockite granite directly established the <b>formal canon of Dravidian temple architecture</b>."],
+  note:"The unfinished stone is primary evidence: workshop chisel grooves document the exact subtractive method.",
+  paper:"Tool-marks on the monolithic rathas reveal that master carvers blocked masses before assigning iconographic specifics, proving an advanced modular workshop pedagogy." },
+{ kick:"Cultural Significance", title:"A Port That Carved <em>for the Sea</em>", tags:["cul","rel"], img:IMG.gaja,
+  cap:"Shore Temple: twin granite vimanas standing directly on the Coromandel surf",
+  pts:["As the chief Pallava maritime gateway, Mamallapuram <b>exported its sculptural vocabulary across the Indian Ocean</b> to Java and Cambodia.",
+       "<b>Shaiva, Vaishnava, and Shakta sanctuaries coexist peacefully side-by-side</b>: imperial synthesis rather than sectarian conflict.",
+       "The Shore Temple stood as an iconic <b>maritime seamark</b>: sacred architecture serving seafaring navigation."],
+  note:"Trans-oceanic transmission: Pallava motifs like the kudu arch and makara reappear in 8th-century Javanese candis.",
+  paper:"Facing the sunrise over the Bay of Bengal, the Shore Temple fused religious worship with royal naval majesty, welcoming foreign embassies arriving along the Maritime Silk Route." },
+{ kick:"Conclusion", title:"The <em>Legible</em> Mountain", tags:["rel","cul","art"], img:IMG.arch,
+  cap:"19th-century archival photograph of the Great Relief: stone that continues to speak",
+  pts:["The four overarching themes form an <b>integrated philosophical and imperial cosmos</b>.",
+       "Mamallapuram created the <b>definitive template for South Indian temple art</b>, later inherited and expanded by the Cholas and Vijayanagara.",
+       "Thirteen centuries later, this living granite remains an articulate primary text that continues to be read and celebrated."],
+  note:"Thematic analysis proves that the site was deliberately designed as an open-air public text for all ranks of society.",
+  paper:"Our analysis concludes where Pallava chisels began: with living stone transformed into eternal speech, proving that stone does not merely endure—it speaks." }
+];
+
+/* 3D monuments data */
+var SLABS = [
+{ t:"Descent of the Ganges (Arjuna's Penance)", s:"Open-air bas-relief · c. 650 CE", img:IMG.ganga, theme:"Religious",
+  sig:"The colossal 29 × 13 m granite cliff transformed into the celestial river Ganga: nagas, ascetics, flying vidyadharas, and the life-sized elephant herd.",
+  attrs:[["Natural Central Fissure","Represents the celestial river Ganga flowing from heaven to earth with ascending nagas"],
+         ["One-legged Ascetic (Tapas)","Dual identity: Bhagiratha bringing Ganga, or Arjuna seeking Pashupatastra"],
+         ["Four-armed Lord Shiva","Accompanied by dwarfish ganas, bestowing divine boon (varada mudra)"],
+         ["Matriarchal Elephant Herd","Remarkable naturalism: male tusker sheltering young calves between front legs"],
+         ["Satirical Ascetic Cat","Parody of hypocritical penance: cat meditates while mice play safely at its paws"]] },
+{ t:"Bhu-Varaha Mandapa", s:"Rock-cut cave panel · Vaishnava", img:IMG.varaha, theme:"Religious",
+  sig:"Vishnu as the colossal boar avatara lifting Mother Earth (Bhudevi) from the cosmic abyss with monumental tenderness.",
+  attrs:[["Boar Head & Muscular Torso","Symbol of Vishnu's transcendent power overturning cosmic disorder"],
+         ["Bhudevi (Mother Earth)","Seated gently on Varaha's flexed right knee in trusting surrender"],
+         ["Sheshanaga underfoot","Underground serpent king supporting the lotus pedestal"],
+         ["Attendant Sages & Devas","Arranged in descending scale to reflect spiritual hierarchy"]] },
+{ t:"Mahishasuramardini Cave", s:"Rock-cut battle panel · Shakta", img:IMG.durga, theme:"Religious",
+  sig:"The goddess Durga mounted on her roaring lion charging the buffalo-headed demon Mahishasura in kinetic moral combat.",
+  attrs:[["Eight-armed Durga","Wielding bow, trident, discus, sword, and conch in harmonious motion"],
+         ["Roaring Lion Vahana","Aggressive springing posture emphasizing divine indignation"],
+         ["Mahishasura Titan","Depicted with human body and buffalo horns, wielding an iron club as he recoils"],
+         ["Direction of Flight","Demonic army collapses toward the right margin, visually declaring defeat"]] },
+{ t:"Govardhana Cave (Krishna Mandapa)", s:"Rock-cut pastoral relief · Krishnaite", img:IMG.krishna, theme:"Cultural",
+  sig:"Krishna lifting Mount Govardhana like an umbrella to shield the cowherds (Ayars) and cattle of Gokula from Indra's storm.",
+  attrs:[["Mountain Held Aloft","Single-handed effortless divine protection over human community"],
+         ["Cow Milking Scene","Mother cow turns affectionately to lick her nursing calf — observational realism"],
+         ["Milkmaid with Pots","Earthy pastoral life elevated to sacred status"],
+         ["Pastoral Flute Player","Music and peace amidst cosmic turmoil"]] },
+{ t:"Simha-Vyala Pillar Porch", s:"Mandapa veranda · Dynastic", img:IMG.lion, theme:"Cultural",
+  sig:"The signature Pallava architectural column: crouching horned lion acting as foundation, guardian, and royal emblem.",
+  attrs:[["Seated Lion (Vyala)","Symbol of Narasimhavarman I 'Mamalla', the conquering king"],
+         ["Cushion Capital (Kumbha)","Bulbous member distributing the dead weight of the rock architrave"],
+         ["Repetition across Caves","Standardized workshop signature spanning four generations of monarchs"]] },
+{ t:"Pancha Rathas (Monolithic Chariots)", s:"Top-down monolithic shrines · 7th c.", img:IMG.rathas, theme:"Artistic",
+  sig:"Five experimental architectural prototypes carved top-down from single granite boulders, codifying Dravidian temple forms.",
+  attrs:[["Dharmaraja Ratha","Stepped tritala vimana with octagonal sikhara and corner deity sculptures"],
+         ["Bhima Ratha","Massive oblong barrel-vaulted wagon roof (sala-shikhara) with pillared portico"],
+         ["Draupadi Ratha","Four-cornered square hut (kutagara) shrine modeled on thatch hermitages"],
+         ["Nakula-Sahadeva & Elephant","Apsidal elephant-back (gajaprishta) shrine with free-standing monolithic elephant"]] },
+{ t:"Shore Temple (Alai-vayil-kovil)", s:"Structural coastal temple · c. 700–728 CE", img:IMG.shore, theme:"Cultural",
+  sig:"Twin granite vimanas kissing the ocean surf: early structural Dravidian temple functioning as both sanctuary and maritime beacon.",
+  attrs:[["Twin Tiered Vimanas","Dedicated to Shiva (east and west) with Vishnu Anantasayana between"],
+         ["Nandi Bull Perimeter","Enclosure wall adorned with dozens of couchant stone bulls facing the sea"],
+         ["Granite Breakwater","Engineered directly into coastal bedrock to withstand tidal erosion"]] },
+{ t:"Kudu Arch & Gable Stele", s:"Ornamental detail · Architectural", img:IMG.gable, theme:"Artistic",
+  sig:"The horseshoe-shaped chaitya arch (kudu) with a protective human face inside, framing roof tiers and dormers.",
+  attrs:[["Horseshoe Kudu Arch","Dravidian decorative adaptation of earlier Buddhist sun-window arches"],
+         ["Protective Face Inside","Apotropaic guardian looking outward from the roof perimeter"],
+         ["Finial Kalasa","Apex terminal accentuating vertical ascent"]] }
+];
+
+var REFS = [
+ "Srinivasan, K. R. (1964). <i>Cave-Temples of the Pallavas</i>. New Delhi: Archaeological Survey of India (ASI).",
+ "Lockwood, Michael, Siromoney, Gift, & Dayanandan, P. (1974). <i>Mahabalipuram Studies</i>. Madras: Christian Literature Society.",
+ "Dehejia, Vidya (1997). <i>Indian Art</i>. London: Phaidon Press.",
+ "UNESCO World Heritage Centre (1984). <i>Group of Monuments at Mahabalipuram</i>. Advisory Body Evaluation, Ref. 249."
+];
+
+/* ================= PRESENTATION DECK ================= */
+var deck = $("#deck");
+deck.innerHTML = SLIDES.map(function(s,i){
+  if(s.cover){
+    return '<section class="slide coverS" data-i="'+i+'"><div class="cwrap">'+
+      '<p class="inst">SRM Institute of Science and Technology · Assignment 5 · CO2 · 10 Marks</p>'+
+      '<h1>'+s.title+'</h1><p class="sub">'+s.sub+'</p>'+
+      '<div class="ledger">'+
+        '<div class="row"><span class="k">Student Name</span><span class="dots"></span><span class="v">HARINISH S V</span></div>'+
+        '<div class="row"><span class="k">Registration No</span><span class="dots"></span><span class="v">RA2411030010137</span></div>'+
+        '<div class="row"><span class="k">Section / Year</span><span class="dots"></span><span class="v">Section Y1 · 2026</span></div>'+
+        '<div class="row"><span class="k">Subject Name</span><span class="dots"></span><span class="v">INDIAN ART FORM</span></div>'+
+        '<div class="row"><span class="k">Subject Code</span><span class="dots"></span><span class="v">21LEM301T</span></div>'+
+      '</div><p class="abs">'+s.abs+'</p>'+
+      '<div class="cta-row">'+
+        '<button class="tbtn on" onclick="setMode(\'site\')">Start 3D Site Walk →</button>'+
+        '<button class="tbtn" onclick="setMode(\'rep\')">Read Academic Paper (6 pp)</button>'+
+        '<a href="Sculpture_Thematic_Analysis_Mahabalipuram_Harinish.pdf" download class="tbtn pdf">Download Official PDF</a>'+
+      '</div></div></section>';
+  }
+  var tags = (s.tags||[]).map(function(t){
+    var cls = t==="rel"?"rel":t==="cul"?"cul":"art";
+    var lab = t==="rel"?"Religious":t==="cul"?"Cultural":"Artistic";
+    return '<span class="'+cls+'">'+lab+'</span>';
+  }).join("");
+  return '<section class="slide" data-i="'+i+'">'+
+    '<div class="txt"><div class="kick">'+s.kick+'<span class="tags">'+tags+'</span></div>'+
+    '<h2 class="st">'+s.title+'</h2>'+
+    '<ul class="pts">'+s.pts.map(function(p){return "<li>"+p+"</li>";}).join("")+'</ul>'+
+    '<div class="notebox"><b>Iconography Insight</b>'+s.note+'</div></div>'+
+    '<figure class="fig"><div class="im"><img src="'+s.img+'" alt="'+s.cap+'" loading="lazy"></div>'+
+    '<figcaption class="cap"><b>Fig. '+i+'</b>'+s.cap+'</figcaption></figure></section>';
+}).join("");
+
+var slides = Array.from(document.querySelectorAll(".slide")), cur = 0;
+$("#dots").innerHTML = slides.map(function(_,i){ return '<button data-i="'+i+'" aria-label="Slide '+(i+1)+'"></button>'; }).join("");
+function show(i){
+  cur = Math.max(0, Math.min(slides.length-1, i));
+  slides.forEach(function(s,j){ s.classList.toggle("active", j===cur); });
+  document.querySelectorAll("#dots button").forEach(function(d,j){ d.classList.toggle("on", j===cur); });
+  $("#ctr").textContent = String(cur+1).padStart(2,"0")+" / "+String(slides.length).padStart(2,"0");
+  $("#prog").style.width = ((cur+1)/slides.length*100)+"%";
+  $("#prev").disabled = cur===0; $("#next").disabled = cur===slides.length-1;
+}
+$("#prev").onclick = function(){ show(cur-1); };
+$("#next").onclick = function(){ show(cur+1); };
+$("#dots").addEventListener("click", function(e){ var b = e.target.closest("button[data-i]"); if(b) show(+b.dataset.i); });
+window.addEventListener("keydown", function(e){
+  if($("#site").classList.contains("on") || $("#report").classList.contains("on")) return;
+  if(e.key==="ArrowRight"||e.key==="PageDown"||e.key===" "){ e.preventDefault(); show(cur+1); }
+  if(e.key==="ArrowLeft"||e.key==="PageUp"){ e.preventDefault(); show(cur-1); }
+  if(e.key==="Home") show(0);
+  if(e.key==="End") show(slides.length-1);
+});
+deck.addEventListener("mousemove", function(e){
+  var im = slides[cur] && slides[cur].querySelector(".fig .im");
+  if(!im) return;
+  var r = deck.getBoundingClientRect();
+  im.style.setProperty("--px", ((e.clientX - r.width/2)/r.width*12).toFixed(2)+"px");
+  im.style.setProperty("--py", ((e.clientY - r.height/2)/r.height*10).toFixed(2)+"px");
+});
+show(0);
+
+/* ================= REPORT (6 PAGES) ================= */
+function para(s){ return s.pts.map(function(p){ return "<p>"+p.replace(/<b>/g,"<strong>").replace(/<\/b>/g,"</strong>")+"</p>"; }).join("") + (s.paper ? "<p>"+s.paper+"</p>" : ""); }
+function rfig(img,cap){ return '<figure class="rfig"><img src="'+img+'" alt="'+cap+'"><figcaption class="rc">'+cap+'</figcaption></figure>'; }
+var S = SLIDES;
+var pages = [
+ '<h3>Sculpture Thematic Analysis: The Rock-Cut Sculptures of Mahabalipuram</h3>'+
+ '<p class="abs">'+S[0].abs+'</p>'+
+ '<div class="rledg"><div><b>Student Name</b><span>HARINISH S V (Registration No: RA2411030010137)</span></div>'+
+ '<div><b>Section & Subject</b><span>Section Y1 · 21LEM301T — Indian Art Form (Assignment 5 · CO2)</span></div>'+
+ '<div><b>Institution</b><span>SRM Institute of Science and Technology · Faculty of Science and Humanities</span></div></div>'+
+ rfig(IMG.shore,"Fig. 1 — Shore Temple: monolithic subtraction evolving into maritime structural architecture."),
+ '<h3>1. The Site and Its Method: Geology & Subtraction</h3>'+ para(S[1]) +
+ '<h3>2. Patronage: The Heraldic Lion of the Pallavas</h3>'+ para(S[2]) +
+ rfig(IMG.rathas,"Fig. 2 — Pancha Rathas: five monolithic structural prototypes chiseled top-down from granite."),
+ '<h3>3. Theme I — The Sacred Descends: The Descent of the Ganges</h3>'+ para(S[3]) +
+ rfig(IMG.ganga,"Fig. 3 — The colossal open-air relief; natural geological fissure serving as the celestial river."),
+ '<h3>4. Theme II — Gods in Heroic Action</h3>'+ para(S[4]) +
+ '<h3>5. Theme III — The Everyday Sanctified</h3>'+ para(S[5]) +
+ rfig(IMG.varaha,"Fig. 4 — Varaha mandapa: cosmic deliverance rendered with somatic tenderness."),
+ '<h3>6. Iconographic Language: The Semiotic Syntax</h3>'+ para(S[6]) +
+ '<h3>7. Artistic Significance: The Monolithic Prototype</h3>'+ para(S[7]) +
+ rfig(IMG.durga,"Fig. 5 — Mahishasuramardini panel: spatial directionality, mudras, and ayudha grammar."),
+ '<h3>8. Cultural Significance: Trans-Oceanic Maritime Transmission</h3>'+ para(S[8]) +
+ '<h3>9. Conclusion: The Living Text of Living Basalt</h3>'+ para(S[9]) +
+ '<h4>Scholarly References & Primary Archival Literature</h4><ol class="refs">'+REFS.map(function(r){return "<li>"+r+"</li>";}).join("")+'</ol>'+
+ rfig(IMG.arch,"Fig. 6 — 19th-century photographic archive: thirteen centuries of continuous reading.")
+];
+$("#report").innerHTML = pages.map(function(p,i){
+  return '<section class="sheet"><div class="rhead"><span>Sculpture Thematic Analysis · Mahabalipuram</span><span>21LEM301T · CO2 · 10 MARKS</span></div>'+
+    p + '<div class="pnum">— PAGE '+(i+1)+' OF 6 —</div></section>';
+}).join("");
+var rio = new IntersectionObserver(function(es){ es.forEach(function(en){ if(en.isIntersecting){ en.target.classList.add("in"); rio.unobserve(en.target); } }); }, {threshold:.1});
+document.querySelectorAll(".sheet").forEach(function(s){ rio.observe(s); });
+
+/* ================= ROUTING MODES ================= */
+function setMode(m){
+  $("#site").classList.toggle("on", m==="site");
+  $("#report").classList.toggle("on", m==="rep");
+  $("#deck").style.display = (m==="deck") ? "" : "none";
+  $("#dnav").style.display = (m==="deck") ? "" : "none";
+  $("#prog").style.display = (m==="deck") ? "" : "none";
+  $("#mDeck").classList.toggle("on", m==="deck");
+  $("#mSite").classList.toggle("on", m==="site");
+  $("#mRep").classList.toggle("on", m==="rep");
+  document.body.classList.toggle("cavelock", m==="site");
+  if(m==="site") initRealisticSite();
+  if(m==="rep") $("#report").scrollTop = 0;
+}
+$("#mDeck").onclick = function(){ setMode("deck"); };
+$("#mSite").onclick = function(){ setMode("site"); };
+$("#mRep").onclick  = function(){ setMode("rep"); };
+
+/* ================= WEB AUDIO API AMBIENCE (PROCEDURAL OCEAN WAVES & WIND) ================= */
+var audioCtx = null, audioRunning = false;
+function toggleAudio(){
+  if(!audioCtx){
+    try {
+      var AC = window.AudioContext || window.webkitAudioContext;
+      audioCtx = new AC();
+      
+      // Pink noise generator for ocean waves
+      var bufferSize = audioCtx.sampleRate * 2;
+      var noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+      var output = noiseBuffer.getChannelData(0);
+      var b0=0,b1=0,b2=0,b3=0,b4=0,b5=0,b6=0;
+      for (var i = 0; i < bufferSize; i++) {
+        var white = Math.random() * 2 - 1;
+        b0 = 0.99886 * b0 + white * 0.0555179;
+        b1 = 0.99332 * b1 + white * 0.0750759;
+        b2 = 0.96900 * b2 + white * 0.1538520;
+        b3 = 0.86650 * b3 + white * 0.3104856;
+        b4 = 0.55000 * b4 + white * 0.5329522;
+        b5 = -0.7616 * b5 - white * 0.0168980;
+        output[i] = b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362;
+        output[i] *= 0.11;
+        b6 = white * 0.115926;
+      }
+      var whiteNoise = audioCtx.createBufferSource();
+      whiteNoise.buffer = noiseBuffer;
+      whiteNoise.loop = true;
+
+      // Lowpass filter modulated by LFO to simulate surf swell
+      var filter = audioCtx.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(320, audioCtx.currentTime);
+
+      var lfo = audioCtx.createOscillator();
+      lfo.frequency.setValueAtTime(0.12, audioCtx.currentTime); // ~8 sec wave period
+      var lfoGain = audioCtx.createGain();
+      lfoGain.gain.setValueAtTime(260, audioCtx.currentTime);
+      lfo.connect(lfoGain);
+      lfoGain.connect(filter.frequency);
+
+      var gainNode = audioCtx.createGain();
+      gainNode.gain.setValueAtTime(0.4, audioCtx.currentTime);
+
+      whiteNoise.connect(filter);
+      filter.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+
+      whiteNoise.start(0);
+      lfo.start(0);
+      audioRunning = true;
+      $("#btnSound").textContent = "🔊 Ocean Surf: On";
+      $("#btnSound").classList.add("active");
+    } catch(e){
+      console.log("Audio not allowed", e);
+    }
+  } else {
+    if(audioCtx.state === 'suspended'){
+      audioCtx.resume();
+      audioRunning = true;
+      $("#btnSound").textContent = "🔊 Ocean Surf: On";
+      $("#btnSound").classList.add("active");
+    } else if(audioCtx.state === 'running'){
+      audioCtx.suspend();
+      audioRunning = false;
+      $("#btnSound").textContent = "🔇 Ocean Surf: Off";
+      $("#btnSound").classList.remove("active");
+    }
+  }
+}
+$("#btnSound").onclick = toggleAudio;
+
+/* ================= 3D REALISTIC SCULPTURE & ARCHAEOLOGICAL ENGINE ================= */
+var siteReady = false;
+function initRealisticSite(){
+  if(siteReady) return; siteReady = true;
+
+  /* ---------- HIGH-RESOLUTION PROCEDURAL TEXTURE SYNTHESIS ---------- */
+  function createCanvas(w,h){
+    var c = document.createElement("canvas"); c.width=w; c.height=h;
+    var ctx = c.getContext("2d");
+    return [c, ctx];
+  }
+
+  // Realistic South Indian Charnockite Granite texture generator
+  function generateGranite(w, h, baseHex, speckleHex, darkFleck){
+    var a = createCanvas(w, h), ctx = a[1];
+    ctx.fillStyle = baseHex; ctx.fillRect(0,0,w,h);
+    
+    // Mineral crystalline flecks
+    var imgData = ctx.getImageData(0,0,w,h), d = imgData.data;
+    for(var i=0; i<d.length; i+=4){
+      var noise = (Math.random() - 0.5) * 50;
+      var fleck = Math.random();
+      if(fleck > 0.94){ // Quartz crystals (bright)
+        d[i]   = Math.min(255, d[i] + 70);
+        d[i+1] = Math.min(255, d[i+1] + 65);
+        d[i+2] = Math.min(255, d[i+2] + 55);
+      } else if(fleck < 0.08){ // Biotite hornblende (dark iron fleck)
+        d[i]   = Math.max(0, d[i] - 65);
+        d[i+1] = Math.max(0, d[i+1] - 65);
+        d[i+2] = Math.max(0, d[i+2] - 65);
+      } else {
+        d[i]   = Math.max(0, Math.min(255, d[i] + noise));
+        d[i+1] = Math.max(0, Math.min(255, d[i+1] + noise));
+        d[i+2] = Math.max(0, Math.min(255, d[i+2] + noise));
+      }
+    }
+    ctx.putImageData(imgData, 0, 0);
+
+    // Fine chisel tooth striations (Pallava point & claw chisel dressing)
+    ctx.strokeStyle = "rgba(40,35,30,0.14)";
+    ctx.lineWidth = 1.2;
+    for(var y=0; y<h; y+=7){
+      ctx.beginPath();
+      ctx.moveTo(0, y + (Math.random()-0.5)*3);
+      for(var x=0; x<w; x+=20){
+        ctx.lineTo(x, y + Math.sin(x*0.08)*2 + (Math.random()-0.5)*2);
+      }
+      ctx.stroke();
+    }
+    return a[0];
+  }
+
+  // Relief heightmap for Descent of the Ganges
+  function makeGangaReliefMap(){
+    var w = 1024, h = 512, a = createCanvas(w,h), ctx = a[1];
+    ctx.fillStyle = "#808080"; ctx.fillRect(0,0,w,h); // Mid gray base
+
+    // Central geological cleft (deep trench)
+    ctx.save();
+    ctx.filter = "blur(8px)";
+    ctx.fillStyle = "#2a2a2a";
+    ctx.beginPath();
+    ctx.moveTo(w/2 - 24, 0);
+    ctx.bezierCurveTo(w/2 - 10, h*0.3, w/2 + 20, h*0.6, w/2 - 6, h);
+    ctx.lineTo(w/2 + 20, h);
+    ctx.bezierCurveTo(w/2 + 40, h*0.6, w/2 + 10, h*0.3, w/2 + 18, 0);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+
+    // Serpentine Nagas in cleft
+    ctx.save();
+    ctx.filter = "blur(4px)";
+    ctx.fillStyle = "#d0d0d0";
+    ctx.strokeStyle = "#d0d0d0";
+    ctx.lineWidth = 14;
+    ctx.beginPath();
+    for(var ny=80; ny<h-40; ny+=10){
+      var nx = w/2 + Math.sin(ny*0.05)*14;
+      if(ny===80) ctx.moveTo(nx, ny); else ctx.lineTo(nx, ny);
+    }
+    ctx.stroke();
+    // Naga hoods
+    ctx.beginPath(); ctx.arc(w/2, 85, 20, 0, Math.PI*2); ctx.fill();
+    ctx.restore();
+
+    // Giant Elephant Herd (Right bank)
+    ctx.save();
+    ctx.filter = "blur(6px)";
+    ctx.fillStyle = "#e0e0e0";
+    // Matriarch bull elephant
+    ctx.beginPath(); ctx.ellipse(w*0.75, h*0.7, 110, 80, 0, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(w*0.64, h*0.62, 50, 0, Math.PI*2); ctx.fill(); // Head
+    // Trunk
+    ctx.lineWidth = 20; ctx.strokeStyle = "#e0e0e0";
+    ctx.beginPath(); ctx.moveTo(w*0.62, h*0.65); ctx.quadraticCurveTo(w*0.58, h*0.82, w*0.60, h*0.9); ctx.stroke();
+    // Two Baby elephants tucked under
+    ctx.beginPath(); ctx.ellipse(w*0.62, h*0.82, 35, 26, 0, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(w*0.88, h*0.8, 45, 32, 0, 0, Math.PI*2); ctx.fill();
+    ctx.restore();
+
+    // Flying Vidyadharas & Gandharvas (Upper heavens)
+    ctx.save();
+    ctx.filter = "blur(4px)";
+    ctx.fillStyle = "#dedede";
+    for(var vi=0; vi<10; vi++){
+      var vx = 80 + vi*95;
+      if(Math.abs(vx - w/2) < 60) continue;
+      var vy = 70 + (vi%2)*30;
+      ctx.beginPath(); ctx.ellipse(vx, vy, 24, 14, vi>5?-0.3:0.3, 0, Math.PI*2); ctx.fill();
+      ctx.beginPath(); ctx.arc(vx + (vi>5?-16:16), vy-10, 8, 0, Math.PI*2); ctx.fill();
+    }
+    // Ascetic (Bhagiratha / Arjuna) standing on one leg
+    ctx.beginPath(); ctx.ellipse(w*0.38, h*0.5, 12, 35, 0, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(w*0.38, h*0.42, 9, 0, Math.PI*2); ctx.fill();
+    // Four-armed Shiva adjacent
+    ctx.beginPath(); ctx.ellipse(w*0.34, h*0.48, 20, 48, 0, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(w*0.34, h*0.38, 12, 0, Math.PI*2); ctx.fill();
+    // Cat & mice (satirical relief at bottom right)
+    ctx.beginPath(); ctx.ellipse(w*0.56, h*0.88, 10, 18, 0, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(w*0.54, h*0.92, 4, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(w*0.58, h*0.93, 4, 0, Math.PI*2); ctx.fill();
+    ctx.restore();
+
+    return a[0];
+  }
+
+  var graniteCanvas = generateGranite(1024, 1024, "#a18765", "#c4af8c", "#3b3123");
+  var graniteDarkCanvas = generateGranite(1024, 1024, "#7a6346", "#9a805f", "#261f16");
+  var sandCanvas = generateGranite(1024, 1024, "#cbaf81", "#dec499", "#8e734c");
+
+  function makeTex(c, rep){
+    var t = new THREE.CanvasTexture(c);
+    t.wrapS = t.wrapT = THREE.RepeatWrapping;
+    if(rep) t.repeat.set(rep, rep);
+    t.anisotropy = 8;
+    return t;
+  }
+
+  var graniteTex = makeTex(graniteCanvas, 4);
+  var graniteDarkTex = makeTex(graniteDarkCanvas, 2);
+  var sandTex = makeTex(sandCanvas, 12);
+
+  /* ---------- THREE.JS SCENE SETUP ---------- */
+  var host = $("#gl");
+  var scene = new THREE.Scene();
+
+  var camera = new THREE.PerspectiveCamera(65, host.clientWidth/host.clientHeight, 0.1, 800);
+  camera.rotation.order = "YXZ";
+
+  var renderer = new THREE.WebGLRenderer({antialias:true, powerPreference:"high-performance"});
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(host.clientWidth, host.clientHeight);
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.05;
+  host.appendChild(renderer.domElement);
+
+  /* ---------- ATMOSPHERIC SKY DOME ---------- */
+  var skyGeo = new THREE.SphereGeometry(350, 32, 24);
+  var skyMat = new THREE.ShaderMaterial({
+    uniforms: {
+      topColor: { value: new THREE.Color(0x386b99) },
+      bottomColor: { value: new THREE.Color(0xebd2a4) },
+      offset: { value: 20 },
+      exponent: { value: 0.6 }
+    },
+    vertexShader: [
+      "varying vec3 vWorldPosition;",
+      "void main() {",
+      "  vec4 worldPosition = modelMatrix * vec4( position, 1.0 );",
+      "  vWorldPosition = worldPosition.xyz;",
+      "  gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );",
+      "}"
+    ].join("\n"),
+    fragmentShader: [
+      "uniform vec3 topColor;",
+      "uniform vec3 bottomColor;",
+      "uniform float offset;",
+      "uniform float exponent;",
+      "varying vec3 vWorldPosition;",
+      "void main() {",
+      "  float h = normalize( vWorldPosition + offset ).y;",
+      "  gl_FragColor = vec4( mix( bottomColor, topColor, max( pow( max( h, 0.0 ), exponent ), 0.0 ) ), 1.0 );",
+      "}"
+    ].join("\n"),
+    side: THREE.BackSide
+  });
+  var sky = new THREE.Mesh(skyGeo, skyMat);
+  scene.add(sky);
+  scene.fog = new THREE.FogExp2(0xd6c29e, 0.007);
+
+  /* ---------- LIGHTING RIG ---------- */
+  var hemiLight = new THREE.HemisphereLight(0xdde9f0, 0x826442, 0.65);
+  scene.add(hemiLight);
+
+  var sunLight = new THREE.DirectionalLight(0xffdfa8, 1.6);
+  sunLight.castShadow = true;
+  sunLight.shadow.mapSize.width = 2048;
+  sunLight.shadow.mapSize.height = 2048;
+  sunLight.shadow.camera.near = 0.5;
+  sunLight.shadow.camera.far = 160;
+  sunLight.shadow.camera.left = -50;
+  sunLight.shadow.camera.right = 50;
+  sunLight.shadow.camera.top = 50;
+  sunLight.shadow.camera.bottom = -50;
+  sunLight.shadow.bias = -0.0004;
+  scene.add(sunLight);
+  scene.add(sunLight.target);
+
+  /* ---------- TIME OF DAY CONTROLS ---------- */
+  var TIME_PRESETS = [
+    { name:"Golden Hour", elev:18, az:42, col:0xffd396, hemiSky:0xfae2be, hemiGrd:0x87643b, fog:0xd9b986, exp:1.1, sunI:1.7 },
+    { name:"High Noon", elev:65, az:15, col:0xfff5e6, hemiSky:0xd0e6f7, hemiGrd:0x9c7a52, fog:0xcfdde5, exp:1.0, sunI:1.9 },
+    { name:"Coastal Dawn", elev:10, az:78, col:0xff9a76, hemiSky:0xdbb0a0, hemiGrd:0x5e453a, fog:0xcda89b, exp:0.95, sunI:1.4 },
+    { name:"Moonlit Shore Night", elev:35, az:210, col:0x8ba6c9, hemiSky:0x1b2738, hemiGrd:0x0f151e, fog:0x121824, exp:0.7, sunI:0.6 }
+  ];
+  var timeIdx = 0;
+  function applyTimePreset(idx){
+    var p = TIME_PRESETS[idx];
+    timeIdx = idx;
+    var sa = p.az * Math.PI/180, se = p.elev * Math.PI/180;
+    sunLight.position.set(Math.cos(sa)*Math.cos(se)*90, Math.sin(se)*90, Math.sin(sa)*Math.cos(se)*90);
+    sunLight.color.setHex(p.col);
+    sunLight.intensity = p.sunI;
+    hemiLight.color.setHex(p.hemiSky);
+    hemiLight.groundColor.setHex(p.hemiGrd);
+    scene.fog.color.setHex(p.fog);
+    skyMat.uniforms.bottomColor.value.setHex(p.fog);
+    renderer.toneMappingExposure = p.exp;
+    $("#btnTime").textContent = "Time: " + p.name;
+  }
+  applyTimePreset(0);
+
+  var rakingOn = false;
+  function toggleRaking(){
+    rakingOn = !rakingOn;
+    if(rakingOn){
+      // Raking light: low elevation, side azimuth grazing relief carvings
+      sunLight.position.set(70, 7, -35);
+      sunLight.intensity = 2.4;
+      sunLight.color.setHex(0xffeaad);
+      $("#btnRake").textContent = "Raking Light: Active";
+      $("#btnRake").classList.add("active");
+    } else {
+      applyTimePreset(timeIdx);
+      $("#btnRake").textContent = "Raking Light: Off";
+      $("#btnRake").classList.remove("active");
+    }
+  }
+  $("#btnRake").onclick = toggleRaking;
+  $("#btnTime").onclick = function(){ applyTimePreset((timeIdx+1)%TIME_PRESETS.length); };
+
+  /* ---------- TERRAIN & COASTLINE (BAY OF BENGAL) ---------- */
+  var terrainGeo = new THREE.PlaneGeometry(260, 260, 120, 120);
+  terrainGeo.rotateX(-Math.PI/2);
+  var tPos = terrainGeo.attributes.position;
+  for(var ti=0; ti<tPos.count; ti++){
+    var tx = tPos.getX(ti), tz = tPos.getZ(ti);
+    // East slope down to the sea (x > 45)
+    var elev = Math.sin(tx*0.06)*Math.cos(tz*0.05)*1.2 + Math.sin(tx*0.2+tz*0.1)*0.3;
+    if(tx > 35) elev -= (tx - 35) * 0.28; // Beach gradient dropping below sea level
+    tPos.setY(ti, elev);
+  }
+  terrainGeo.computeVertexNormals();
+
+  var sandMat = new THREE.MeshStandardMaterial({
+    map: sandTex,
+    bumpMap: sandTex,
+    bumpScale: 0.06,
+    roughness: 0.94,
+    metalness: 0.05
+  });
+  var terrain = new THREE.Mesh(terrainGeo, sandMat);
+  terrain.receiveShadow = true;
+  scene.add(terrain);
+
+  // Animated Ocean Surface (East side, x > 40)
+  var waterGeo = new THREE.PlaneGeometry(120, 260, 48, 64);
+  waterGeo.rotateX(-Math.PI/2);
+  var waterMat = new THREE.MeshStandardMaterial({
+    color: 0x1d4d5e,
+    roughness: 0.12,
+    metalness: 0.85,
+    transparent: true,
+    opacity: 0.88
+  });
+  var water = new THREE.Mesh(waterGeo, waterMat);
+  water.position.set(95, -0.6, 0);
+  scene.add(water);
+
+  /* ---------- COLLISION & MONUMENT ARRAYS ---------- */
+  var colliders = [];
+  var examineObjects = [];
+
+  var graniteStandardMat = new THREE.MeshStandardMaterial({
+    map: graniteTex,
+    bumpMap: graniteTex,
+    bumpScale: 0.08,
+    roughness: 0.92,
+    metalness: 0.05
+  });
+
+  var graniteDarkMat = new THREE.MeshStandardMaterial({
+    map: graniteDarkTex,
+    bumpMap: graniteDarkTex,
+    bumpScale: 0.12,
+    roughness: 0.95,
+    metalness: 0.02
+  });
+
+  /* 1. THE GREAT DESCENT OF THE GANGES CLIFF (Central Outcrop) */
+  (function buildGangesRelief(){
+    var cliffGroup = new THREE.Group();
+    cliffGroup.position.set(0, 0, -26);
+
+    // Main 30m x 12m rock facade
+    var cliffGeo = new THREE.PlaneGeometry(28, 12, 160, 80);
+    var gangaHMap = new THREE.CanvasTexture(makeGangaReliefMap());
+    gangaHMap.anisotropy = 8;
+    
+    var cliffMat = new THREE.MeshStandardMaterial({
+      map: makeTex(graniteCanvas, 2),
+      displacementMap: gangaHMap,
+      displacementScale: 1.15,
+      bumpMap: makeTex(graniteCanvas, 4),
+      bumpScale: 0.1,
+      roughness: 0.94
+    });
+    var cliffMesh = new THREE.Mesh(cliffGeo, cliffMat);
+    cliffMesh.position.set(0, 6, 0);
+    cliffMesh.castShadow = true;
+    cliffMesh.receiveShadow = true;
+    cliffMesh.userData.infoIndex = 0;
+    examineObjects.push(cliffMesh);
+    cliffGroup.add(cliffMesh);
+
+    // Supporting outcrop bedrock backing
+    var rockBack = new THREE.Mesh(new THREE.BoxGeometry(30, 13, 10), graniteDarkMat);
+    rockBack.position.set(0, 6, -5);
+    rockBack.castShadow = true;
+    rockBack.receiveShadow = true;
+    cliffGroup.add(rockBack);
+
+    // Ancient Cistern reservoir rim atop cliff
+    var cistern = new THREE.Mesh(new THREE.CylinderGeometry(4.5, 4.5, 1.6, 18), graniteDarkMat);
+    cistern.position.set(0, 13, -3);
+    cistern.castShadow = true;
+    cliffGroup.add(cistern);
+
+    scene.add(cliffGroup);
+    colliders.push({x:0, z:-26, r:15});
+  })();
+
+  /* 2. PANCHA RATHAS (Monolithic Shrines on the South-East) */
+  (function buildPanchaRathas(){
+    var rathaGroup = new THREE.Group();
+    rathaGroup.position.set(22, 0, 14);
+
+    // Dharmaraja Ratha (Tritala Dravidian stepped vimana)
+    var dr = new THREE.Group();
+    dr.position.set(0, 0, 0);
+    // Tier 1
+    var d1 = new THREE.Mesh(new THREE.BoxGeometry(6.5, 3.6, 6.5), graniteStandardMat);
+    d1.position.y = 1.8; d1.castShadow = true; d1.receiveShadow = true; dr.add(d1);
+    // Tier 2
+    var d2 = new THREE.Mesh(new THREE.BoxGeometry(5.0, 2.6, 5.0), graniteStandardMat);
+    d2.position.y = 4.9; d2.castShadow = true; dr.add(d2);
+    // Tier 3
+    var d3 = new THREE.Mesh(new THREE.BoxGeometry(3.6, 2.0, 3.6), graniteStandardMat);
+    d3.position.y = 7.2; d3.castShadow = true; dr.add(d3);
+    // Octagonal Shikhara dome + Stupi finial
+    var sDome = new THREE.Mesh(new THREE.CylinderGeometry(1.4, 2.0, 1.8, 8), graniteStandardMat);
+    sDome.position.y = 9.1; sDome.castShadow = true; dr.add(sDome);
+    var stupi = new THREE.Mesh(new THREE.SphereGeometry(0.5, 12, 10), graniteStandardMat);
+    stupi.position.y = 10.3; stupi.castShadow = true; dr.add(stupi);
+    d1.userData.infoIndex = 5;
+    examineObjects.push(d1);
+    rathaGroup.add(dr);
+    colliders.push({x:22, z:14, r:4.5});
+
+    // Bhima Ratha (Long barrel-vaulted sala-shikhara)
+    var br = new THREE.Group();
+    br.position.set(9, 0, 1);
+    var bBase = new THREE.Mesh(new THREE.BoxGeometry(9.0, 3.5, 5.5), graniteStandardMat);
+    bBase.position.y = 1.75; bBase.castShadow = true; bBase.receiveShadow = true; br.add(bBase);
+    // Vaulted wagon roof
+    var vault = new THREE.Mesh(new THREE.CylinderGeometry(2.75, 2.75, 8.8, 20, 1, false, 0, Math.PI), graniteStandardMat);
+    vault.rotation.z = Math.PI/2;
+    vault.position.y = 3.5; vault.castShadow = true; br.add(vault);
+    // Gables
+    var gable = new THREE.Mesh(new THREE.CylinderGeometry(0.4, 0.4, 8.6, 12), graniteDarkMat);
+    gable.rotation.z = Math.PI/2; gable.position.y = 6.3; br.add(gable);
+    bBase.userData.infoIndex = 5;
+    examineObjects.push(bBase);
+    rathaGroup.add(br);
+    colliders.push({x:31, z:15, r:5.5});
+
+    // Arjuna Ratha (Two-tiered elegant shrine)
+    var ar = new THREE.Group();
+    ar.position.set(-7, 0, 2);
+    var a1 = new THREE.Mesh(new THREE.BoxGeometry(4.2, 3.0, 4.2), graniteStandardMat);
+    a1.position.y = 1.5; a1.castShadow = true; ar.add(a1);
+    var a2 = new THREE.Mesh(new THREE.BoxGeometry(3.0, 2.0, 3.0), graniteStandardMat);
+    a2.position.y = 4.0; a2.castShadow = true; ar.add(a2);
+    var aDome = new THREE.Mesh(new THREE.SphereGeometry(1.2, 14, 10), graniteStandardMat);
+    aDome.position.y = 5.6; aDome.castShadow = true; ar.add(aDome);
+    a1.userData.infoIndex = 5;
+    examineObjects.push(a1);
+    rathaGroup.add(ar);
+    colliders.push({x:15, z:16, r:3.2});
+
+    // Draupadi Ratha (Thatched hut kutagara)
+    var dra = new THREE.Group();
+    dra.position.set(-13, 0, 2);
+    var drBase = new THREE.Mesh(new THREE.BoxGeometry(3.2, 2.6, 3.2), graniteStandardMat);
+    drBase.position.y = 1.3; drBase.castShadow = true; dra.add(drBase);
+    var drRoof = new THREE.Mesh(new THREE.ConeGeometry(2.4, 1.8, 4), graniteStandardMat);
+    drRoof.rotation.y = Math.PI/4; drRoof.position.y = 3.5; drRoof.castShadow = true; dra.add(drRoof);
+    drBase.userData.infoIndex = 5;
+    examineObjects.push(drBase);
+    rathaGroup.add(dra);
+    colliders.push({x:9, z:16, r:2.8});
+
+    // Monolithic Guardian Elephant
+    var ele = new THREE.Group();
+    ele.position.set(-4, 0, 7);
+    var eb = new THREE.Mesh(new THREE.BoxGeometry(2.8, 2.2, 1.6), graniteDarkMat);
+    eb.position.y = 1.2; eb.castShadow = true; ele.add(eb);
+    var eh = new THREE.Mesh(new THREE.SphereGeometry(0.8, 12, 10), graniteDarkMat);
+    eh.position.set(1.4, 1.8, 0); eh.castShadow = true; ele.add(eh);
+    var et = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.35, 1.4, 8), graniteDarkMat);
+    et.position.set(1.9, 1.0, 0); et.rotation.z = -0.4; ele.add(et);
+    eb.userData.infoIndex = 5;
+    examineObjects.push(eb);
+    rathaGroup.add(ele);
+
+    scene.add(rathaGroup);
+  })();
+
+  /* 3. SHORE TEMPLE (Directly on the Ocean Coastline) */
+  (function buildShoreTemple(){
+    var shoreGroup = new THREE.Group();
+    shoreGroup.position.set(52, 0, -22);
+
+    // Granite foundation plinth breakwater
+    var plinth = new THREE.Mesh(new THREE.BoxGeometry(18, 1.6, 24), graniteDarkMat);
+    plinth.position.y = 0.8;
+    plinth.receiveShadow = true;
+    shoreGroup.add(plinth);
+
+    // Primary Vimana (East facing, ocean side)
+    var v1 = new THREE.Group();
+    v1.position.set(2, 1.6, -2);
+    var v1b = new THREE.Mesh(new THREE.BoxGeometry(7, 4.5, 7), graniteStandardMat);
+    v1b.position.y = 2.25; v1b.castShadow = true; v1.add(v1b);
+    var v1t1 = new THREE.Mesh(new THREE.BoxGeometry(5.4, 3.2, 5.4), graniteStandardMat);
+    v1t1.position.y = 6.1; v1t1.castShadow = true; v1.add(v1t1);
+    var v1t2 = new THREE.Mesh(new THREE.BoxGeometry(3.8, 2.4, 3.8), graniteStandardMat);
+    v1t2.position.y = 8.9; v1t2.castShadow = true; v1.add(v1t2);
+    var v1cap = new THREE.Mesh(new THREE.CylinderGeometry(1.2, 2.2, 1.8, 12), graniteStandardMat);
+    v1cap.position.y = 11.0; v1cap.castShadow = true; v1.add(v1cap);
+    var v1fin = new THREE.Mesh(new THREE.SphereGeometry(0.65, 12, 10), graniteStandardMat);
+    v1fin.position.y = 12.3; v1fin.castShadow = true; v1.add(v1fin);
+    v1b.userData.infoIndex = 6;
+    examineObjects.push(v1b);
+    shoreGroup.add(v1);
+
+    // Smaller Western Vimana
+    var v2 = new THREE.Group();
+    v2.position.set(-4.5, 1.6, -2);
+    var v2b = new THREE.Mesh(new THREE.BoxGeometry(4.6, 3.4, 4.6), graniteStandardMat);
+    v2b.position.y = 1.7; v2b.castShadow = true; v2.add(v2b);
+    var v2t = new THREE.Mesh(new THREE.BoxGeometry(3.2, 2.2, 3.2), graniteStandardMat);
+    v2t.position.y = 4.5; v2t.castShadow = true; v2.add(v2t);
+    var v2cap = new THREE.Mesh(new THREE.SphereGeometry(1.1, 10, 8), graniteStandardMat);
+    v2cap.position.y = 6.2; v2cap.castShadow = true; v2.add(v2cap);
+    shoreGroup.add(v2);
+
+    // Perimeter wall of couchant Nandi bulls
+    for(var bi=-7; bi<=7; bi+=2.5){
+      var nandi = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.8, 0.7), graniteDarkMat);
+      nandi.position.set(bi, 1.9, 10);
+      nandi.castShadow = true;
+      shoreGroup.add(nandi);
+    }
+
+    scene.add(shoreGroup);
+    colliders.push({x:52, z:-22, r:12});
+  })();
+
+  /* 4. ROCK-CUT MANDAPAS (Varaha, Mahishasuramardini, Krishna) */
+  function createMandapaCave(x, z, rotY, infoIdx, labelName){
+    var mg = new THREE.Group();
+    mg.position.set(x, 0, z);
+    mg.rotation.y = rotY;
+
+    // Monolithic rock facade
+    var caveRock = new THREE.Mesh(new THREE.BoxGeometry(12, 7.5, 7), graniteDarkMat);
+    caveRock.position.set(0, 3.75, -2);
+    caveRock.castShadow = true; caveRock.receiveShadow = true; mg.add(caveRock);
+
+    // Cut-out interior veranda
+    var porchPlinth = new THREE.Mesh(new THREE.BoxGeometry(10, 0.6, 4), graniteStandardMat);
+    porchPlinth.position.set(0, 0.3, 1.5);
+    porchPlinth.receiveShadow = true; mg.add(porchPlinth);
+
+    // 4 Vyala (Lion-base) pillars along portico
+    for(var pi=-3.6; pi<=3.6; pi+=2.4){
+      var pg = new THREE.Group();
+      pg.position.set(pi, 0.6, 2.4);
+
+      // Crouching Lion base
+      var lBase = new THREE.Mesh(new THREE.BoxGeometry(0.85, 0.95, 0.85), graniteDarkMat);
+      lBase.position.y = 0.48; lBase.castShadow = true; pg.add(lBase);
+      // Fluted shaft
+      var shaft = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.32, 2.6, 12), graniteStandardMat);
+      shaft.position.y = 2.25; shaft.castShadow = true; pg.add(shaft);
+      // Cushion capital
+      var cap = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.4, 0.4, 12), graniteStandardMat);
+      cap.position.y = 3.65; cap.castShadow = true; pg.add(cap);
+
+      mg.add(pg);
+    }
+
+    // High relief narrative icon in back wall
+    var reliefBack = new THREE.Mesh(new THREE.PlaneGeometry(4.8, 4.2), graniteStandardMat);
+    reliefBack.position.set(0, 3.2, 0.8);
+    reliefBack.userData.infoIndex = infoIdx;
+    examineObjects.push(reliefBack);
+    mg.add(reliefBack);
+
+    scene.add(mg);
+    colliders.push({x:x, z:z, r:5.2});
+  }
+
+  // Varaha Mandapa (West)
+  createMandapaCave(-20, -10, 0.6, 1, "Varaha Mandapa");
+  // Mahishasuramardini Cave (North-West)
+  createMandapaCave(-26, 8, 1.2, 2, "Mahishasuramardini Cave");
+  // Krishna Mandapa (South-West)
+  createMandapaCave(-12, 18, 0.2, 3, "Krishna Mandapa");
+
+  /* 5. SCATTERED CHARNOCKITE WEATHERED BOULDERS */
+  var boulderGeo = new THREE.DodecahedronGeometry(2.4, 1);
+  var bPos = boulderGeo.attributes.position;
+  for(var bi=0; bi<bPos.count; bi++){
+    bPos.setXYZ(bi, bPos.getX(bi)*(1 + Math.sin(bi*3)*0.2), bPos.getY(bi)*(0.9 + Math.cos(bi*4)*0.15), bPos.getZ(bi)*(1 + Math.sin(bi*5)*0.2));
+  }
+  boulderGeo.computeVertexNormals();
+
+  var boulderPositions = [
+    [-6, 6], [8, -8], [-2, 12], [28, -8], [16, -24], [-15, -28], [38, 4]
+  ];
+  boulderPositions.forEach(function(bp){
+    var bMesh = new THREE.Mesh(boulderGeo, graniteDarkMat);
+    bMesh.position.set(bp[0], 1.5, bp[1]);
+    bMesh.rotation.set(Math.random()*3, Math.random()*3, Math.random()*3);
+    bMesh.castShadow = true; bMesh.receiveShadow = true;
+    scene.add(bMesh);
+    colliders.push({x:bp[0], z:bp[1], r:2.8});
+  });
+
+  /* ---------- PLAYER NAVIGATION & CAMERA ---------- */
+  var px = 0, py = 1.7, pz = 10;
+  var yaw = 0, pitch = 0, bob = 0;
+  var started = false, locked = false;
+  var keys = {};
+  var droneMode = false;
+
+  var enterOv = $("#sEnter"), promptEl = $("#sPrompt"), crossEl = $("#sCross"), toastEl = $("#sToast");
+  var foundSet = {}, foundN = 0, hoverIndex = null;
+
+  function toast(msg){
+    toastEl.textContent = msg;
+    toastEl.classList.add("on");
+    setTimeout(function(){ toastEl.classList.remove("on"); }, 2400);
+  }
+
+  function beginExperience(){
+    if(started) return; started = true;
+    enterOv.classList.add("hide");
+    try { renderer.domElement.requestPointerLock(); } catch(e){}
+    toast("THE PALLAVA OUTCROP IS UNLOCKED · WALK FREELY");
+  }
+  enterOv.onclick = beginExperience;
+
+  window.addEventListener("keydown", function(e){
+    var k = e.key.toLowerCase();
+    if($("#site").classList.contains("on") && k==="enter" && !started){ beginExperience(); return; }
+    keys[k] = true;
+    if(k==="e") tryExamineMonument();
+    if(k==="l") toggleRaking();
+    if(k==="t") applyTimePreset((timeIdx+1)%TIME_PRESETS.length);
+    if(k==="m") toggleAudio();
+    if(["arrowup","arrowdown","arrowleft","arrowright"," "].indexOf(k)>=0 && $("#site").classList.contains("on")) e.preventDefault();
+  });
+  window.addEventListener("keyup", function(e){ keys[e.key.toLowerCase()] = false; });
+
+  document.addEventListener("pointerlockchange", function(){
+    locked = document.pointerLockElement === renderer.domElement;
+  });
+
+  window.addEventListener("mousemove", function(e){
+    if(!started || !$("#site").classList.contains("on") || $("#decode").classList.contains("on") || droneMode) return;
+    if(!locked && !host.contains(e.target)) return;
+    yaw = (yaw + e.movementX * 0.0024) % (Math.PI * 2);
+    pitch = Math.max(-1.3, Math.min(1.3, pitch + e.movementY * 0.0024));
+  });
+
+  renderer.domElement.onclick = function(){ if(locked) tryExamineMonument(); };
+
+  // Drone View Toggle
+  $("#btnOrbit").onclick = function(){
+    droneMode = !droneMode;
+    $("#btnOrbit").textContent = droneMode ? "1st Person View" : "Drone View";
+    $("#btnOrbit").classList.toggle("active", droneMode);
+    if(document.pointerLockElement) document.exitPointerLock();
+  };
+
+  // Raycasting for monument inspection
+  var raycaster = new THREE.Raycaster();
+  function checkMonumentProximity(){
+    raycaster.setFromCamera({x:0, y:0}, camera);
+    var hits = raycaster.intersectObjects(examineObjects, true);
+    hoverIndex = (hits.length > 0 && hits[0].distance < 16) ? hits[0].object.userData.infoIndex : null;
+
+    var isHovering = hoverIndex !== null && hoverIndex !== undefined && started;
+    promptEl.classList.toggle("on", isHovering);
+    crossEl.classList.toggle("hot", isHovering);
+    if(isHovering){
+      promptEl.textContent = "Click / Press E — Examine: " + SLABS[hoverIndex].t;
+    }
+  }
+
+  function tryExamineMonument(){
+    if(hoverIndex === null || hoverIndex === undefined || !started || $("#decode").classList.contains("on")) return;
+    var s = SLABS[hoverIndex];
+    $("#dImg").src = s.img;
+    $("#dKick").textContent = s.theme + " Theme · " + s.s;
+    $("#dTitle").textContent = s.t;
+    $("#dSig").textContent = s.sig;
+    $("#dAttrs").innerHTML = s.attrs.map(function(a){
+      return "<li><b>"+a[0]+"</b><span>"+a[1]+"</span></li>";
+    }).join("");
+    $("#decode").classList.add("on");
+    if(document.pointerLockElement) document.exitPointerLock();
+
+    if(!foundSet[hoverIndex]){
+      foundSet[hoverIndex] = true;
+      foundN++;
+      $("#sFound").textContent = foundN + " / 8";
+      if(foundN === 8){
+        setTimeout(function(){ toast("ACADEMIC DISCOVERY COMPLETE · ALL 8 MONUMENTS READ"); }, 500);
+      }
+    }
+  }
+  $("#dClose").onclick = function(){
+    $("#decode").classList.remove("on");
+    try { renderer.domElement.requestPointerLock(); } catch(e){}
+  };
+
+  // Compass tick marks
+  (function buildCompass(){
+    var s = "";
+    for(var rep=0; rep<3; rep++){
+      for(var d=0; d<360; d+=15){
+        var card = d%90===0 ? ["N","E","S","W"][d/90] : "";
+        s += '<span class="tick'+(card?" card":"")+'">'+(card||"·")+'</span>';
+      }
+    }
+    $("#sStrip").innerHTML = s;
+  })();
+
+  function resolveCollisions(){
+    for(var i=0; i<colliders.length; i++){
+      var c = colliders[i];
+      var dx = px - c.x, dz = pz - c.z;
+      var dist = Math.hypot(dx, dz);
+      if(dist < c.r && dist > 0.001){
+        px = c.x + (dx/dist) * c.r;
+        pz = c.z + (dz/dist) * c.r;
+      }
+    }
+    px = Math.max(-65, Math.min(80, px));
+    pz = Math.max(-65, Math.min(65, pz));
+  }
+
+  /* ---------- MAIN RENDER ANIMATION LOOP ---------- */
+  var prevTime = performance.now();
+  var waveOffset = 0;
+
+  function animateLoop(now){
+    requestAnimationFrame(animateLoop);
+    if(!$("#site").classList.contains("on")) return;
+
+    var dt = Math.min(0.05, (now - prevTime)/1000);
+    prevTime = now;
+
+    // Ocean waves animation
+    waveOffset += dt * 1.4;
+    var wPos = waterGeo.attributes.position;
+    for(var wi=0; wi<wPos.count; wi++){
+      var wx = wPos.getX(wi), wz = wPos.getZ(wi);
+      wPos.setY(wi, Math.sin(wx*0.2 + waveOffset)*0.22 + Math.cos(wz*0.15 + waveOffset*0.8)*0.18);
+    }
+    waterGeo.computeVertexNormals();
+    waterGeo.attributes.position.needsUpdate = true;
+
+    if(started && !$("#decode").classList.contains("on") && !droneMode){
+      var moveF = (keys["w"]||keys["arrowup"]?1:0) - (keys["s"]||keys["arrowdown"]?1:0);
+      var moveS = (keys["d"]||keys["arrowright"]?1:0) - (keys["a"]||keys["arrowleft"]?1:0);
+      if(moveF || moveS){
+        var speed = keys["shift"] ? 10.5 : 4.8;
+        px += (-Math.sin(yaw)*moveF + Math.cos(yaw)*moveS) * speed * dt;
+        pz += (-Math.cos(yaw)*moveF - Math.sin(yaw)*moveS) * speed * dt;
+        resolveCollisions();
+        bob += dt * (keys["shift"] ? 12 : 8.5);
+      }
+      camera.position.set(px, py + Math.sin(bob)*0.07, pz);
+      camera.rotation.y = yaw;
+      camera.rotation.x = pitch;
+    } else if(droneMode){
+      // Aerial Cinematic Drone Orbit
+      var orbitTime = now * 0.0003;
+      camera.position.set(Math.cos(orbitTime)*55, 32, Math.sin(orbitTime)*55);
+      camera.lookAt(8, 3, -5);
+    }
+
+    // Update compass HUD
+    var deg = ((-yaw * 180 / Math.PI)%360 + 360)%360;
+    $("#sStrip").style.transform = "translateX("+ (-(deg/15)*20 + $("#sComp").offsetWidth/2 - 10).toFixed(1) +"px)";
+
+    checkMonumentProximity();
+    renderer.render(scene, camera);
+  }
+  requestAnimationFrame(animateLoop);
+
+  window.addEventListener("resize", function(){
+    if(!$("#site").classList.contains("on")) return;
+    camera.aspect = host.clientWidth / host.clientHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(host.clientWidth, host.clientHeight);
+  });
+}
+</script>
+</body>
+</html>

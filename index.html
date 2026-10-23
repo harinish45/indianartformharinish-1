@@ -2,753 +2,1358 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>Ajanta Frames — Cave Walkthrough · Assignment 4</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%23171009' stroke='%23d08a3e' stroke-width='4'/%3E%3Ccircle cx='50' cy='50' r='30' fill='none' stroke='%23e8b06a' stroke-width='2'/%3E%3Ctext x='50' y='64' font-size='34' text-anchor='middle' fill='%23e8b06a' font-family='Georgia, serif'%3Eअ%3C/text%3E%3C/svg%3E">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/cinzel@5/400.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/cinzel@5/700.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/ibm-plex-serif@5/400.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/ibm-plex-serif@5/400-italic.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/ibm-plex-sans@5/300.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/ibm-plex-sans@5/400.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/ibm-plex-sans@5/600.css">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stone That Speaks — Mahabalipuram · Assignment 5</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%2326262a' stroke='%23d9a441' stroke-width='4'/%3E%3Ccircle cx='50' cy='50' r='30' fill='none' stroke='%233aa6a0' stroke-width='2'/%3E%3Ctext x='50' y='64' font-size='34' text-anchor='middle' fill='%23d9a441' font-family='Georgia, serif'%3Eम%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/marcellus@5/index.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/alegreya-sans@5/400.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/alegreya-sans@5/500.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/alegreya-sans@5/700.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/alegreya-sans@5/400-italic.css">
+<script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
 <style>
 :root{
-  --cave:#171009; --panel:#1d150c; --ochre:#d08a3e; --ochre2:#e8b06a; --pig:#a4432c; --cream:#efe3cd;
-  --disp:'Cinzel', Georgia, serif; --serif:'IBM Plex Serif', Georgia, serif; --body:'IBM Plex Sans', system-ui, sans-serif;
-  --noise:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.55 0'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)'/%3E%3C/svg%3E");
-  --rockbg:radial-gradient(ellipse 120% 90% at 50% 40%, #6b4a2e 0%, #4a3018 45%, #2b1a0c 100%);
+  --gran:#212124; --gran2:#2a2a2f; --slab:#323238; --line:#46464d;
+  --ink:#eeeae2; --dim:#aba89f; --teal:#3aa6a0; --gold:#d9a441; --gold2:#f3c467; --rust:#b0563f;
+  --disp:'Marcellus', Georgia, serif; --body:'Alegreya Sans', system-ui, sans-serif;
+  --paper:#f4f1e8; --pink:#2b2b2e;
+  --noise:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.55 0 0 0 0 0.55 0 0 0 0 0.52 0 0 0 0.06 0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:var(--cave); color:var(--cream); font-family:var(--body); font-weight:300; line-height:1.6; overflow-x:hidden}
-body.cavelock{overflow:hidden; height:100dvh}
-::selection{background:rgba(208,138,62,.45)}
+body{background:var(--gran); color:var(--ink); font-family:var(--body); font-weight:400; line-height:1.6; overflow:hidden}
+body::before{content:""; position:fixed; inset:0; background:var(--noise); pointer-events:none; z-index:0}
+body.cavelock{overflow:hidden}
+::selection{background:rgba(58,166,160,.4)}
 img{display:block; max-width:100%}
 button{font-family:inherit; cursor:pointer}
-.screen{display:none; position:relative; z-index:1}
-.screen.active{display:block; animation:pg .45s ease}
-@keyframes pg{from{opacity:0} to{opacity:1}}
 
-.nav{position:sticky; top:0; z-index:90; display:flex; justify-content:space-between; align-items:center; gap:14px;
-  padding:12px 4vw; background:rgba(23,16,9,.95); backdrop-filter:blur(9px); border-bottom:1px solid rgba(208,138,62,.35)}
-.nav-logo{font-family:var(--disp); font-weight:700; font-size:16px; letter-spacing:.16em; color:var(--ochre2); animation:logoGlow 4s ease-in-out infinite alternate}
-@keyframes logoGlow{from{text-shadow:0 0 6px rgba(208,138,62,.2)} to{text-shadow:0 0 18px rgba(232,176,106,.55)}}
-.nav-logo small{font-family:var(--body); font-weight:300; font-size:9.5px; letter-spacing:.26em; opacity:.55; margin-left:10px}
-.nav-right{display:flex; gap:6px}
-.nav button{padding:8px 16px; border:1px solid rgba(208,138,62,.45); background:transparent; color:var(--cream); font-size:10px; letter-spacing:.22em; text-transform:uppercase; font-weight:600; transition:all .25s}
-.nav button:hover{border-color:var(--ochre); color:var(--ochre2); transform:translateY(-1px)}
-.nav button.active{background:var(--ochre); color:var(--cave); border-color:var(--ochre); box-shadow:0 0 18px rgba(208,138,62,.45)}
-.btn{display:inline-flex; align-items:center; gap:10px; padding:14px 30px; border:2px solid var(--ochre); background:transparent; color:var(--ochre2); font-size:11px; letter-spacing:.26em; text-transform:uppercase; font-weight:600; transition:all .3s}
-.btn:hover{background:var(--ochre); color:var(--cave); transform:translateY(-2px); box-shadow:0 12px 40px rgba(208,138,62,.35)}
-.btn.solid{background:var(--ochre); color:var(--cave)}
-.btn.solid:hover{background:var(--ochre2)}
+/* ---------- TOP NAVBAR ---------- */
+.top{position:fixed; top:0; left:0; right:0; z-index:60; display:flex; justify-content:space-between; align-items:center; gap:12px;
+  padding:10px 2.5vw; background:rgba(33,33,36,.94); backdrop-filter:blur(10px); border-bottom:1px solid var(--line)}
+.top-l{font-size:10.5px; letter-spacing:.24em; text-transform:uppercase; color:var(--dim); font-weight:500; display:flex; align-items:center; gap:8px}
+.top-l b{color:var(--gold)}
+.top-badge{background:rgba(58,166,160,.18); color:var(--teal); border:1px solid rgba(58,166,160,.4); padding:2px 8px; border-radius:4px; font-size:9px; letter-spacing:.14em}
+.top-r{display:flex; gap:6px; align-items:center}
+.tbtn{padding:7px 14px; border:1px solid var(--line); background:transparent; color:var(--ink); font-size:10px; letter-spacing:.18em; text-transform:uppercase; font-weight:600; transition:all .25s; border-radius:2px}
+.tbtn:hover{border-color:var(--teal); color:var(--teal); transform:translateY(-1px)}
+.tbtn.on{background:var(--teal); border-color:var(--teal); color:#0c1a19; font-weight:700; box-shadow:0 0 14px rgba(58,166,160,.35)}
+.tbtn.pdf{background:linear-gradient(135deg,#d9a441,#b0563f); border-color:var(--gold); color:#171105; font-weight:700}
+.tbtn.pdf:hover{background:linear-gradient(135deg,#f3c467,#c5644c); transform:translateY(-1px); box-shadow:0 0 18px rgba(217,164,65,.45)}
+#prog{position:fixed; top:0; left:0; height:3px; width:0%; background:linear-gradient(90deg,var(--teal),var(--gold)); z-index:70; transition:width .4s ease; box-shadow:0 0 12px rgba(58,166,160,.8)}
 
-/* ---------- COVER ---------- */
-.cover{min-height:calc(100dvh - 52px); display:grid; place-items:center; padding:56px 4vw; position:relative; overflow:hidden}
-.cover-bg{position:absolute; inset:-6%}
-.cover-bg img{width:100%; height:100%; object-fit:cover; opacity:.34; filter:sepia(.35) contrast(1.1) brightness(.8); animation:kb 26s ease-in-out infinite alternate}
-@keyframes kb{from{transform:scale(1)} to{transform:scale(1.16) translate(-2%,-2%)}}
-.cover-bg::after{content:""; position:absolute; inset:0; background:radial-gradient(ellipse 70% 60% at 50% 45%, transparent 18%, rgba(23,16,9,.94) 76%)}
-.cover-torch{position:absolute; bottom:0; width:60px; height:220px; z-index:1; pointer-events:none}
-.cover-torch.l{left:6%}.cover-torch.r{right:6%}
-.cover-torch .stick{position:absolute; left:26px; bottom:0; width:12px; height:150px; border-radius:4px; background:linear-gradient(90deg,#241710,#5d3f28 45%,#241710)}
-.cover-torch .fl{position:absolute; left:50%; bottom:140px; width:44px; height:66px; translate:-50% 0; border-radius:50% 50% 44% 56%/64% 64% 36% 36%;
-  background:radial-gradient(circle at 50% 70%, #fff6cf 0 16%, #ffd276 32%, #ff8c2e 56%, rgba(255,90,20,.2) 78%, transparent 84%);
-  filter:blur(1px); mix-blend-mode:screen; animation:fl .24s infinite alternate}
-.cover-torch .gl{position:absolute; left:50%; bottom:60px; width:300px; height:300px; translate:-50% 0; border-radius:50%;
-  background:radial-gradient(circle, rgba(255,170,80,.28), transparent 65%); animation:tgl 3s infinite alternate}
-.cover-box{position:relative; z-index:2; width:min(860px,100%); text-align:center; border:2px solid rgba(208,138,62,.55); padding:44px clamp(20px,5vw,60px) 38px; background:rgba(23,16,9,.78); backdrop-filter:blur(4px); box-shadow:0 0 0 8px rgba(23,16,9,.6), 0 0 0 9px rgba(208,138,62,.4), 0 40px 120px rgba(0,0,0,.7)}
-.c-inst{font-size:10px; letter-spacing:.32em; text-transform:uppercase; color:var(--ochre); font-weight:600}
-.c-title{font-family:var(--disp); font-weight:700; font-size:clamp(38px,6vw,74px); letter-spacing:.06em; margin:14px 0 6px; text-shadow:0 0 46px rgba(208,138,62,.4)}
-.c-title span{color:var(--ochre2)}
-.c-sub{font-family:var(--serif); font-style:italic; font-size:clamp(14px,2vw,18px); color:var(--ochre2)}
-.c-desc{font-size:13.5px; opacity:.8; max-width:62ch; margin:14px auto 24px}
-.c-ledger{max-width:470px; margin:0 auto; text-align:left}
-.c-ledger .row{display:flex; gap:12px; align-items:baseline; padding:7px 2px; border-bottom:1px dashed rgba(208,138,62,.3); font-size:12.5px}
-.c-ledger .k{opacity:.6; font-size:10px; letter-spacing:.18em; text-transform:uppercase; white-space:nowrap; font-weight:600}
-.c-ledger .dots{flex:1; border-bottom:1px dotted rgba(208,138,62,.35); transform:translateY(-4px)}
-.c-ledger .v{font-weight:600}
-.c-due{margin-top:16px; font-size:10px; letter-spacing:.26em; text-transform:uppercase; opacity:.65}
-.c-due b{color:var(--ochre2)}
-.c-cta{margin-top:24px; display:flex; gap:14px; justify-content:center; flex-wrap:wrap}
+/* ---------- PRESENTATION DECK ---------- */
+#deck{position:fixed; inset:0; padding:52px 0 64px; z-index:1}
+.slide{position:absolute; inset:52px 0 64px; display:none; padding:2vh 4vw; overflow:auto}
+.slide.active{display:grid; grid-template-columns:1.02fr .98fr; gap:4vw; align-items:center; animation:chisel .6s ease both}
+@keyframes chisel{from{opacity:0; clip-path:inset(0 100% 0 0)} to{opacity:1; clip-path:inset(0 0 0 0)}}
+.slide .txt > *{animation:up .5s ease both}
+.slide .txt > *:nth-child(2){animation-delay:.08s}.slide .txt > *:nth-child(3){animation-delay:.16s}
+.slide .txt > *:nth-child(4){animation-delay:.24s}
+@keyframes up{from{opacity:0; transform:translateY(18px)} to{opacity:1; transform:none}}
+.kick{display:flex; align-items:center; gap:10px; font-size:10.5px; letter-spacing:.3em; text-transform:uppercase; color:var(--teal); font-weight:700; margin-bottom:14px}
+.kick::before{content:""; width:30px; height:2px; background:var(--teal)}
+.tags{display:flex; gap:6px; margin-left:auto}
+.tags span{font-size:9px; letter-spacing:.16em; text-transform:uppercase; font-weight:700; padding:3px 10px; border:1px solid; border-radius:999px}
+.tags span.rel{color:var(--teal); border-color:var(--teal); background:rgba(58,166,160,.1)}
+.tags span.cul{color:var(--gold); border-color:var(--gold); background:rgba(217,164,65,.1)}
+.tags span.art{color:var(--rust); border-color:var(--rust); background:rgba(176,86,63,.1)}
+h2.st{font-family:var(--disp); font-weight:400; font-size:clamp(30px,4.2vw,56px); line-height:1.08; margin-bottom:18px; position:relative; padding-bottom:12px}
+h2.st::after{content:""; position:absolute; left:0; bottom:0; height:3px; width:64%; background:linear-gradient(90deg,var(--gold),transparent); animation:underline .9s .25s ease both}
+@keyframes underline{from{width:0} to{width:64%}}
+h2.st em{font-style:normal; color:var(--gold)}
+.pts{list-style:none; display:flex; flex-direction:column; gap:12px; margin-bottom:18px}
+.pts li{position:relative; padding-left:26px; font-size:clamp(14px,1.25vw,17px); opacity:.93}
+.pts li::before{content:""; position:absolute; left:0; top:.5em; width:12px; height:12px; background:var(--teal); clip-path:polygon(0 0,100% 0,100% 60%,60% 100%,0 100%); animation:bul 2.4s ease-in-out infinite alternate}
+@keyframes bul{from{transform:scale(1)} to{transform:scale(1.25)}}
+.pts li b{color:var(--gold); font-weight:700}
+.notebox{border-left:3px solid var(--gold); background:rgba(217,164,65,.08); padding:12px 16px; font-size:13.5px; color:var(--dim)}
+.notebox b{color:var(--gold); letter-spacing:.18em; text-transform:uppercase; font-size:10px; display:block; margin-bottom:4px}
+.fig{position:relative; background:var(--slab); border:1px solid var(--line); padding:12px; box-shadow:0 30px 80px rgba(0,0,0,.5); perspective:900px}
+.slide.active .fig{animation:figIn .9s .15s cubic-bezier(.2,.8,.3,1) both}
+@keyframes figIn{from{opacity:0; transform:perspective(900px) rotateY(20deg) translateX(70px)} to{opacity:1; transform:none}}
+.fig::before,.fig::after{content:""; position:absolute; width:22px; height:22px; border:2px solid var(--gold); opacity:.7}
+.fig::before{top:-6px; left:-6px; border-right:0; border-bottom:0}
+.fig::after{bottom:-6px; right:-6px; border-left:0; border-top:0}
+.fig .im{position:relative; overflow:hidden; aspect-ratio:4/3; background:#1a1a1d; transform:translate3d(var(--px,0),var(--py,0),0); transition:transform .2s ease-out}
+.fig img{width:100%; height:100%; object-fit:cover; filter:contrast(1.05) saturate(.92); animation:kburns 22s ease-in-out infinite alternate}
+@keyframes kburns{from{transform:scale(1)} to{transform:scale(1.09) translate(-1.5%,-1%)}}
+.fig .cap{padding:10px 4px 2px; font-size:12px; color:var(--dim); font-style:italic}
+.fig .cap b{color:var(--teal); font-style:normal; letter-spacing:.14em; text-transform:uppercase; font-size:9.5px; margin-right:8px}
 
-/* ================= CAVE — sealed box, no void, no game ================= */
-#stage{position:relative; height:calc(100dvh - 53px); overflow:hidden; background:var(--rockbg); touch-action:none; user-select:none; -webkit-user-select:none}
-#viewport{position:absolute; inset:0; perspective:760px; perspective-origin:50% 50%; overflow:hidden; background:var(--rockbg)}
-#world{position:absolute; left:50%; top:50%; width:0; height:0; transform-style:preserve-3d; will-change:transform}
-.pl{position:absolute; left:0; top:0; backface-visibility:visible}   /* every surface double-sided: holes impossible */
+.slide.coverS.active{display:flex; align-items:center; justify-content:center}
+.cwrap{max-width:920px; width:100%; text-align:center; border:1px solid var(--line); background:rgba(42,42,47,.75); padding:40px clamp(20px,4vw,60px); position:relative; box-shadow:0 30px 100px rgba(0,0,0,.7)}
+.cwrap::before{content:""; position:absolute; inset:8px; border:1px solid rgba(217,164,65,.35); pointer-events:none}
+.cwrap .inst{font-size:10px; letter-spacing:.32em; text-transform:uppercase; color:var(--teal); font-weight:700}
+.cwrap h1{font-family:var(--disp); font-size:clamp(36px,5.4vw,70px); line-height:1.05; margin:14px 0 6px}
+.cwrap h1 span{color:var(--gold)}
+.cwrap .sub{font-style:italic; color:var(--dim); font-size:clamp(14px,1.6vw,18px); max-width:58ch; margin:0 auto 20px}
+.ledger{max-width:520px; margin:0 auto; text-align:left}
+.ledger .row{display:flex; gap:12px; align-items:baseline; padding:6px 2px; border-bottom:1px dashed var(--line); font-size:13px}
+.ledger .k{color:var(--dim); font-size:10px; letter-spacing:.18em; text-transform:uppercase; white-space:nowrap; font-weight:700}
+.ledger .dots{flex:1; border-bottom:1px dotted var(--line); transform:translateY(-4px)}
+.ledger .v{font-weight:700}
+.cwrap .abs{margin:18px auto 0; font-size:13px; color:var(--dim); max-width:66ch; line-height:1.7}
+.cwrap .cta-row{margin-top:22px; display:flex; gap:12px; justify-content:center; flex-wrap:wrap}
 
-.rockwall{background:
-    var(--noise),
-    var(--noise),
-    repeating-linear-gradient(177deg, rgba(0,0,0,.2) 0 3px, transparent 3px 15px),
-    radial-gradient(ellipse 46% 34% at 18% 26%, rgba(196,110,60,.3), transparent 70%),
-    radial-gradient(ellipse 40% 46% at 74% 62%, rgba(60,36,16,.4), transparent 72%),
-    radial-gradient(ellipse 30% 24% at 44% 14%, rgba(240,190,120,.2), transparent 70%),
-    radial-gradient(ellipse 34% 30% at 90% 36%, rgba(150,100,55,.4), transparent 72%),
-    radial-gradient(ellipse 26% 40% at 8% 70%, rgba(60,36,16,.35), transparent 70%),
-    linear-gradient(180deg, #3a2412 0%, #7d5a36 16%, #96703f 44%, #6f4c28 74%, #33200f 100%);
-  background-size:240px 240px, 90px 90px, auto, auto, auto, auto, auto, auto, auto;
-  box-shadow:inset 0 40px 90px rgba(0,0,0,.5), inset 0 -50px 100px rgba(0,0,0,.55)}
-.rockfloor{background:
-    var(--noise),
-    repeating-linear-gradient(90deg, rgba(0,0,0,.3) 0 2px, transparent 2px 200px),
-    repeating-linear-gradient(0deg, rgba(0,0,0,.3) 0 2px, transparent 2px 220px),
-    radial-gradient(ellipse 60% 45% at 50% 45%, rgba(170,120,70,.4), transparent 78%),
-    linear-gradient(180deg, #4a3018, #33200f 60%, #241608);
-  box-shadow:inset 0 0 130px rgba(0,0,0,.6)}
-.rockceil{background:
-    var(--noise),
-    repeating-linear-gradient(92deg, rgba(0,0,0,.26) 0 4px, transparent 4px 44px),
-    radial-gradient(ellipse 55% 60% at 50% 45%, rgba(150,100,55,.4), transparent 78%),
-    linear-gradient(0deg, #2b1a0c, #4a3018 55%, #5d3f22);
-  box-shadow:inset 0 60px 110px rgba(0,0,0,.55)}
-.frieze{background:
-    repeating-linear-gradient(90deg, transparent 0 10px, rgba(30,18,8,.5) 10px 12px, transparent 12px 24px),
-    repeating-radial-gradient(circle at 12px 50%, rgba(240,190,120,.3) 0 3px, transparent 4px 11px),
-    linear-gradient(180deg, rgba(40,24,10,.5), rgba(170,110,60,.4), rgba(40,24,10,.5));
-  border-block:2px solid rgba(30,18,8,.6)}
-.archj{background:linear-gradient(90deg,#2b1a0c,#7d5a36 40%,#5d3f22 60%,#2b1a0c); box-shadow:inset 0 0 50px rgba(0,0,0,.5)}
-.archt{background:radial-gradient(ellipse 60% 130% at 50% 0%, #7d5a36, #4a3018 72%); border-radius:0 0 50% 50%/0 0 100% 100%; box-shadow:inset 0 -20px 50px rgba(0,0,0,.5)}
-.pface{background:
-    var(--noise),
-    repeating-linear-gradient(0deg, rgba(0,0,0,.24) 0 3px, transparent 3px 22px),
-    linear-gradient(90deg, #2b1a0c, #8a6238 28%, #9c7444 50%, #8a6238 72%, #2b1a0c);
-  box-shadow:inset 0 20px 50px rgba(0,0,0,.45), inset 0 -30px 60px rgba(0,0,0,.5)}
-.pface.carved{background:linear-gradient(180deg, rgba(30,18,8,.5), transparent 16% 84%, rgba(30,18,8,.55)), var(--pimg) center/cover; filter:sepia(.3) brightness(.85) contrast(1.15)}
-.pcap{background:linear-gradient(180deg,#9c7444,#4a3018); box-shadow:0 6px 16px rgba(0,0,0,.5), inset 0 2px 0 rgba(240,190,120,.3)}
-.spike{background:linear-gradient(180deg,#4a3018,#8a6238 40%,#33200f); clip-path:polygon(50% 100%, 18% 34%, 32% 0, 68% 0, 82% 34%); filter:brightness(.9)}
-.spike.up{clip-path:polygon(50% 0, 18% 66%, 32% 100%, 68% 100%, 82% 66%)}
-.boulder{background:radial-gradient(ellipse 60% 50% at 40% 30%, #9c7444, #4a3018 70%, #2b1a0c); clip-path:polygon(15% 85%, 0 55%, 12% 20%, 45% 0, 80% 8%, 100% 45%, 88% 88%, 50% 100%)}
-.lightpool{background:radial-gradient(circle, rgba(255,180,90,.34), rgba(255,140,50,.14) 45%, transparent 70%); border-radius:50%; animation:tgl 2.9s infinite alternate}
-.wetsheen{background:radial-gradient(ellipse 50% 50% at 50% 50%, rgba(160,205,225,.24), rgba(130,175,195,.1) 55%, transparent 75%); border-radius:50%}
-.wfall{background:
-   linear-gradient(180deg, rgba(235,248,255,.85), rgba(185,220,240,.55) 30%, rgba(155,195,220,.4) 70%, rgba(225,242,250,.7)),
-   repeating-linear-gradient(180deg, rgba(255,255,255,.4) 0 6px, transparent 6px 18px),
-   repeating-linear-gradient(90deg, rgba(255,255,255,.3) 0 3px, transparent 3px 9px);
-  filter:blur(.7px); opacity:.9; animation:wfall .8s linear infinite}
-@keyframes wfall{to{background-position:0 0,0 360px,0 0}}
-.mist{background:radial-gradient(ellipse 50% 42% at 50% 78%, rgba(225,242,252,.36), rgba(205,228,242,.14) 52%, transparent 72%); filter:blur(2px); animation:mist 3.2s ease-in-out infinite alternate}
-@keyframes mist{from{opacity:.55; transform:scale(.94)} to{opacity:.95; transform:scale(1.08)}}
-.pool{background:
-   repeating-radial-gradient(circle at 50% 50%, rgba(210,235,248,.35) 0 2px, transparent 3px 26px),
-   radial-gradient(ellipse 60% 55% at 50% 50%, rgba(130,175,195,.5), rgba(50,80,95,.65) 60%, rgba(15,25,32,.85));
-  border-radius:50%; animation:ripple 2.6s ease-in-out infinite alternate}
-@keyframes ripple{from{opacity:.7; transform:scale(.985)} to{opacity:1; transform:scale(1.02)}}
-.drip{width:3px; height:26px; background:linear-gradient(rgba(200,230,245,0), rgba(215,238,250,.85)); animation:dripfall 1.7s linear infinite}
-@keyframes dripfall{0%{transform:translateY(0); opacity:0}12%{opacity:.9}100%{transform:translateY(330px); opacity:0}}
-.bat{width:44px; height:14px}
-.bat i{position:absolute; top:2px; width:20px; height:10px; background:#1a120a; clip-path:polygon(0 100%, 40% 0, 100% 30%, 60% 100%)}
-.bat i.l{left:0; transform-origin:100% 50%; animation:flapL .3s infinite alternate}
-.bat i.r{right:0; transform-origin:0 50%; scale:-1 1; animation:flapL .3s infinite alternate}
-.bat b{position:absolute; left:18px; top:3px; width:8px; height:8px; border-radius:50%; background:#1a120a}
-@keyframes flapL{from{transform:rotate(24deg)} to{transform:rotate(-26deg)}}
-.batpath1{animation:bp1 17s linear infinite}
-@keyframes bp1{0%{transform:translate3d(-240px,-220px,-600px)}50%{transform:translate3d(200px,-260px,-2400px)}100%{transform:translate3d(-240px,-200px,-4200px)}}
-.batpath2{animation:bp2 23s linear infinite}
-@keyframes bp2{0%{transform:translate3d(220px,-260px,-4800px)}50%{transform:translate3d(-180px,-200px,-2600px)}100%{transform:translate3d(220px,-250px,-600px)}}
-.torch{width:10px; height:46px; background:linear-gradient(180deg,#4a3018,#241710); border-radius:3px; box-shadow:0 0 8px rgba(0,0,0,.6)}
-.flame{position:absolute; left:50%; top:-26px; width:26px; height:38px; translate:-50% 0; border-radius:50% 50% 46% 54%/62% 62% 38% 38%;
-  background:radial-gradient(circle at 50% 68%, #fff3c4 0 18%, #ffcf6a 34%, #ff8c2e 58%, rgba(255,90,20,.15) 78%, transparent 82%);
-  filter:blur(.6px); animation:fl .26s infinite alternate; mix-blend-mode:screen}
-@keyframes fl{from{transform:scale(1) rotate(-3deg)} to{transform:scale(1.15,1.3) rotate(3deg)}}
-.tglow{position:absolute; left:50%; top:-10px; width:460px; height:460px; translate:-50% -50%; border-radius:50%; pointer-events:none;
-  background:radial-gradient(circle, rgba(255,176,80,.34), rgba(255,130,45,.12) 44%, transparent 68%);
-  animation:tgl 3.4s infinite alternate}
-@keyframes tgl{from{opacity:.72} to{opacity:1}}
+.dnav{position:fixed; left:0; right:0; bottom:0; z-index:60; display:flex; align-items:center; justify-content:space-between; gap:14px; padding:10px 3vw; background:rgba(33,33,36,.96); border-top:1px solid var(--line)}
+.dnav button{padding:9px 20px; border:1px solid var(--line); background:transparent; color:var(--ink); font-size:10.5px; letter-spacing:.2em; text-transform:uppercase; font-weight:600; transition:all .25s}
+.dnav button:hover{border-color:var(--teal); color:var(--teal)}
+.dnav button:disabled{opacity:.3; cursor:not-allowed}
+#dots{display:flex; gap:8px; flex-wrap:wrap; justify-content:center}
+#dots button{width:10px; height:10px; padding:0; border-radius:50%; border:1px solid var(--teal); background:transparent; transition:all .25s}
+#dots button.on{background:var(--teal); transform:scale(1.35)}
+#ctr{font-family:var(--disp); font-size:15px; color:var(--gold); min-width:64px; text-align:center}
 
-/* plates: big, protruding, angled toward the walker, glowing, double-sided */
-.plate3d{padding:18px; background:linear-gradient(140deg,#5d3f22,#33200f 40%,#4a3018); border:3px solid #241710;
-  box-shadow:0 20px 70px rgba(0,0,0,.6), 0 0 60px rgba(255,190,100,.22), inset 0 0 0 4px rgba(222,175,126,.6), inset 0 0 0 9px #241710}
-.plate3d .glass{position:relative; width:100%; height:100%; overflow:hidden; background:#120b06}
-.plate3d img{width:100%; height:100%; object-fit:cover; filter:sepia(.16) contrast(1.1) saturate(1.02) brightness(1.12)}
-.plate3d .glass::after{content:""; position:absolute; inset:0; background:linear-gradient(115deg, rgba(255,244,210,.16) 0 18%, transparent 30% 62%, rgba(255,244,210,.08) 74% 82%, transparent 90%)}
-.plate3d .cone{position:absolute; left:50%; top:-150px; width:230%; height:200%; translate:-50% 0; pointer-events:none;
-  background:radial-gradient(ellipse 46% 60% at 50% 0%, rgba(255,206,120,.36), rgba(255,150,60,.12) 46%, transparent 70%); animation:tgl 4.2s infinite alternate}
-.plaque{position:absolute; left:50%; bottom:-36px; translate:-50% 0; white-space:nowrap; font-size:10px; letter-spacing:.22em; text-transform:uppercase; font-weight:600;
-  color:#2b1a0e; background:linear-gradient(160deg,#f0d194,#c99a5e 55%,#96662e); padding:6px 16px; border:1px solid #241710; box-shadow:0 4px 12px rgba(0,0,0,.5)}
-.niche{padding:16px; background:radial-gradient(ellipse at 50% 30%, #4a3018, #241710 78%); border:3px solid #241710; border-radius:190px 190px 10px 10px;
-  box-shadow:inset 0 14px 50px rgba(0,0,0,.6), 0 18px 60px rgba(0,0,0,.55), 0 0 44px rgba(255,190,100,.16)}
-.niche .glass{position:relative; width:100%; height:100%; overflow:hidden; border-radius:170px 170px 5px 5px; background:#120b06}
-.niche img{width:100%; height:100%; object-fit:cover; filter:sepia(.34) brightness(.95) contrast(1.2)}
-.niche .glass::after{content:""; position:absolute; inset:0; box-shadow:inset 0 0 60px rgba(0,0,0,.6); border-radius:inherit}
-.shrine{background:
-   radial-gradient(ellipse 70% 60% at 50% 46%, rgba(255,190,100,.24), transparent 62%),
-   linear-gradient(180deg, rgba(20,12,6,.5), transparent 26% 74%, rgba(20,12,6,.6)),
-   var(--shimg) center/cover;
-  filter:saturate(.95) contrast(1.05) brightness(.95)}
-.shrine::after{content:""; position:absolute; inset:0; background:radial-gradient(circle at 50% 58%, rgba(255,180,90,.28), transparent 42%); animation:tgl 5s infinite alternate}
+/* ---------- 3D REALISTIC SITE ---------- */
+#site{position:fixed; inset:0; z-index:1; display:none; background:#0b0a08}
+#site.on{display:block}
+#gl{position:absolute; inset:0}
+#gl canvas{display:block; width:100%; height:100%}
 
-/* HUD */
-.hud{position:absolute; inset:0; pointer-events:none; z-index:6}
-.hud-vig{position:absolute; inset:0; background:radial-gradient(ellipse 118% 92% at 50% 50%, transparent 52%, rgba(20,12,6,.55)); animation:flick 6s infinite}
-@keyframes flick{0%,100%{opacity:.8}9%{opacity:.95}17%{opacity:.78}29%{opacity:.95}41%{opacity:.8}57%{opacity:.94}73%{opacity:.82}88%{opacity:.96}}
-#compass{position:absolute; top:12px; left:50%; translate:-50% 0; width:min(360px,60vw); height:24px; overflow:hidden;
+.shud{position:absolute; inset:0; pointer-events:none; z-index:5}
+.shud-vig{position:absolute; inset:0; background:radial-gradient(ellipse 120% 95% at 50% 45%, transparent 52%, rgba(14,12,10,.65))}
+#sCross{position:absolute; left:50%; top:50%; width:18px; height:18px; translate:-50% -50%; opacity:.85; transition:transform .2s}
+#sCross::before,#sCross::after{content:""; position:absolute; background:var(--gold2); box-shadow:0 0 8px rgba(0,0,0,.9)}
+#sCross::before{left:8px; top:0; width:2px; height:18px}
+#sCross::after{top:8px; left:0; height:2px; width:18px}
+#sCross.hot{transform:scale(1.45)}
+#sCross.hot::before,#sCross.hot::after{background:#fff8db; box-shadow:0 0 12px #f3c467}
+#sPrompt{position:absolute; left:50%; bottom:16%; translate:-50% 0; background:rgba(20,16,12,.92); border:1.5px solid var(--gold); padding:10px 24px; font-size:11px; letter-spacing:.22em; text-transform:uppercase; font-weight:700; color:var(--gold2); opacity:0; transition:opacity .25s; white-space:nowrap; box-shadow:0 8px 30px rgba(0,0,0,.7)}
+#sPrompt.on{opacity:1}
+#sToast{position:absolute; left:50%; top:18%; translate:-50% 0; font-family:var(--disp); font-size:clamp(18px,2.6vw,30px); letter-spacing:.12em; color:var(--gold2); text-shadow:0 2px 24px rgba(0,0,0,.95); opacity:0; transition:opacity .4s}
+#sToast.on{opacity:1}
+.s-tl{position:absolute; top:52px; left:16px; font-size:10px; letter-spacing:.26em; text-transform:uppercase; color:var(--gold2); font-weight:700; text-shadow:0 2px 8px rgba(0,0,0,.9)}
+.s-tl small{display:block; color:var(--ink); opacity:.75; letter-spacing:.2em; margin-top:3px}
+.s-tr{position:absolute; top:52px; right:16px; text-align:right; font-size:10px; letter-spacing:.22em; text-transform:uppercase; font-weight:700; text-shadow:0 2px 8px rgba(0,0,0,.9)}
+.s-tr b{color:var(--gold2); font-family:var(--disp); font-size:18px}
+.s-bl{position:absolute; left:16px; bottom:14px; font-size:10px; letter-spacing:.14em; opacity:.85; line-height:1.9; text-shadow:0 2px 6px rgba(0,0,0,.9)}
+.s-bl b{color:var(--gold2)}
+
+/* Controls toolbar bottom right */
+.s-ctrls{position:absolute; right:16px; bottom:14px; pointer-events:auto; display:flex; gap:8px; flex-wrap:wrap}
+.s-btn{padding:8px 14px; border:1px solid var(--line); background:rgba(23,20,16,.85); backdrop-filter:blur(6px); color:var(--ink); font-size:10px; letter-spacing:.18em; text-transform:uppercase; font-weight:600; border-radius:3px; transition:all .2s}
+.s-btn:hover{border-color:var(--gold); color:var(--gold2); transform:translateY(-1px)}
+.s-btn.active{background:var(--gold); color:#171105; border-color:var(--gold); font-weight:700}
+
+#sComp{position:absolute; top:52px; left:50%; translate:-50% 0; width:min(340px,50vw); height:24px; overflow:hidden;
   -webkit-mask:linear-gradient(90deg,transparent,#000 18% 82%,transparent); mask:linear-gradient(90deg,transparent,#000 18% 82%,transparent)}
-#compass .strip{position:absolute; top:0; left:0; height:100%; display:flex; align-items:center; will-change:transform}
-#compass .tick{width:20px; flex:0 0 20px; text-align:center; font-size:9px; letter-spacing:.1em; color:var(--cream); opacity:.7; position:relative}
-#compass .tick::before{content:""; position:absolute; top:0; left:50%; width:1px; height:6px; background:var(--ochre)}
-#compass .tick.card{font-family:var(--disp); font-size:12px; color:var(--ochre2); opacity:1; font-weight:700}
-#compass .mid{position:absolute; left:50%; top:0; width:2px; height:10px; background:var(--ochre2); translate:-50% 0; box-shadow:0 0 6px rgba(208,138,62,.8)}
-.hud-tl{position:absolute; top:44px; left:16px; font-size:10px; letter-spacing:.26em; text-transform:uppercase; color:var(--ochre2); font-weight:600; text-shadow:0 2px 8px rgba(0,0,0,.8)}
-.hud-tl small{display:block; color:var(--cream); opacity:.65; letter-spacing:.2em; margin-top:3px}
-.hud-tr{position:absolute; top:44px; right:16px; text-align:right; font-size:10px; letter-spacing:.22em; text-transform:uppercase; font-weight:600; text-shadow:0 2px 8px rgba(0,0,0,.8)}
-.hud-tr b{color:var(--ochre2); font-family:var(--disp); font-size:17px; letter-spacing:.08em}
-#cross{position:absolute; left:50%; top:50%; width:18px; height:18px; translate:-50% -50%; opacity:.9; transition:transform .2s}
-#cross.hot{transform:scale(1.35)}
-#cross::before,#cross::after{content:""; position:absolute; background:var(--ochre2); box-shadow:0 0 6px rgba(0,0,0,.8)}
-#cross::before{left:8px; top:0; width:2px; height:18px}
-#cross::after{top:8px; left:0; height:2px; width:18px}
-#cross.hot::before,#cross.hot::after{background:#fff3c4}
-#prompt{position:absolute; left:50%; bottom:15%; translate:-50% 0; background:rgba(23,16,9,.9); border:1px solid var(--ochre); padding:9px 22px; font-size:11px; letter-spacing:.2em; text-transform:uppercase; font-weight:600; color:var(--ochre2); opacity:0; transition:opacity .2s; white-space:nowrap}
-#prompt.on{opacity:1}
-#toast{position:absolute; left:50%; top:20%; translate:-50% 0; font-family:var(--disp); font-size:clamp(18px,2.6vw,30px); letter-spacing:.12em; color:var(--ochre2); text-shadow:0 2px 20px rgba(0,0,0,.9); opacity:0; transition:opacity .4s}
-#toast.on{opacity:1}
-.hud-bl{position:absolute; left:16px; bottom:14px; font-size:10px; letter-spacing:.14em; opacity:.75; line-height:1.9; text-shadow:0 2px 6px rgba(0,0,0,.8)}
-.hud-bl b{color:var(--ochre2)}
-#prog{position:absolute; left:50%; bottom:12px; translate:-50% 0; width:min(380px,52vw); height:3px; background:rgba(208,138,62,.22); border-radius:2px}
-#prog i{display:block; height:100%; width:0%; background:linear-gradient(90deg,var(--pig),var(--ochre2)); border-radius:2px; box-shadow:0 0 10px rgba(208,138,62,.7)}
-#puff{position:absolute; inset:0; pointer-events:none; overflow:hidden}
-#puff i{position:absolute; left:50%; bottom:8%; width:10px; height:10px; border-radius:50%; background:rgba(200,170,130,.4); filter:blur(3px); animation:puff .7s ease-out forwards}
-@keyframes puff{from{transform:translate(-50%,0) scale(.6); opacity:.7} to{transform:translate(calc(-50% + var(--dx)), -46px) scale(2.6); opacity:0}}
-#embers{position:absolute; inset:0; pointer-events:none; overflow:hidden}
-#embers i{position:absolute; right:9%; bottom:20%; width:4px; height:4px; border-radius:50%; background:#ffcf6a; box-shadow:0 0 8px #ff8c2e; animation:ember 3.4s ease-out infinite}
-@keyframes ember{0%{transform:translate(0,0) scale(1); opacity:0}10%{opacity:.95}100%{transform:translate(calc(-40px - var(--ex)), -46vh) scale(.2); opacity:0}}
-#hand{position:absolute; right:5%; bottom:-44px; width:120px; height:230px; z-index:7; pointer-events:none; transform-origin:80% 100%; will-change:transform}
-#hand .stick{position:absolute; right:30px; bottom:0; width:26px; height:200px; border-radius:8px; transform:rotate(14deg);
-  background:linear-gradient(90deg,#241710,#6b4a28 40%,#4a3018); box-shadow:0 0 20px rgba(0,0,0,.6), inset 0 -30px 40px rgba(0,0,0,.5)}
-#hand .wrap{position:absolute; right:26px; bottom:128px; width:34px; height:26px; border-radius:6px; transform:rotate(14deg);
-  background:repeating-linear-gradient(45deg,#96662e 0 4px,#6b4a28 4px 8px)}
-#hand .hflame{position:absolute; right:16px; bottom:146px; width:74px; height:104px; border-radius:50% 50% 44% 56%/64% 64% 36% 36%;
-  background:radial-gradient(circle at 50% 70%, #fff6cf 0 16%, #ffd276 32%, #ff8c2e 56%, rgba(255,90,20,.2) 78%, transparent 84%);
-  filter:blur(1px); mix-blend-mode:screen; animation:fl .22s infinite alternate}
-#hand .hglow{position:absolute; right:-90px; bottom:30px; width:420px; height:420px; border-radius:50%;
-  background:radial-gradient(circle, rgba(255,180,90,.34), transparent 65%); animation:tgl 2.8s infinite alternate}
-#dpad{position:absolute; left:16px; bottom:44px; display:none; grid-template-columns:repeat(3,52px); grid-template-rows:repeat(3,52px); gap:6px; pointer-events:auto}
-#dpad button{border:1.5px solid rgba(208,138,62,.6); background:rgba(23,16,9,.6); color:var(--ochre2); font-size:16px; border-radius:10px; touch-action:none}
-#dpad button:active{background:var(--ochre); color:var(--cave)}
-#dpad .u{grid-area:1/2}#dpad .l{grid-area:2/1}#dpad .d{grid-area:3/2}#dpad .r{grid-area:2/3}
-body.touch #dpad{display:grid}
-body.touch .hud-bl{display:none}
-#dust3d{position:absolute; inset:0; pointer-events:none; overflow:hidden; z-index:5}
-#dust3d i{position:absolute; border-radius:50%; background:rgba(240,190,120,.5); animation:rise linear infinite}
-@keyframes rise{0%{transform:translate(0,0); opacity:0}12%{opacity:.7}88%{opacity:.35}100%{transform:translate(6vw,-104vh); opacity:0}}
-#enterOv{position:absolute; inset:0; z-index:9; display:grid; place-items:center; text-align:center; padding:20px; cursor:pointer;
-  background:radial-gradient(ellipse at 50% 45%, rgba(40,26,12,.7), rgba(20,12,6,.94))}
-#enterOv h3{font-family:var(--disp); font-weight:700; font-size:clamp(26px,4vw,48px); letter-spacing:.1em; color:var(--ochre2); text-shadow:0 0 44px rgba(208,138,62,.55)}
-#enterOv .load{font-size:11px; letter-spacing:.26em; text-transform:uppercase; opacity:.75; margin:10px 0 4px}
-#enterOv p{font-size:12.5px; opacity:.82; max-width:56ch; margin:10px auto 18px}
-#enterOv .keys{display:flex; gap:10px; justify-content:center; flex-wrap:wrap; font-size:10px; letter-spacing:.18em; text-transform:uppercase; opacity:.85}
-#enterOv .keys span{border:1px solid rgba(208,138,62,.55); padding:6px 14px}
-#enterOv .keys span.enter{background:var(--ochre); color:var(--cave); border-color:var(--ochre); font-weight:600; animation:pulseK 1.6s infinite}
-@keyframes pulseK{0%,100%{box-shadow:0 0 0 0 rgba(208,138,62,.5)}50%{box-shadow:0 0 0 10px rgba(208,138,62,0)}}
-#enterOv.hide{display:none}
-#exhibit{position:absolute; inset:0; z-index:10; display:none; place-items:center; background:rgba(20,12,6,.93); backdrop-filter:blur(6px); padding:18px}
-#exhibit.on{display:grid}
-.ex-card{width:min(900px,100%); max-height:94%; overflow:auto; background:var(--panel); border:2px solid var(--ochre); box-shadow:0 40px 120px rgba(0,0,0,.8); display:grid; grid-template-columns:1.15fr .85fr}
-.ex-card img{width:100%; height:100%; object-fit:cover; min-height:300px; filter:sepia(.16) contrast(1.06)}
-.ex-body{padding:26px 26px 22px; display:flex; flex-direction:column; gap:12px}
-.ex-body .dir{font-size:9.5px; letter-spacing:.3em; text-transform:uppercase; color:var(--ochre); font-weight:600}
-.ex-body h3{font-family:var(--disp); font-weight:700; font-size:26px; letter-spacing:.04em; color:var(--ochre2)}
-.ex-body .cap{font-family:var(--serif); font-style:italic; font-size:15px; border-left:2px solid var(--ochre); padding-left:12px}
-.ex-body .desc{font-size:12.5px; opacity:.82}
-.ex-body .close{margin-top:auto; align-self:flex-start}
-@media (max-width:860px){ .ex-card{grid-template-columns:1fr} .ex-card img{max-height:250px} }
+#sComp .strip{position:absolute; top:0; left:0; height:100%; display:flex; align-items:center; will-change:transform}
+#sComp .tick{width:20px; flex:0 0 20px; text-align:center; font-size:9px; color:var(--ink); opacity:.75; position:relative}
+#sComp .tick::before{content:""; position:absolute; top:0; left:50%; width:1px; height:5px; background:var(--gold)}
+#sComp .tick.card{font-family:var(--disp); font-size:12px; color:var(--gold2); opacity:1; font-weight:700}
+#sComp .mid{position:absolute; left:50%; top:0; width:2px; height:10px; background:var(--gold2); translate:-50% 0; box-shadow:0 0 6px #f3c467}
 
-/* ---------- STORY ---------- */
-.story{padding:56px 0 40px}
-.story-head{max-width:1040px; margin:0 auto; padding:0 4vw 6px; text-align:center}
-.story-head .k{font-size:10px; letter-spacing:.32em; text-transform:uppercase; color:var(--ochre); font-weight:600}
-.story-head h2{font-family:var(--disp); font-weight:700; font-size:clamp(28px,4vw,50px); letter-spacing:.05em; margin:10px 0 8px}
-.story-head h2 span{color:var(--ochre2)}
-.story-head p{font-family:var(--serif); font-style:italic; font-size:14.5px; opacity:.82; max-width:64ch; margin:0 auto}
-.panels{max-width:1020px; margin:0 auto; padding:30px 4vw 10px; display:flex; flex-direction:column; gap:70px}
-.panel{opacity:0; transform:translateY(40px); transition:opacity .9s ease, transform .9s ease}
-.panel.in{opacity:1; transform:none}
-.p-grid{display:grid; grid-template-columns:1.15fr .85fr; background:var(--panel); border:1px solid rgba(208,138,62,.3); box-shadow:0 26px 80px rgba(0,0,0,.5); transition:transform .4s ease, box-shadow .4s ease}
-.panel.in .p-grid:hover{transform:translateY(-6px); box-shadow:0 36px 100px rgba(0,0,0,.6), 0 0 40px rgba(208,138,62,.12)}
-.panel:nth-child(even) .p-frame{order:2}
-.p-frame{position:relative; overflow:hidden; min-height:320px; background:#120b06}
-.p-frame img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; filter:sepia(.24) contrast(1.07) brightness(.98); animation:kb 20s ease-in-out infinite alternate; transition:filter .5s}
-.panel.in .p-grid:hover .p-frame img{filter:sepia(.12) contrast(1.1) brightness(1.05)}
-.panel:nth-child(even) .p-frame img{animation-direction:alternate-reverse}
-.p-frame::after{content:""; position:absolute; inset:0; background:radial-gradient(ellipse 120% 95% at 50% 50%, transparent 55%, rgba(23,16,9,.5)); animation:flick 6.5s infinite}
-.p-num{position:absolute; top:10px; left:14px; z-index:3; font-family:var(--disp); font-weight:700; font-size:42px; color:var(--ochre2); text-shadow:0 2px 10px rgba(0,0,0,.9)}
-.p-dir{position:absolute; bottom:10px; right:12px; z-index:3; font-size:9px; letter-spacing:.28em; text-transform:uppercase; color:var(--cream); font-weight:600; background:rgba(23,16,9,.85); border-left:2px solid var(--ochre); padding:4px 10px}
-.p-body{padding:26px 26px 22px; display:flex; flex-direction:column; gap:12px; border-left:1px solid rgba(208,138,62,.25)}
-.panel:nth-child(even) .p-body{border-left:0; border-right:1px solid rgba(208,138,62,.25)}
-.p-body h3{font-family:var(--disp); font-weight:700; font-size:24px; letter-spacing:.05em; color:var(--ochre2)}
-.p-line{font-family:var(--serif); font-style:italic; font-size:15px; min-height:1.6em; border-left:2px solid var(--ochre); padding-left:12px}
-.p-line::after{content:"▌"; color:var(--ochre); animation:caret 1s steps(1) infinite}
-.p-line.done::after{content:""}
-@keyframes caret{50%{opacity:0}}
-.p-desc{font-size:12.5px; opacity:.78}
-.p-tags{margin-top:auto; display:flex; gap:6px; flex-wrap:wrap}
-.p-tags span{font-size:9.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--ochre2); border:1px solid rgba(208,138,62,.45); padding:3px 9px; font-weight:600}
-footer{margin-top:60px; border-top:1px solid rgba(208,138,62,.3); background:#120b06; padding:28px 4vw 44px; display:flex; justify-content:space-between; gap:24px; flex-wrap:wrap}
-.f-brand .f-title{font-family:var(--disp); font-weight:700; font-size:19px; color:var(--ochre2); letter-spacing:.1em}
-.f-brand p{font-size:12px; opacity:.72; margin-top:6px; max-width:48ch}
-.f-meta{text-align:right; font-size:11.5px; opacity:.8}
-.f-meta .due{display:inline-block; margin-bottom:8px; padding:6px 14px; border:1.5px solid var(--ochre); color:var(--ochre2); letter-spacing:.2em; text-transform:uppercase; font-size:10px; font-weight:600}
-.f-meta p{margin-top:4px}
-@media (max-width:900px){ .p-grid{grid-template-columns:1fr} .panel:nth-child(even) .p-frame{order:0} .panel:nth-child(even) .p-body{border-right:0; border-left:1px solid rgba(208,138,62,.25)} .p-frame{aspect-ratio:16/10; min-height:0} .f-meta{text-align:left} .cover-torch{display:none} }
+/* Overlay start modal */
+#sEnter{position:absolute; inset:0; z-index:9; display:grid; place-items:center; text-align:center; padding:20px; cursor:pointer;
+  background:radial-gradient(ellipse at 50% 45%, rgba(35,28,18,.75), rgba(11,10,8,.97))}
+#sEnter h3{font-family:var(--disp); font-size:clamp(26px,4vw,50px); letter-spacing:.12em; color:var(--gold2); text-shadow:0 0 44px rgba(217,164,65,.6)}
+#sEnter p{font-size:13px; opacity:.85; max-width:62ch; margin:12px auto 20px; line-height:1.7}
+#sEnter .keys{display:flex; gap:10px; justify-content:center; flex-wrap:wrap; font-size:10px; letter-spacing:.18em; text-transform:uppercase; opacity:.9}
+#sEnter .keys span{border:1px solid rgba(217,164,65,.55); padding:6px 14px; background:rgba(20,16,10,.6)}
+#sEnter .keys span.enter{background:var(--gold); color:#1a1306; border-color:var(--gold); font-weight:700; animation:pulseK 1.6s infinite}
+@keyframes pulseK{0%,100%{box-shadow:0 0 0 0 rgba(217,164,65,.6)}50%{box-shadow:0 0 0 12px rgba(217,164,65,0)}}
+#sEnter.hide{display:none}
+
+/* DECODE MODAL */
+#decode{position:fixed; inset:0; z-index:80; display:none; place-items:center; background:rgba(10,9,7,.94); backdrop-filter:blur(8px); padding:20px}
+#decode.on{display:grid}
+.dcard{width:min(940px,96vw); max-height:92%; overflow:auto; background:var(--gran2); border:1.5px solid var(--gold); box-shadow:0 40px 140px #000; display:grid; grid-template-columns:1.05fr .95fr}
+.dcard .dim{position:relative; min-height:340px; background:#18181b}
+.dcard .dim img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; filter:contrast(1.06) saturate(.95)}
+.dcard .dim::after{content:""; position:absolute; inset:0; background:linear-gradient(90deg, transparent 65%, rgba(42,42,47,.95))}
+.dbody{padding:28px 28px 24px; display:flex; flex-direction:column}
+.dbody .dk{font-size:10px; letter-spacing:.3em; text-transform:uppercase; color:var(--teal); font-weight:700}
+.dbody h3{font-family:var(--disp); font-size:26px; margin:8px 0 10px; line-height:1.15; color:var(--gold2)}
+.dbody .dsig{font-size:13px; color:var(--dim); font-style:italic; margin-bottom:14px; line-height:1.6}
+.dbody h5{font-size:10px; letter-spacing:.24em; text-transform:uppercase; color:var(--gold); margin:12px 0 8px}
+.dattrs{list-style:none}
+.dattrs li{display:flex; gap:10px; align-items:baseline; padding:7px 0; border-bottom:1px dashed var(--line); font-size:12.5px}
+.dattrs li b{color:var(--teal); font-weight:700; min-width:130px}
+.dbody .dclose{margin-top:auto; padding-top:16px; align-self:flex-start}
+@media (max-width:860px){ .dcard{grid-template-columns:1fr} .dcard .dim{min-height:220px} }
+
+/* ---------- REPORT (A4 PAPER VIEW) ---------- */
+#report{position:fixed; inset:0; overflow:auto; padding:64px 4vw 60px; background:#2e2e33; display:none; z-index:1}
+#report.on{display:block}
+.sheet{width:min(860px,94vw); margin:0 auto 34px; background:var(--paper); color:var(--pink); padding:54px clamp(28px,5vw,64px) 46px; position:relative;
+  box-shadow:0 24px 80px rgba(0,0,0,.6); opacity:0; transform:translateY(36px); transition:opacity .8s ease, transform .8s ease}
+.sheet.in{opacity:1; transform:none}
+.sheet::before{content:""; position:absolute; inset:12px; border:1px solid rgba(43,43,46,.25); pointer-events:none}
+.rhead{display:flex; justify-content:space-between; font-size:9.5px; letter-spacing:.24em; text-transform:uppercase; color:#7a776e; border-bottom:1.5px solid var(--pink); padding-bottom:8px; margin-bottom:22px}
+.sheet h3{font-family:var(--disp); font-size:clamp(20px,2.4vw,28px); margin:18px 0 8px; line-height:1.2; color:#18181b}
+.sheet h3:first-of-type{margin-top:0}
+.sheet h4{font-size:11px; letter-spacing:.24em; text-transform:uppercase; color:var(--rust); margin:16px 0 6px; font-weight:700}
+.sheet p{font-size:13.5px; line-height:1.75; margin-bottom:10px; text-align:justify}
+.sheet p.abs{font-style:italic; color:#4c4a44; font-size:13px; line-height:1.7}
+.rfig{margin:14px 0; border:1px solid rgba(43,43,46,.4); padding:8px; background:#fff}
+.rfig img{width:100%; max-height:290px; object-fit:cover; filter:contrast(1.04) saturate(.94)}
+.rfig .rc{font-size:11px; font-style:italic; color:#5c5a52; padding-top:6px; text-align:center}
+.rledg{margin:14px 0; font-size:12.5px; background:rgba(0,0,0,.03); padding:8px 12px; border:1px solid rgba(43,43,46,.15)}
+.rledg div{display:flex; gap:10px; padding:4px 0; border-bottom:1px dotted rgba(43,43,46,.3)}
+.rledg div:last-child{border-bottom:none}
+.rledg b{min-width:150px; font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:#6a675e}
+.refs{font-size:12px; line-height:1.7}
+.refs li{margin-left:18px; margin-bottom:6px}
+.pnum{position:absolute; bottom:16px; left:0; right:0; text-align:center; font-size:10px; letter-spacing:.3em; color:#7a776e}
+
+@media (max-width:900px){
+  .slide.active{grid-template-columns:1fr; gap:20px; align-content:start; padding-top:10px}
+  .fig .im{aspect-ratio:16/10}
+  .top-l{display:none}
+}
 </style>
 </head>
 <body>
 
-<nav class="nav">
-  <div class="nav-logo">AJANTA FRAMES<small>CAVE WALKTHROUGH · CO2</small></div>
-  <div class="nav-right">
-    <button data-page="cover">Cover</button>
-    <button data-page="cave">Cave Walk</button>
-    <button data-page="story">Storyboard</button>
+<div id="prog"></div>
+<div class="top">
+  <div class="top-l">
+    <span>21LEM301T · Indian Art Form</span>
+    <b>Assignment 5 · CO2</b>
+    <span class="top-badge">10 Marks</span>
   </div>
-</nav>
+  <div class="top-r">
+    <button class="tbtn on" id="mDeck">Presentation</button>
+    <button class="tbtn" id="mSite">3D Realistic Site Walk</button>
+    <button class="tbtn" id="mRep">Report (6 pp)</button>
+    <a href="Sculpture_Thematic_Analysis_Mahabalipuram_Harinish.pdf" download="Sculpture_Thematic_Analysis_Mahabalipuram_Harinish.pdf" class="tbtn pdf">Download PDF</a>
+  </div>
+</div>
 
-<!-- ============ COVER ============ -->
-<section class="screen" id="page-cover">
-  <div class="cover">
-    <div class="cover-bg"><img src="https://image.qwenlm.ai/public_source/6c87be1b-829a-4fdc-8974-0709bd18cf94/1ee5668ce-718f-4356-9618-9671ae21186d6483.png" alt=""></div>
-    <div class="cover-torch l"><div class="gl"></div><div class="stick"></div><div class="fl"></div></div>
-    <div class="cover-torch r"><div class="gl"></div><div class="stick"></div><div class="fl" style="animation-delay:-.13s"></div></div>
-    <div class="cover-box">
-      <p class="c-inst">SRM Institute of Science and Technology · Assignment 4 · CO2 · 10 Marks</p>
-      <h1 class="c-title">AJANTA <span>FRAMES</span></h1>
-      <p class="c-sub">A first-person cave walkthrough — waterfall, torchlight and eleven real plates.</p>
-      <p class="c-desc">Walk ninety paces of living basalt inside a fully sealed cave: turn a full 360° and the rock surrounds you — floor, ceiling, walls, arches, pillars. Scroll or WASD to move, mouse to look, stand before a plate and press E. Press <b>ENTER</b> and the torch is yours.</p>
-      <div class="c-ledger">
-        <div class="row"><span class="k">Name</span><span class="dots"></span><span class="v">HARINISH S V</span></div>
-        <div class="row"><span class="k">Registration No</span><span class="dots"></span><span class="v">RA2411030010137</span></div>
-        <div class="row"><span class="k">Section</span><span class="dots"></span><span class="v">Y1</span></div>
-        <div class="row"><span class="k">Subject</span><span class="dots"></span><span class="v">INDIAN ART FORM</span></div>
-        <div class="row"><span class="k">Subject Code</span><span class="dots"></span><span class="v">21LEM301T</span></div>
-      </div>
-      <p class="c-due">Submission · <b>27 · 08 · 2026</b></p>
-      <div class="c-cta">
-        <button class="btn solid" data-page="cave">Enter the Cave →</button>
-        <button class="btn" data-page="story">Flat Storyboard</button>
-      </div>
-    </div>
-  </div>
-</section>
+<!-- ============ DECK ============ -->
+<div id="deck"></div>
+<div class="dnav" id="dnav">
+  <button id="prev">← Prev</button>
+  <div id="dots"></div>
+  <span id="ctr">01 / 10</span>
+  <button id="next">Next →</button>
+</div>
 
-<!-- ============ CAVE ============ -->
-<section class="screen" id="caveScreen">
-  <div id="stage">
-    <div id="viewport"><div id="world"></div></div>
-    <div id="dust3d"></div>
-    <div id="puff"></div>
-    <div id="embers"></div>
-    <div class="hud">
-      <div class="hud-vig"></div>
-      <div id="compass"><div class="strip" id="cstrip"></div><div class="mid"></div></div>
-      <div class="hud-tl">Ajanta Frames · Cave Walk<small>Waghora gorge · Maharashtra · 5th c. CE</small></div>
-      <div class="hud-tr">Plates found<br><b id="found">00 / 11</b></div>
-      <div id="cross"></div>
-      <div id="prompt"></div>
-      <div id="toast"></div>
-      <div class="hud-bl"><b>mouse</b> look 360° · <b>W A S D / scroll</b> walk · <b>E / click</b> open plate · <b>enter</b> start · the cave is sealed — only interior</div>
-      <div id="prog"><i></i></div>
-      <div id="dpad">
-        <button class="u" data-k="w">▲</button><button class="l" data-k="a">◀</button><button class="d" data-k="s">▼</button><button class="r" data-k="d">▶</button>
-      </div>
-    </div>
-    <div id="hand"><div class="hglow"></div><div class="stick"></div><div class="wrap"></div><div class="hflame"></div></div>
-    <div id="enterOv">
-      <div>
-        <h3>THE CAVE IS LIT</h3>
-        <p class="load" id="loadTxt">Lighting torches… 0 / 11 plates</p>
-        <p>A fully enclosed basalt corridor: waterfall in the dark, torchlight on every wall, six murals, four carved niches and a glowing shrine at the end. Spin a full 360° — the cave is whole on every side; you will only ever see its interior.</p>
-        <div class="keys"><span class="enter">press ENTER</span><span>or click / tap</span><span>mouse = look 360°</span><span>scroll / W A S D = walk</span><span>E = open plate</span></div>
-      </div>
-    </div>
-    <div id="exhibit">
-      <div class="ex-card">
-        <img id="exImg" src="" alt="">
-        <div class="ex-body">
-          <span class="dir" id="exDir"></span>
-          <h3 id="exTitle"></h3>
-          <p class="cap" id="exCap"></p>
-          <p class="desc" id="exDesc"></p>
-          <button class="btn solid close" id="exClose">Return to the cave</button>
-        </div>
-      </div>
+<!-- ============ 3D REALISTIC SITE ============ -->
+<div id="site">
+  <div id="gl"></div>
+  <div class="shud">
+    <div class="shud-vig"></div>
+    <div id="sComp"><div class="strip" id="sStrip"></div><div class="mid"></div></div>
+    <div class="s-tl">Mamallapuram · Archaeological Coastal Site<small>UNESCO World Heritage · Pallava 7th–8th c. CE</small></div>
+    <div class="s-tr">Monuments examined<br><b id="sFound">0 / 8</b></div>
+    <div id="sCross"></div>
+    <div id="sPrompt"></div>
+    <div id="sToast"></div>
+    <div class="s-bl"><b>mouse</b> look 360° · <b>W A S D</b> walk · <b>shift</b> sprint · <b>E / click</b> examine carving · <b>L</b> raking light · <b>T</b> time of day · <b>M</b> audio</div>
+    
+    <div class="s-ctrls">
+      <button class="s-btn" id="btnRake">Raking Light: Off</button>
+      <button class="s-btn" id="btnTime">Time: Golden Hour</button>
+      <button class="s-btn" id="btnOrbit">Drone View</button>
+      <button class="s-btn" id="btnSound">🔊 Ambient Audio</button>
     </div>
   </div>
-</section>
+  <div id="sEnter">
+    <div>
+      <h3>ENTER THE PALLAVA WORKSHOP</h3>
+      <p>A physically based 3D reconstruction of the Mamallapuram coastal outcrop on the Bay of Bengal: examine the colossal Great Ganges Relief, the Five Monolithic Rathas, Varaha and Mahishasuramardini rock-cut caves, and the twin-vimana Shore Temple. Walk with real sunlight, raking shadows, ocean waves, and procedural stone displacement.</p>
+      <div class="keys"><span class="enter">press ENTER to walk</span><span>or click anywhere</span><span>W A S D walk</span><span>E examine</span><span>L raking light</span><span>T time of day</span></div>
+    </div>
+  </div>
+</div>
 
-<!-- ============ STORY ============ -->
-<section class="screen" id="page-story">
-  <div class="story">
-    <div class="story-head">
-      <p class="k">Caves 1 · 17 · 26 · 5th century CE</p>
-      <h2>SIX FRAMES FROM THE <span>CAVE WALL</span></h2>
-      <p>The flat storyboard edition — the same mural plates sequenced as a graphic novel with camera grammar and captions.</p>
+<!-- ============ DECODE MODAL ============ -->
+<div id="decode">
+  <div class="dcard">
+    <div class="dim"><img id="dImg" src="" alt=""></div>
+    <div class="dbody">
+      <span class="dk" id="dKick"></span>
+      <h3 id="dTitle"></h3>
+      <p class="dsig" id="dSig"></p>
+      <h5>Iconography decode</h5>
+      <ul class="dattrs" id="dAttrs"></ul>
+      <button class="tbtn dclose" id="dClose">Return to the outcrop</button>
     </div>
-    <div class="panels" id="panels"></div>
-    <footer>
-      <div class="f-brand">
-        <span class="f-title">AJANTA FRAMES</span>
-        <p>First-person cave walkthrough &amp; storyboard after Ajanta Caves 1, 17 &amp; 26. By Harinish S V · RA2411030010137 · Section Y1 · 21LEM301T.</p>
-      </div>
-      <div class="f-meta">
-        <span class="due">Submission · 27 August 2026</span>
-        <p>SRM Institute of Science and Technology · Assignment 4 · CO2 · 10 Marks.</p>
-        <p>Original engine, captions &amp; sequencing · real archival plates.</p>
-      </div>
-    </footer>
   </div>
-</section>
+</div>
+
+<!-- ============ REPORT ============ -->
+<div id="report"></div>
 
 <script>
 "use strict";
 var $ = function(s){ return document.querySelector(s); };
-var BASE = "https://image.qwenlm.ai/public_source/6c87be1b-829a-4fdc-8974-0709bd18cf94/";
+var B = "https://image.qwenlm.ai/public_source/6c87be1b-829a-4fdc-8974-0709bd18cf94/";
+var IMG = {
+  shore:  B+"05ead0c5a-5e02-4867-b527-2a24ec786b337208.png",
+  rathas: B+"45ead0c5a-5e02-4867-b527-2a24ec786b338463.png",
+  lion:   B+"15ead0c5a-5e02-4867-b527-2a24ec786b338045.png",
+  ganga:  B+"25ead0c5a-5e02-4867-b527-2a24ec786b332494.png",
+  varaha: B+"55ead0c5a-5e02-4867-b527-2a24ec786b333261.png",
+  krishna:B+"15ead0c5a-5e02-4867-b527-2a24ec786b336339.png",
+  durga:  B+"45ead0c5a-5e02-4867-b527-2a24ec786b334701.png",
+  bhima:  B+"05ead0c5a-5e02-4867-b527-2a24ec786b335274.png",
+  gaja:   B+"65ead0c5a-5e02-4867-b527-2a24ec786b339903.png",
+  arch:   B+"35ead0c5a-5e02-4867-b527-2a24ec786b338432.png",
+  gable:  B+"45ead0c5a-5e02-4867-b527-2a24ec786b339098.png"
+};
 
-var MURALS = [
-{ t:"The Procession Sets Out", dir:"WIDE SHOT · TRACKING", cave:"Mural · Cave 17", img:BASE+"2ee5668ce-718f-4356-9618-9671ae21186d8064.png",
-  cap:"A king rides out with parasols, horses and a crowd of witnesses — the wall begins the story in motion.",
-  desc:"After the procession register of Cave 17: overlapping profiles, three-quarter bodies, eyes outlined in black. Frame 1 — the ride toward the old carved tale." },
-{ t:"The Assembly Under Parasols", dir:"MEDIUM SHOT · CROWD", cave:"Mural · Cave 17", img:BASE+"3ee5668ce-718f-4356-9618-9671ae21186d2171.png",
-  cap:"The court gathers — parasols tilt, faces turn, and the whole wall leans toward what happens next.",
-  desc:"Ajanta's crowds are never static: parasols overlap, glances cross, gestures point beyond the frame. Frame 2 — the assembly watching the king pause before stone." },
-{ t:"Padmapani, the Vision", dir:"CLOSE-UP · PORTRAIT", cave:"Mural · Cave 1", img:BASE+"6ee5668ce-718f-4356-9618-9671ae21186d9422.png",
-  cap:"The lotus-bearer turns his head — the painted face of compassion the king cannot look away from.",
-  desc:"The Bodhisattva of Cave 1: lotus in hand, eyes downcast, body in a soft triple bend. The vision — self-giving alive in pigment." },
-{ t:"The Witnesses", dir:"TWO SHOT · HALOES", cave:"Fresco · Cave 17", img:BASE+"0ee5668ce-718f-4356-9618-9671ae21186d8569.png",
-  cap:"Two haloed figures lean toward each other in the flaking dark — the wall itself bears witness.",
-  desc:"A damaged fresco pair, haloes glowing through lost plaster. The silent reaction shot: nothing said, everything understood." },
-{ t:"Taking Refuge", dir:"WIDE SHOT · RESOLUTION", cave:"Mural copy · Cave 17", img:BASE+"5ee5668ce-718f-4356-9618-9671ae21186d1773.png",
-  cap:"The king kneels in the teaching hall. The story closes where all Ajanta stories close — in the Dharma.",
-  desc:"After the great preaching composition: the Teacher at the centre while kings and crowds surge around. The rider has arrived; the bow is lowered; the wall goes quiet." },
-{ t:"Bodhisattva & Attendants", dir:"MEDIUM SHOT · GROUP", cave:"Mural · Cave 1", img:BASE+"1076084a5-95a6-4856-aae6-d5f5ec0de0b4.png",
-  cap:"Court ladies, jewels and shadow — the painter's whole world in one surviving span of plaster.",
-  desc:"Vakataka-age technique: ochre, lapis, green earth and lamp-black on dry lime plaster, modelled with a subtlety that rivals any fresco tradition." }
+var SLIDES = [
+{ cover:true, img:IMG.shore, cap:"Shore Temple, Mamallapuram",
+  title:'Stone That <em>Speaks</em>',
+  sub:"A thematic and iconographic analysis of the rock-cut sculptures of Mahabalipuram (Mamallapuram), Tamil Nadu — Pallava, 7th–8th century CE.",
+  abs:"This research analyzes the open-air reliefs, cave shrines, and monolithic rathas of Mahabalipuram as one legible theological program, identifying four recurring themes — the descent of divine grace, gods in heroic action, the sanctification of everyday life, and royal dynastic piety — and examining the iconographic language of scale, register, attribute, and gesture through which those themes are communicated." },
+{ kick:"Context", title:"One Outcrop, One Century, <em>One Workshop</em>", tags:["art","cul"], img:IMG.rathas,
+  cap:"Pancha Rathas — five monoliths cut top-down from single boulders",
+  pts:["Mamallapuram, the premier Pallava port on the Coromandel coast, was carved <b>c. 630–730 CE</b> almost entirely from one outcrop of charnockite granite.",
+       "Three architectural formats speak one unified visual language here: <b>open-air bas-reliefs</b>, <b>cave shrines (mandapas)</b>, and <b>monolithic rathas</b>.",
+       "Inscribed as a UNESCO World Heritage Site in 1984, it stands as the clearest primary text of early South Indian Dravidian iconography."],
+  note:"Subtractive epistemology: the sculptor removes and never adds — every form was already latent within the metamorphic boulder.",
+  paper:"Because the entire complex rises from one granite outcrop, stylistic evolution across the site can be read stratigraphically: earlier soft Mahendra-period modeling crystallizes into the crisp, monumental articulation of the Mamalla workshops." },
+{ kick:"Patronage", title:"The <em>Lion</em> of the Pallavas", tags:["cul","rel"], img:IMG.lion,
+  cap:"Lion-base (vyala) pillars under a mandapa porch — dynastic emblem as structure",
+  pts:["Under <b>Narasimhavarman I 'Mamalla'</b> and his royal successors, sculptural iconography was weaponized as state theology.",
+       "The seated Simha-vyala (horned lion) at pillar bases is simultaneously <b>structural support, apotropaic guardian, and dynastic signature</b>.",
+       "Port wealth funded multi-generational workshops that transformed the coastal landscape into an open-air imperial manifesto."],
+  note:"Heraldic insignia as architecture: the lion signs Pallava authorship as incontrovertibly as a royal copper-plate grant.",
+  paper:"The vyala pillar is the site's most recognizable signature: an imperial heraldic beast converted into a load-bearing column, forcing every visitor to cross beneath the body of the king's totemic protector." },
+{ kick:"Theme I · The Sacred Descends", title:"The <em>Descent</em> of the Ganges", tags:["rel"], img:IMG.ganga,
+  cap:"The colossal open-air relief (c. 29 × 13 m): all creation converges on the cleft",
+  pts:["A natural vertical cleft in the granite cliff <b>becomes the celestial river Ganga</b>: raw geology recruited directly into sacred narrative.",
+       "Ascending Nagas and Naginis undulate inside the water cleft, while celestial Gandharvas and Vidyadharas soar weightlessly in the ether.",
+       "The double reading (<b>Arjuna's penance</b> for the Pashupatastra / <b>Bhagiratha's penance</b> to bring Ganga down) is deliberate theological shlesha (polysemy)."],
+  note:"Directionality is meaning: universal movement toward the vertical cleft is movement toward cosmic grace (anugraha).",
+  paper:"The relief's genius is hydrological: an ancient masonry cistern above the cleft released water during festivals, physically cascading down the rock to literally animate the sculpted river." },
+{ kick:"Theme II · Gods in Action", title:"Vishnu <em>Raises</em> the Earth", tags:["rel"], img:IMG.varaha,
+  cap:"Varaha mandapa: the boar-headed Vishnu lifts Bhudevi with profound tenderness",
+  pts:["<b>Bhu-Varaha rescuing Mother Earth</b>: cosmic protection (rakshana) rendered somatic — the boar snout tenderly nuzzling the rescued goddess.",
+       "In the same rock-cut mandapa, <b>Trivikrama</b> measures the cosmos in three cosmic strides, while Lakshmi is bathed by elephants (Gajalakshmi).",
+       "Adjacent, <b>Durga as Mahishasuramardini</b> attacks the buffalo demon Mahishasura in eight-armed militant grandeur."],
+  note:"Iconographic attributes identify avataras: boar head + hoisted Bhudevi = Varaha; disc held edgewise + cosmic stride = Trivikrama.",
+  paper:"The Varaha panel synthesizes titanic power with intimacy: the god's massive shoulder cradles Bhudevi with an organic sensitivity rarely matched in world sculpture." },
+{ kick:"Theme III · The Everyday Sanctified", title:"Cowherds, Cats and <em>Milkmaids</em>", tags:["cul"], img:IMG.krishna,
+  cap:"Krishna mandapa: the herd sheltered under Mount Govardhana",
+  pts:["<b>Krishna lifting Govardhana</b> shelters pastoral society: cowherds, cattle, and milkmaids under a stone canopy.",
+       "Empirical observation of life: a cowherd milks a cow while the mother turns to tenderly lick her nursing calf.",
+       "On the Great Relief, a <b>cat stands in mock ascetic penance</b> while mice dance at its feet — ethical satire inside sacred stone."],
+  note:"Empirical naturalism: the real world is not an illusion to be discarded, but the vessel through which the divine is witnessed.",
+  paper:"The pastoral reliefs in Krishna Mandapa represent an unprecedented triumph of observational realism in Indian art: bovine anatomy, rope tension, and pot-balancing postures are studied directly from Tamil coastal life." },
+{ kick:"Method · Reading the Language", title:"How the Stone <em>Says</em> It", tags:["art"], img:IMG.durga,
+  cap:"Mahishasuramardini panel: attributes, mudras, and scale carry the sentence",
+  pts:["<b>Hierarchy of scale</b>: deities are carved monumental; attendant humans and retinue step down proportionally.",
+       "<b>Ayudhas and mudras are visual grammar</b>: the early Pallava discus held edgewise (prayoga), abhaya mudra, and the bow in tension.",
+       "<b>Spatial directionality</b>: Durga charges from left to right; the retreating demon shrinks toward the right border in moral collapse."],
+  note:"Semiotic formula: Iconography = Vocabulary (attributes) + Syntax (scale, posture, register, gaze).",
+  paper:"Once this visual grammar is mastered, even weathered and salt-eroded granite reliefs remain fully legible to the trained viewer." },
+{ kick:"Artistic Significance", title:"Thinking in <em>Subtraction</em>", tags:["art"], img:IMG.bhima,
+  cap:"Bhima ratha: a barrel-vaulted sala shrine cut top-down from a single boulder",
+  pts:["The Pancha Rathas are <b>scale architectural prototypes</b>: translating perishable timber, thatch, and brick traditions into eternal stone.",
+       "<b>Unfinished faces preserve the workshop sequence</b>: quarry trenching, wedge-splitting, volumetric blocking, and detail chiseling.",
+       "Pallava mastery over hard charnockite granite directly established the <b>formal canon of Dravidian temple architecture</b>."],
+  note:"The unfinished stone is primary evidence: workshop chisel grooves document the exact subtractive method.",
+  paper:"Tool-marks on the monolithic rathas reveal that master carvers blocked masses before assigning iconographic specifics, proving an advanced modular workshop pedagogy." },
+{ kick:"Cultural Significance", title:"A Port That Carved <em>for the Sea</em>", tags:["cul","rel"], img:IMG.gaja,
+  cap:"Shore Temple: twin granite vimanas standing directly on the Coromandel surf",
+  pts:["As the chief Pallava maritime gateway, Mamallapuram <b>exported its sculptural vocabulary across the Indian Ocean</b> to Java and Cambodia.",
+       "<b>Shaiva, Vaishnava, and Shakta sanctuaries coexist peacefully side-by-side</b>: imperial synthesis rather than sectarian conflict.",
+       "The Shore Temple stood as an iconic <b>maritime seamark</b>: sacred architecture serving seafaring navigation."],
+  note:"Trans-oceanic transmission: Pallava motifs like the kudu arch and makara reappear in 8th-century Javanese candis.",
+  paper:"Facing the sunrise over the Bay of Bengal, the Shore Temple fused religious worship with royal naval majesty, welcoming foreign embassies arriving along the Maritime Silk Route." },
+{ kick:"Conclusion", title:"The <em>Legible</em> Mountain", tags:["rel","cul","art"], img:IMG.arch,
+  cap:"19th-century archival photograph of the Great Relief: stone that continues to speak",
+  pts:["The four overarching themes form an <b>integrated philosophical and imperial cosmos</b>.",
+       "Mamallapuram created the <b>definitive template for South Indian temple art</b>, later inherited and expanded by the Cholas and Vijayanagara.",
+       "Thirteen centuries later, this living granite remains an articulate primary text that continues to be read and celebrated."],
+  note:"Thematic analysis proves that the site was deliberately designed as an open-air public text for all ranks of society.",
+  paper:"Our analysis concludes where Pallava chisels began: with living stone transformed into eternal speech, proving that stone does not merely endure—it speaks." }
 ];
-var CARVES = [
-{ t:"Chaitya Hall & Stupa", dir:"RELIEF NICHE · CAVE 10", cave:"Rock-cut · Cave 10", img:BASE+"1ee5668ce-718f-4356-9618-9671ae21186d6842.png",
-  cap:"The prayer hall with its rock-cut stupa and painted columns — architecture subtracted from mountain.",
-  desc:"Ajanta's halls were scooped out of basalt, pillar by pillar, from the ceiling down. The carving is the mountain itself, dressed as architecture." },
-{ t:"Pillar of Carved Bands", dir:"RELIEF NICHE · CAVE 2", cave:"Rock-cut · Cave 2", img:BASE+"2ee5668ce-718f-4356-9618-9671ae21186d6930.png",
-  cap:"Cushion capital and floral friezes chiselled in basalt — the chisel before the brush.",
-  desc:"Every painted cave began as carving: brackets, capitals and friezes cut in hard rock, then plastered and painted over." },
-{ t:"The Pillared Court", dir:"RELIEF NICHE · VIHARA", cave:"Rock-cut · vihara porch", img:BASE+"0ee5668ce-718f-4356-9618-9671ae21186d6024.png",
-  cap:"Brackets and doorways carved as if from timber — stone remembering wood.",
-  desc:"Vihara porches imitate timber construction in stone: octagonal shafts, cushion capitals, deep-shadow doorways of monastic cells." },
-{ t:"Painted Ceiling Frieze", dir:"RELIEF NICHE · CAVE 17", cave:"Rock-cut · Cave 17", img:BASE+"4ee5668ce-718f-4356-9618-9671ae21186d1455.png",
-  cap:"Lotus rosettes and seated figures along the cornice — pattern as prayer.",
-  desc:"Above the carvings, ceilings bloom with lotus medallions, geese and floral bands: the mural vocabulary flattened into ornament, darkened by lamp soot." }
-];
-var SHRINE = { t:"The Shrine Antechamber", dir:"END OF CORRIDOR · CAVE 26", cave:"Rock-cut · Cave 26", img:BASE+"1ee5668ce-718f-4356-9618-9671ae21186d6483.png",
-  cap:"Seated Buddhas in niches above carved brackets — the corridor's destination.",
-  desc:"Cave 26's antechamber: niches of seated Buddhas stacked over carved pillars. In the walk it waits at the end of ninety paces, glowing." };
 
-/* ---------- router ---------- */
-var PAGES = ["cover","cave","story"];
-function go(p){ if(PAGES.indexOf(p) >= 0) location.hash = "#/" + p; }
-function route(){
-  var h = location.hash.replace("#/","");
-  if(PAGES.indexOf(h) < 0) h = "cover";
-  document.querySelectorAll(".screen").forEach(function(s){ s.classList.toggle("active", s.id === (h === "cave" ? "caveScreen" : "page-" + h)); });
-  document.querySelectorAll(".nav button").forEach(function(b){ b.classList.toggle("active", b.dataset.page === h); });
-  document.body.classList.toggle("cavelock", h === "cave");
-  window.scrollTo(0,0);
-  if(h === "cave") initCave();
+/* 3D monuments data */
+var SLABS = [
+{ t:"Descent of the Ganges (Arjuna's Penance)", s:"Open-air bas-relief · c. 650 CE", img:IMG.ganga, theme:"Religious",
+  sig:"The colossal 29 × 13 m granite cliff transformed into the celestial river Ganga: nagas, ascetics, flying vidyadharas, and the life-sized elephant herd.",
+  attrs:[["Natural Central Fissure","Represents the celestial river Ganga flowing from heaven to earth with ascending nagas"],
+         ["One-legged Ascetic (Tapas)","Dual identity: Bhagiratha bringing Ganga, or Arjuna seeking Pashupatastra"],
+         ["Four-armed Lord Shiva","Accompanied by dwarfish ganas, bestowing divine boon (varada mudra)"],
+         ["Matriarchal Elephant Herd","Remarkable naturalism: male tusker sheltering young calves between front legs"],
+         ["Satirical Ascetic Cat","Parody of hypocritical penance: cat meditates while mice play safely at its paws"]] },
+{ t:"Bhu-Varaha Mandapa", s:"Rock-cut cave panel · Vaishnava", img:IMG.varaha, theme:"Religious",
+  sig:"Vishnu as the colossal boar avatara lifting Mother Earth (Bhudevi) from the cosmic abyss with monumental tenderness.",
+  attrs:[["Boar Head & Muscular Torso","Symbol of Vishnu's transcendent power overturning cosmic disorder"],
+         ["Bhudevi (Mother Earth)","Seated gently on Varaha's flexed right knee in trusting surrender"],
+         ["Sheshanaga underfoot","Underground serpent king supporting the lotus pedestal"],
+         ["Attendant Sages & Devas","Arranged in descending scale to reflect spiritual hierarchy"]] },
+{ t:"Mahishasuramardini Cave", s:"Rock-cut battle panel · Shakta", img:IMG.durga, theme:"Religious",
+  sig:"The goddess Durga mounted on her roaring lion charging the buffalo-headed demon Mahishasura in kinetic moral combat.",
+  attrs:[["Eight-armed Durga","Wielding bow, trident, discus, sword, and conch in harmonious motion"],
+         ["Roaring Lion Vahana","Aggressive springing posture emphasizing divine indignation"],
+         ["Mahishasura Titan","Depicted with human body and buffalo horns, wielding an iron club as he recoils"],
+         ["Direction of Flight","Demonic army collapses toward the right margin, visually declaring defeat"]] },
+{ t:"Govardhana Cave (Krishna Mandapa)", s:"Rock-cut pastoral relief · Krishnaite", img:IMG.krishna, theme:"Cultural",
+  sig:"Krishna lifting Mount Govardhana like an umbrella to shield the cowherds (Ayars) and cattle of Gokula from Indra's storm.",
+  attrs:[["Mountain Held Aloft","Single-handed effortless divine protection over human community"],
+         ["Cow Milking Scene","Mother cow turns affectionately to lick her nursing calf — observational realism"],
+         ["Milkmaid with Pots","Earthy pastoral life elevated to sacred status"],
+         ["Pastoral Flute Player","Music and peace amidst cosmic turmoil"]] },
+{ t:"Simha-Vyala Pillar Porch", s:"Mandapa veranda · Dynastic", img:IMG.lion, theme:"Cultural",
+  sig:"The signature Pallava architectural column: crouching horned lion acting as foundation, guardian, and royal emblem.",
+  attrs:[["Seated Lion (Vyala)","Symbol of Narasimhavarman I 'Mamalla', the conquering king"],
+         ["Cushion Capital (Kumbha)","Bulbous member distributing the dead weight of the rock architrave"],
+         ["Repetition across Caves","Standardized workshop signature spanning four generations of monarchs"]] },
+{ t:"Pancha Rathas (Monolithic Chariots)", s:"Top-down monolithic shrines · 7th c.", img:IMG.rathas, theme:"Artistic",
+  sig:"Five experimental architectural prototypes carved top-down from single granite boulders, codifying Dravidian temple forms.",
+  attrs:[["Dharmaraja Ratha","Stepped tritala vimana with octagonal sikhara and corner deity sculptures"],
+         ["Bhima Ratha","Massive oblong barrel-vaulted wagon roof (sala-shikhara) with pillared portico"],
+         ["Draupadi Ratha","Four-cornered square hut (kutagara) shrine modeled on thatch hermitages"],
+         ["Nakula-Sahadeva & Elephant","Apsidal elephant-back (gajaprishta) shrine with free-standing monolithic elephant"]] },
+{ t:"Shore Temple (Alai-vayil-kovil)", s:"Structural coastal temple · c. 700–728 CE", img:IMG.shore, theme:"Cultural",
+  sig:"Twin granite vimanas kissing the ocean surf: early structural Dravidian temple functioning as both sanctuary and maritime beacon.",
+  attrs:[["Twin Tiered Vimanas","Dedicated to Shiva (east and west) with Vishnu Anantasayana between"],
+         ["Nandi Bull Perimeter","Enclosure wall adorned with dozens of couchant stone bulls facing the sea"],
+         ["Granite Breakwater","Engineered directly into coastal bedrock to withstand tidal erosion"]] },
+{ t:"Kudu Arch & Gable Stele", s:"Ornamental detail · Architectural", img:IMG.gable, theme:"Artistic",
+  sig:"The horseshoe-shaped chaitya arch (kudu) with a protective human face inside, framing roof tiers and dormers.",
+  attrs:[["Horseshoe Kudu Arch","Dravidian decorative adaptation of earlier Buddhist sun-window arches"],
+         ["Protective Face Inside","Apotropaic guardian looking outward from the roof perimeter"],
+         ["Finial Kalasa","Apex terminal accentuating vertical ascent"]] }
+];
+
+var REFS = [
+ "Srinivasan, K. R. (1964). <i>Cave-Temples of the Pallavas</i>. New Delhi: Archaeological Survey of India (ASI).",
+ "Lockwood, Michael, Siromoney, Gift, & Dayanandan, P. (1974). <i>Mahabalipuram Studies</i>. Madras: Christian Literature Society.",
+ "Dehejia, Vidya (1997). <i>Indian Art</i>. London: Phaidon Press.",
+ "UNESCO World Heritage Centre (1984). <i>Group of Monuments at Mahabalipuram</i>. Advisory Body Evaluation, Ref. 249."
+];
+
+/* ================= PRESENTATION DECK ================= */
+var deck = $("#deck");
+deck.innerHTML = SLIDES.map(function(s,i){
+  if(s.cover){
+    return '<section class="slide coverS" data-i="'+i+'"><div class="cwrap">'+
+      '<p class="inst">SRM Institute of Science and Technology · Assignment 5 · CO2 · 10 Marks</p>'+
+      '<h1>'+s.title+'</h1><p class="sub">'+s.sub+'</p>'+
+      '<div class="ledger">'+
+        '<div class="row"><span class="k">Student Name</span><span class="dots"></span><span class="v">HARINISH S V</span></div>'+
+        '<div class="row"><span class="k">Registration No</span><span class="dots"></span><span class="v">RA2411030010137</span></div>'+
+        '<div class="row"><span class="k">Section / Year</span><span class="dots"></span><span class="v">Section Y1 · 2026</span></div>'+
+        '<div class="row"><span class="k">Subject Name</span><span class="dots"></span><span class="v">INDIAN ART FORM</span></div>'+
+        '<div class="row"><span class="k">Subject Code</span><span class="dots"></span><span class="v">21LEM301T</span></div>'+
+      '</div><p class="abs">'+s.abs+'</p>'+
+      '<div class="cta-row">'+
+        '<button class="tbtn on" onclick="setMode(\'site\')">Start 3D Site Walk →</button>'+
+        '<button class="tbtn" onclick="setMode(\'rep\')">Read Academic Paper (6 pp)</button>'+
+        '<a href="Sculpture_Thematic_Analysis_Mahabalipuram_Harinish.pdf" download class="tbtn pdf">Download Official PDF</a>'+
+      '</div></div></section>';
+  }
+  var tags = (s.tags||[]).map(function(t){
+    var cls = t==="rel"?"rel":t==="cul"?"cul":"art";
+    var lab = t==="rel"?"Religious":t==="cul"?"Cultural":"Artistic";
+    return '<span class="'+cls+'">'+lab+'</span>';
+  }).join("");
+  return '<section class="slide" data-i="'+i+'">'+
+    '<div class="txt"><div class="kick">'+s.kick+'<span class="tags">'+tags+'</span></div>'+
+    '<h2 class="st">'+s.title+'</h2>'+
+    '<ul class="pts">'+s.pts.map(function(p){return "<li>"+p+"</li>";}).join("")+'</ul>'+
+    '<div class="notebox"><b>Iconography Insight</b>'+s.note+'</div></div>'+
+    '<figure class="fig"><div class="im"><img src="'+s.img+'" alt="'+s.cap+'" loading="lazy"></div>'+
+    '<figcaption class="cap"><b>Fig. '+i+'</b>'+s.cap+'</figcaption></figure></section>';
+}).join("");
+
+var slides = Array.from(document.querySelectorAll(".slide")), cur = 0;
+$("#dots").innerHTML = slides.map(function(_,i){ return '<button data-i="'+i+'" aria-label="Slide '+(i+1)+'"></button>'; }).join("");
+function show(i){
+  cur = Math.max(0, Math.min(slides.length-1, i));
+  slides.forEach(function(s,j){ s.classList.toggle("active", j===cur); });
+  document.querySelectorAll("#dots button").forEach(function(d,j){ d.classList.toggle("on", j===cur); });
+  $("#ctr").textContent = String(cur+1).padStart(2,"0")+" / "+String(slides.length).padStart(2,"0");
+  $("#prog").style.width = ((cur+1)/slides.length*100)+"%";
+  $("#prev").disabled = cur===0; $("#next").disabled = cur===slides.length-1;
 }
-window.addEventListener("hashchange", route);
-document.addEventListener("click", function(e){ var g = e.target.closest("[data-page]"); if(g) go(g.dataset.page); });
+$("#prev").onclick = function(){ show(cur-1); };
+$("#next").onclick = function(){ show(cur+1); };
+$("#dots").addEventListener("click", function(e){ var b = e.target.closest("button[data-i]"); if(b) show(+b.dataset.i); });
+window.addEventListener("keydown", function(e){
+  if($("#site").classList.contains("on") || $("#report").classList.contains("on")) return;
+  if(e.key==="ArrowRight"||e.key==="PageDown"||e.key===" "){ e.preventDefault(); show(cur+1); }
+  if(e.key==="ArrowLeft"||e.key==="PageUp"){ e.preventDefault(); show(cur-1); }
+  if(e.key==="Home") show(0);
+  if(e.key==="End") show(slides.length-1);
+});
+deck.addEventListener("mousemove", function(e){
+  var im = slides[cur] && slides[cur].querySelector(".fig .im");
+  if(!im) return;
+  var r = deck.getBoundingClientRect();
+  im.style.setProperty("--px", ((e.clientX - r.width/2)/r.width*12).toFixed(2)+"px");
+  im.style.setProperty("--py", ((e.clientY - r.height/2)/r.height*10).toFixed(2)+"px");
+});
+show(0);
 
-/* ---------- flat storyboard ---------- */
-$("#panels").innerHTML = MURALS.map(function(s,i){ return (
- '<article class="panel"><div class="p-grid">'+
- '<div class="p-frame"><span class="p-num">0'+(i+1)+'</span><img src="'+s.img+'" alt="'+s.t+'" loading="lazy"><span class="p-dir">'+s.dir+'</span></div>'+
- '<div class="p-body"><h3>'+s.t+'</h3><p class="p-line" data-text="'+s.cap.replace(/"/g,"&quot;")+'"></p><p class="p-desc">'+s.desc+'</p>'+
- '<div class="p-tags"><span>'+s.cave+'</span></div></div></div></article>'); }).join("");
-var sio = new IntersectionObserver(function(es){ es.forEach(function(en){
-  if(!en.isIntersecting) return;
-  en.target.classList.add("in");
-  var el = en.target.querySelector(".p-line"), txt = el.dataset.text, i = 0;
-  setTimeout(function(){ var t = setInterval(function(){ el.textContent = txt.slice(0,++i); if(i >= txt.length){ clearInterval(t); el.classList.add("done"); } }, 20); }, 450);
-  sio.unobserve(en.target);
-}); }, {threshold:.25});
-document.querySelectorAll(".panel").forEach(function(p){ sio.observe(p); });
+/* ================= REPORT (6 PAGES) ================= */
+function para(s){ return s.pts.map(function(p){ return "<p>"+p.replace(/<b>/g,"<strong>").replace(/<\/b>/g,"</strong>")+"</p>"; }).join("") + (s.paper ? "<p>"+s.paper+"</p>" : ""); }
+function rfig(img,cap){ return '<figure class="rfig"><img src="'+img+'" alt="'+cap+'"><figcaption class="rc">'+cap+'</figcaption></figure>'; }
+var S = SLIDES;
+var pages = [
+ '<h3>Sculpture Thematic Analysis: The Rock-Cut Sculptures of Mahabalipuram</h3>'+
+ '<p class="abs">'+S[0].abs+'</p>'+
+ '<div class="rledg"><div><b>Student Name</b><span>HARINISH S V (Registration No: RA2411030010137)</span></div>'+
+ '<div><b>Section & Subject</b><span>Section Y1 · 21LEM301T — Indian Art Form (Assignment 5 · CO2)</span></div>'+
+ '<div><b>Institution</b><span>SRM Institute of Science and Technology · Faculty of Science and Humanities</span></div></div>'+
+ rfig(IMG.shore,"Fig. 1 — Shore Temple: monolithic subtraction evolving into maritime structural architecture."),
+ '<h3>1. The Site and Its Method: Geology & Subtraction</h3>'+ para(S[1]) +
+ '<h3>2. Patronage: The Heraldic Lion of the Pallavas</h3>'+ para(S[2]) +
+ rfig(IMG.rathas,"Fig. 2 — Pancha Rathas: five monolithic structural prototypes chiseled top-down from granite."),
+ '<h3>3. Theme I — The Sacred Descends: The Descent of the Ganges</h3>'+ para(S[3]) +
+ rfig(IMG.ganga,"Fig. 3 — The colossal open-air relief; natural geological fissure serving as the celestial river."),
+ '<h3>4. Theme II — Gods in Heroic Action</h3>'+ para(S[4]) +
+ '<h3>5. Theme III — The Everyday Sanctified</h3>'+ para(S[5]) +
+ rfig(IMG.varaha,"Fig. 4 — Varaha mandapa: cosmic deliverance rendered with somatic tenderness."),
+ '<h3>6. Iconographic Language: The Semiotic Syntax</h3>'+ para(S[6]) +
+ '<h3>7. Artistic Significance: The Monolithic Prototype</h3>'+ para(S[7]) +
+ rfig(IMG.durga,"Fig. 5 — Mahishasuramardini panel: spatial directionality, mudras, and ayudha grammar."),
+ '<h3>8. Cultural Significance: Trans-Oceanic Maritime Transmission</h3>'+ para(S[8]) +
+ '<h3>9. Conclusion: The Living Text of Living Basalt</h3>'+ para(S[9]) +
+ '<h4>Scholarly References & Primary Archival Literature</h4><ol class="refs">'+REFS.map(function(r){return "<li>"+r+"</li>";}).join("")+'</ol>'+
+ rfig(IMG.arch,"Fig. 6 — 19th-century photographic archive: thirteen centuries of continuous reading.")
+];
+$("#report").innerHTML = pages.map(function(p,i){
+  return '<section class="sheet"><div class="rhead"><span>Sculpture Thematic Analysis · Mahabalipuram</span><span>21LEM301T · CO2 · 10 MARKS</span></div>'+
+    p + '<div class="pnum">— PAGE '+(i+1)+' OF 6 —</div></section>';
+}).join("");
+var rio = new IntersectionObserver(function(es){ es.forEach(function(en){ if(en.isIntersecting){ en.target.classList.add("in"); rio.unobserve(en.target); } }); }, {threshold:.1});
+document.querySelectorAll(".sheet").forEach(function(s){ rio.observe(s); });
 
-/* ================= CAVE WALK — sealed, calm, paintings forward ================= */
-var caveReady = false;
-function initCave(){
-  if(caveReady) return; caveReady = true;
-  var isTouch = ("ontouchstart" in window);
-  if(isTouch) document.body.classList.add("touch");
+/* ================= ROUTING MODES ================= */
+function setMode(m){
+  $("#site").classList.toggle("on", m==="site");
+  $("#report").classList.toggle("on", m==="rep");
+  $("#deck").style.display = (m==="deck") ? "" : "none";
+  $("#dnav").style.display = (m==="deck") ? "" : "none";
+  $("#prog").style.display = (m==="deck") ? "" : "none";
+  $("#mDeck").classList.toggle("on", m==="deck");
+  $("#mSite").classList.toggle("on", m==="site");
+  $("#mRep").classList.toggle("on", m==="rep");
+  document.body.classList.toggle("cavelock", m==="site");
+  if(m==="site") initRealisticSite();
+  if(m==="rep") $("#report").scrollTop = 0;
+}
+$("#mDeck").onclick = function(){ setMode("deck"); };
+$("#mSite").onclick = function(){ setMode("site"); };
+$("#mRep").onclick  = function(){ setMode("rep"); };
 
-  var HALF_W = 300, FLOOR = 120, CEIL = -330, Z0 = 240, Z1 = -5600, OV = 60;
-  var XMAX = 110;                       /* central walking path: plates & walls always to the sides */
-  var ZMAX = Z0 - 240, ZMIN = Z1 + 260;
-  var PILLAR_Z = [-900,-2300,-3700,-5000], PILLAR_X = [-215,215];
-  var world = $("#world"), viewport = $("#viewport"), stage = $("#stage");
-  var plates = [], html = "";
+/* ================= WEB AUDIO API AMBIENCE (PROCEDURAL OCEAN WAVES & WIND) ================= */
+var audioCtx = null, audioRunning = false;
+function toggleAudio(){
+  if(!audioCtx){
+    try {
+      var AC = window.AudioContext || window.webkitAudioContext;
+      audioCtx = new AC();
+      
+      // Pink noise generator for ocean waves
+      var bufferSize = audioCtx.sampleRate * 2;
+      var noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+      var output = noiseBuffer.getChannelData(0);
+      var b0=0,b1=0,b2=0,b3=0,b4=0,b5=0,b6=0;
+      for (var i = 0; i < bufferSize; i++) {
+        var white = Math.random() * 2 - 1;
+        b0 = 0.99886 * b0 + white * 0.0555179;
+        b1 = 0.99332 * b1 + white * 0.0750759;
+        b2 = 0.96900 * b2 + white * 0.1538520;
+        b3 = 0.86650 * b3 + white * 0.3104856;
+        b4 = 0.55000 * b4 + white * 0.5329522;
+        b5 = -0.7616 * b5 - white * 0.0168980;
+        output[i] = b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362;
+        output[i] *= 0.11;
+        b6 = white * 0.115926;
+      }
+      var whiteNoise = audioCtx.createBufferSource();
+      whiteNoise.buffer = noiseBuffer;
+      whiteNoise.loop = true;
 
-  function plane(w,h,tf,cls,extra){
-    return '<div class="pl '+cls+'" style="width:'+w+'px;height:'+h+'px;margin:'+(-h/2)+'px 0 0 '+(-w/2)+'px;transform:'+tf+';'+(extra||"")+'"></div>';
+      // Lowpass filter modulated by LFO to simulate surf swell
+      var filter = audioCtx.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(320, audioCtx.currentTime);
+
+      var lfo = audioCtx.createOscillator();
+      lfo.frequency.setValueAtTime(0.12, audioCtx.currentTime); // ~8 sec wave period
+      var lfoGain = audioCtx.createGain();
+      lfoGain.gain.setValueAtTime(260, audioCtx.currentTime);
+      lfo.connect(lfoGain);
+      lfoGain.connect(filter.frequency);
+
+      var gainNode = audioCtx.createGain();
+      gainNode.gain.setValueAtTime(0.4, audioCtx.currentTime);
+
+      whiteNoise.connect(filter);
+      filter.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+
+      whiteNoise.start(0);
+      lfo.start(0);
+      audioRunning = true;
+      $("#btnSound").textContent = "🔊 Ocean Surf: On";
+      $("#btnSound").classList.add("active");
+    } catch(e){
+      console.log("Audio not allowed", e);
+    }
+  } else {
+    if(audioCtx.state === 'suspended'){
+      audioCtx.resume();
+      audioRunning = true;
+      $("#btnSound").textContent = "🔊 Ocean Surf: On";
+      $("#btnSound").classList.add("active");
+    } else if(audioCtx.state === 'running'){
+      audioCtx.suspend();
+      audioRunning = false;
+      $("#btnSound").textContent = "🔇 Ocean Surf: Off";
+      $("#btnSound").classList.remove("active");
+    }
+  }
+}
+$("#btnSound").onclick = toggleAudio;
+
+/* ================= 3D REALISTIC SCULPTURE & ARCHAEOLOGICAL ENGINE ================= */
+var siteReady = false;
+function initRealisticSite(){
+  if(siteReady) return; siteReady = true;
+
+  /* ---------- HIGH-RESOLUTION PROCEDURAL TEXTURE SYNTHESIS ---------- */
+  function createCanvas(w,h){
+    var c = document.createElement("canvas"); c.width=w; c.height=h;
+    var ctx = c.getContext("2d");
+    return [c, ctx];
   }
 
-  var L = Z0 - Z1, midZ = (Z0+Z1)/2, wallH = FLOOR-CEIL, wallY = (FLOOR+CEIL)/2;
-  html += plane(HALF_W*2+OV*2, L+OV*2, 'translate3d(0px,'+FLOOR+'px,'+midZ+'px) rotateX(90deg)', 'rockfloor');
-  html += plane(HALF_W*2+OV*2, L+OV*2, 'translate3d(0px,'+CEIL+'px,'+midZ+'px) rotateX(-90deg)', 'rockceil');
-  html += plane(L+OV*2, wallH+OV*2, 'translate3d('+(-HALF_W)+'px,'+wallY+'px,'+midZ+'px) rotateY(90deg)', 'rockwall');
-  html += plane(L+OV*2, wallH+OV*2, 'translate3d('+HALF_W+'px,'+wallY+'px,'+midZ+'px) rotateY(-90deg)', 'rockwall');
-  html += plane(HALF_W*2+OV*2, wallH+OV*2, 'translate3d(0px,'+wallY+'px,'+Z1+'px)', 'shrine', '--shimg:url('+SHRINE.img+')');
-  html += plane(HALF_W*2+OV*2, wallH+OV*2, 'translate3d(0px,'+wallY+'px,'+Z0+'px) rotateY(180deg)', 'rockwall');
-  [-HALF_W+1, HALF_W-1].forEach(function(xx,i){
-    html += '<div class="pl frieze" style="width:'+(L+OV*2)+'px;height:44px;margin:-22px 0 0 '+(-(L+OV*2)/2)+'px;transform:translate3d('+xx+'px,-150px,'+midZ+'px) rotateY('+(i ? -90 : 90)+'deg)"></div>';
+  // Realistic South Indian Charnockite Granite texture generator
+  function generateGranite(w, h, baseHex, speckleHex, darkFleck){
+    var a = createCanvas(w, h), ctx = a[1];
+    ctx.fillStyle = baseHex; ctx.fillRect(0,0,w,h);
+    
+    // Mineral crystalline flecks
+    var imgData = ctx.getImageData(0,0,w,h), d = imgData.data;
+    for(var i=0; i<d.length; i+=4){
+      var noise = (Math.random() - 0.5) * 50;
+      var fleck = Math.random();
+      if(fleck > 0.94){ // Quartz crystals (bright)
+        d[i]   = Math.min(255, d[i] + 70);
+        d[i+1] = Math.min(255, d[i+1] + 65);
+        d[i+2] = Math.min(255, d[i+2] + 55);
+      } else if(fleck < 0.08){ // Biotite hornblende (dark iron fleck)
+        d[i]   = Math.max(0, d[i] - 65);
+        d[i+1] = Math.max(0, d[i+1] - 65);
+        d[i+2] = Math.max(0, d[i+2] - 65);
+      } else {
+        d[i]   = Math.max(0, Math.min(255, d[i] + noise));
+        d[i+1] = Math.max(0, Math.min(255, d[i+1] + noise));
+        d[i+2] = Math.max(0, Math.min(255, d[i+2] + noise));
+      }
+    }
+    ctx.putImageData(imgData, 0, 0);
+
+    // Fine chisel tooth striations (Pallava point & claw chisel dressing)
+    ctx.strokeStyle = "rgba(40,35,30,0.14)";
+    ctx.lineWidth = 1.2;
+    for(var y=0; y<h; y+=7){
+      ctx.beginPath();
+      ctx.moveTo(0, y + (Math.random()-0.5)*3);
+      for(var x=0; x<w; x+=20){
+        ctx.lineTo(x, y + Math.sin(x*0.08)*2 + (Math.random()-0.5)*2);
+      }
+      ctx.stroke();
+    }
+    return a[0];
+  }
+
+  // Relief heightmap for Descent of the Ganges
+  function makeGangaReliefMap(){
+    var w = 1024, h = 512, a = createCanvas(w,h), ctx = a[1];
+    ctx.fillStyle = "#808080"; ctx.fillRect(0,0,w,h); // Mid gray base
+
+    // Central geological cleft (deep trench)
+    ctx.save();
+    ctx.filter = "blur(8px)";
+    ctx.fillStyle = "#2a2a2a";
+    ctx.beginPath();
+    ctx.moveTo(w/2 - 24, 0);
+    ctx.bezierCurveTo(w/2 - 10, h*0.3, w/2 + 20, h*0.6, w/2 - 6, h);
+    ctx.lineTo(w/2 + 20, h);
+    ctx.bezierCurveTo(w/2 + 40, h*0.6, w/2 + 10, h*0.3, w/2 + 18, 0);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+
+    // Serpentine Nagas in cleft
+    ctx.save();
+    ctx.filter = "blur(4px)";
+    ctx.fillStyle = "#d0d0d0";
+    ctx.strokeStyle = "#d0d0d0";
+    ctx.lineWidth = 14;
+    ctx.beginPath();
+    for(var ny=80; ny<h-40; ny+=10){
+      var nx = w/2 + Math.sin(ny*0.05)*14;
+      if(ny===80) ctx.moveTo(nx, ny); else ctx.lineTo(nx, ny);
+    }
+    ctx.stroke();
+    // Naga hoods
+    ctx.beginPath(); ctx.arc(w/2, 85, 20, 0, Math.PI*2); ctx.fill();
+    ctx.restore();
+
+    // Giant Elephant Herd (Right bank)
+    ctx.save();
+    ctx.filter = "blur(6px)";
+    ctx.fillStyle = "#e0e0e0";
+    // Matriarch bull elephant
+    ctx.beginPath(); ctx.ellipse(w*0.75, h*0.7, 110, 80, 0, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(w*0.64, h*0.62, 50, 0, Math.PI*2); ctx.fill(); // Head
+    // Trunk
+    ctx.lineWidth = 20; ctx.strokeStyle = "#e0e0e0";
+    ctx.beginPath(); ctx.moveTo(w*0.62, h*0.65); ctx.quadraticCurveTo(w*0.58, h*0.82, w*0.60, h*0.9); ctx.stroke();
+    // Two Baby elephants tucked under
+    ctx.beginPath(); ctx.ellipse(w*0.62, h*0.82, 35, 26, 0, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(w*0.88, h*0.8, 45, 32, 0, 0, Math.PI*2); ctx.fill();
+    ctx.restore();
+
+    // Flying Vidyadharas & Gandharvas (Upper heavens)
+    ctx.save();
+    ctx.filter = "blur(4px)";
+    ctx.fillStyle = "#dedede";
+    for(var vi=0; vi<10; vi++){
+      var vx = 80 + vi*95;
+      if(Math.abs(vx - w/2) < 60) continue;
+      var vy = 70 + (vi%2)*30;
+      ctx.beginPath(); ctx.ellipse(vx, vy, 24, 14, vi>5?-0.3:0.3, 0, Math.PI*2); ctx.fill();
+      ctx.beginPath(); ctx.arc(vx + (vi>5?-16:16), vy-10, 8, 0, Math.PI*2); ctx.fill();
+    }
+    // Ascetic (Bhagiratha / Arjuna) standing on one leg
+    ctx.beginPath(); ctx.ellipse(w*0.38, h*0.5, 12, 35, 0, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(w*0.38, h*0.42, 9, 0, Math.PI*2); ctx.fill();
+    // Four-armed Shiva adjacent
+    ctx.beginPath(); ctx.ellipse(w*0.34, h*0.48, 20, 48, 0, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(w*0.34, h*0.38, 12, 0, Math.PI*2); ctx.fill();
+    // Cat & mice (satirical relief at bottom right)
+    ctx.beginPath(); ctx.ellipse(w*0.56, h*0.88, 10, 18, 0, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(w*0.54, h*0.92, 4, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(w*0.58, h*0.93, 4, 0, Math.PI*2); ctx.fill();
+    ctx.restore();
+
+    return a[0];
+  }
+
+  var graniteCanvas = generateGranite(1024, 1024, "#a18765", "#c4af8c", "#3b3123");
+  var graniteDarkCanvas = generateGranite(1024, 1024, "#7a6346", "#9a805f", "#261f16");
+  var sandCanvas = generateGranite(1024, 1024, "#cbaf81", "#dec499", "#8e734c");
+
+  function makeTex(c, rep){
+    var t = new THREE.CanvasTexture(c);
+    t.wrapS = t.wrapT = THREE.RepeatWrapping;
+    if(rep) t.repeat.set(rep, rep);
+    t.anisotropy = 8;
+    return t;
+  }
+
+  var graniteTex = makeTex(graniteCanvas, 4);
+  var graniteDarkTex = makeTex(graniteDarkCanvas, 2);
+  var sandTex = makeTex(sandCanvas, 12);
+
+  /* ---------- THREE.JS SCENE SETUP ---------- */
+  var host = $("#gl");
+  var scene = new THREE.Scene();
+
+  var camera = new THREE.PerspectiveCamera(65, host.clientWidth/host.clientHeight, 0.1, 800);
+  camera.rotation.order = "YXZ";
+
+  var renderer = new THREE.WebGLRenderer({antialias:true, powerPreference:"high-performance"});
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(host.clientWidth, host.clientHeight);
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.05;
+  host.appendChild(renderer.domElement);
+
+  /* ---------- ATMOSPHERIC SKY DOME ---------- */
+  var skyGeo = new THREE.SphereGeometry(350, 32, 24);
+  var skyMat = new THREE.ShaderMaterial({
+    uniforms: {
+      topColor: { value: new THREE.Color(0x386b99) },
+      bottomColor: { value: new THREE.Color(0xebd2a4) },
+      offset: { value: 20 },
+      exponent: { value: 0.6 }
+    },
+    vertexShader: [
+      "varying vec3 vWorldPosition;",
+      "void main() {",
+      "  vec4 worldPosition = modelMatrix * vec4( position, 1.0 );",
+      "  vWorldPosition = worldPosition.xyz;",
+      "  gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );",
+      "}"
+    ].join("\n"),
+    fragmentShader: [
+      "uniform vec3 topColor;",
+      "uniform vec3 bottomColor;",
+      "uniform float offset;",
+      "uniform float exponent;",
+      "varying vec3 vWorldPosition;",
+      "void main() {",
+      "  float h = normalize( vWorldPosition + offset ).y;",
+      "  gl_FragColor = vec4( mix( bottomColor, topColor, max( pow( max( h, 0.0 ), exponent ), 0.0 ) ), 1.0 );",
+      "}"
+    ].join("\n"),
+    side: THREE.BackSide
   });
-  [-1500,-3000,-4500].forEach(function(z){
-    html += plane(150, wallH+40, 'translate3d('+(-HALF_W+75)+'px,'+wallY+'px,'+z+'px)', 'archj');
-    html += plane(150, wallH+40, 'translate3d('+(HALF_W-75)+'px,'+wallY+'px,'+z+'px)', 'archj');
-    html += plane(HALF_W*2-300, 170, 'translate3d(0px,'+(CEIL+80)+'px,'+z+'px)', 'archt');
+  var sky = new THREE.Mesh(skyGeo, skyMat);
+  scene.add(sky);
+  scene.fog = new THREE.FogExp2(0xd6c29e, 0.007);
+
+  /* ---------- LIGHTING RIG ---------- */
+  var hemiLight = new THREE.HemisphereLight(0xdde9f0, 0x826442, 0.65);
+  scene.add(hemiLight);
+
+  var sunLight = new THREE.DirectionalLight(0xffdfa8, 1.6);
+  sunLight.castShadow = true;
+  sunLight.shadow.mapSize.width = 2048;
+  sunLight.shadow.mapSize.height = 2048;
+  sunLight.shadow.camera.near = 0.5;
+  sunLight.shadow.camera.far = 160;
+  sunLight.shadow.camera.left = -50;
+  sunLight.shadow.camera.right = 50;
+  sunLight.shadow.camera.top = 50;
+  sunLight.shadow.camera.bottom = -50;
+  sunLight.shadow.bias = -0.0004;
+  scene.add(sunLight);
+  scene.add(sunLight.target);
+
+  /* ---------- TIME OF DAY CONTROLS ---------- */
+  var TIME_PRESETS = [
+    { name:"Golden Hour", elev:18, az:42, col:0xffd396, hemiSky:0xfae2be, hemiGrd:0x87643b, fog:0xd9b986, exp:1.1, sunI:1.7 },
+    { name:"High Noon", elev:65, az:15, col:0xfff5e6, hemiSky:0xd0e6f7, hemiGrd:0x9c7a52, fog:0xcfdde5, exp:1.0, sunI:1.9 },
+    { name:"Coastal Dawn", elev:10, az:78, col:0xff9a76, hemiSky:0xdbb0a0, hemiGrd:0x5e453a, fog:0xcda89b, exp:0.95, sunI:1.4 },
+    { name:"Moonlit Shore Night", elev:35, az:210, col:0x8ba6c9, hemiSky:0x1b2738, hemiGrd:0x0f151e, fog:0x121824, exp:0.7, sunI:0.6 }
+  ];
+  var timeIdx = 0;
+  function applyTimePreset(idx){
+    var p = TIME_PRESETS[idx];
+    timeIdx = idx;
+    var sa = p.az * Math.PI/180, se = p.elev * Math.PI/180;
+    sunLight.position.set(Math.cos(sa)*Math.cos(se)*90, Math.sin(se)*90, Math.sin(sa)*Math.cos(se)*90);
+    sunLight.color.setHex(p.col);
+    sunLight.intensity = p.sunI;
+    hemiLight.color.setHex(p.hemiSky);
+    hemiLight.groundColor.setHex(p.hemiGrd);
+    scene.fog.color.setHex(p.fog);
+    skyMat.uniforms.bottomColor.value.setHex(p.fog);
+    renderer.toneMappingExposure = p.exp;
+    $("#btnTime").textContent = "Time: " + p.name;
+  }
+  applyTimePreset(0);
+
+  var rakingOn = false;
+  function toggleRaking(){
+    rakingOn = !rakingOn;
+    if(rakingOn){
+      // Raking light: low elevation, side azimuth grazing relief carvings
+      sunLight.position.set(70, 7, -35);
+      sunLight.intensity = 2.4;
+      sunLight.color.setHex(0xffeaad);
+      $("#btnRake").textContent = "Raking Light: Active";
+      $("#btnRake").classList.add("active");
+    } else {
+      applyTimePreset(timeIdx);
+      $("#btnRake").textContent = "Raking Light: Off";
+      $("#btnRake").classList.remove("active");
+    }
+  }
+  $("#btnRake").onclick = toggleRaking;
+  $("#btnTime").onclick = function(){ applyTimePreset((timeIdx+1)%TIME_PRESETS.length); };
+
+  /* ---------- TERRAIN & COASTLINE (BAY OF BENGAL) ---------- */
+  var terrainGeo = new THREE.PlaneGeometry(260, 260, 120, 120);
+  terrainGeo.rotateX(-Math.PI/2);
+  var tPos = terrainGeo.attributes.position;
+  for(var ti=0; ti<tPos.count; ti++){
+    var tx = tPos.getX(ti), tz = tPos.getZ(ti);
+    // East slope down to the sea (x > 45)
+    var elev = Math.sin(tx*0.06)*Math.cos(tz*0.05)*1.2 + Math.sin(tx*0.2+tz*0.1)*0.3;
+    if(tx > 35) elev -= (tx - 35) * 0.28; // Beach gradient dropping below sea level
+    tPos.setY(ti, elev);
+  }
+  terrainGeo.computeVertexNormals();
+
+  var sandMat = new THREE.MeshStandardMaterial({
+    map: sandTex,
+    bumpMap: sandTex,
+    bumpScale: 0.06,
+    roughness: 0.94,
+    metalness: 0.05
   });
-  PILLAR_Z.forEach(function(z,zi){ PILLAR_X.forEach(function(px,pi){
-    var w = 96, k = zi+pi;
-    html += plane(w, wallH+20, 'translate3d('+px+'px,'+wallY+'px,'+(z-w/2)+'px)', 'pface'+(k%2 ? ' carved':''), (k%2 ? '--pimg:url('+CARVES[1].img+')':''));
-    html += plane(w, wallH+20, 'translate3d('+px+'px,'+wallY+'px,'+(z+w/2)+'px) rotateY(180deg)', 'pface'+((k+1)%2 ? ' carved':''), ((k+1)%2 ? '--pimg:url('+CARVES[3].img+')':''));
-    html += plane(w, wallH+20, 'translate3d('+(px-w/2)+'px,'+wallY+'px,'+z+'px) rotateY(90deg)', 'pface');
-    html += plane(w, wallH+20, 'translate3d('+(px+w/2)+'px,'+wallY+'px,'+z+'px) rotateY(-90deg)', 'pface');
-    html += plane(w+26, 26, 'translate3d('+px+'px,'+(CEIL+13)+'px,'+z+'px) rotateX(90deg)', 'pcap');
-    html += plane(w+26, 26, 'translate3d('+px+'px,'+(FLOOR-13)+'px,'+z+'px) rotateX(-90deg)', 'pcap');
-  }); });
-  for(var tz=-450; tz>Z1+260; tz-=600){
-    [-HALF_W+6, HALF_W-6].forEach(function(xx,i){
-      html += '<div class="pl" style="width:10px;height:46px;margin:-23px 0 0 -5px;transform:translate3d('+xx+'px,-140px,'+tz+'px) rotateY('+(i ? -90 : 90)+'deg)">'+
-        '<div class="torch"></div><div class="flame" style="animation-delay:-'+(Math.random()*2).toFixed(2)+'s"></div>'+
-        '<div class="tglow" style="animation-delay:-'+(Math.random()*3).toFixed(2)+'s"></div></div>';
-      html += plane(320, 320, 'translate3d('+(xx>0? 200 : -200)+'px,'+(FLOOR-1.5)+'px,'+tz+'px) rotateX(90deg)', 'lightpool', 'animation-delay:-'+(Math.random()*3).toFixed(2)+'s');
+  var terrain = new THREE.Mesh(terrainGeo, sandMat);
+  terrain.receiveShadow = true;
+  scene.add(terrain);
+
+  // Animated Ocean Surface (East side, x > 40)
+  var waterGeo = new THREE.PlaneGeometry(120, 260, 48, 64);
+  waterGeo.rotateX(-Math.PI/2);
+  var waterMat = new THREE.MeshStandardMaterial({
+    color: 0x1d4d5e,
+    roughness: 0.12,
+    metalness: 0.85,
+    transparent: true,
+    opacity: 0.88
+  });
+  var water = new THREE.Mesh(waterGeo, waterMat);
+  water.position.set(95, -0.6, 0);
+  scene.add(water);
+
+  /* ---------- COLLISION & MONUMENT ARRAYS ---------- */
+  var colliders = [];
+  var examineObjects = [];
+
+  var graniteStandardMat = new THREE.MeshStandardMaterial({
+    map: graniteTex,
+    bumpMap: graniteTex,
+    bumpScale: 0.08,
+    roughness: 0.92,
+    metalness: 0.05
+  });
+
+  var graniteDarkMat = new THREE.MeshStandardMaterial({
+    map: graniteDarkTex,
+    bumpMap: graniteDarkTex,
+    bumpScale: 0.12,
+    roughness: 0.95,
+    metalness: 0.02
+  });
+
+  /* 1. THE GREAT DESCENT OF THE GANGES CLIFF (Central Outcrop) */
+  (function buildGangesRelief(){
+    var cliffGroup = new THREE.Group();
+    cliffGroup.position.set(0, 0, -26);
+
+    // Main 30m x 12m rock facade
+    var cliffGeo = new THREE.PlaneGeometry(28, 12, 160, 80);
+    var gangaHMap = new THREE.CanvasTexture(makeGangaReliefMap());
+    gangaHMap.anisotropy = 8;
+    
+    var cliffMat = new THREE.MeshStandardMaterial({
+      map: makeTex(graniteCanvas, 2),
+      displacementMap: gangaHMap,
+      displacementScale: 1.15,
+      bumpMap: makeTex(graniteCanvas, 4),
+      bumpScale: 0.1,
+      roughness: 0.94
     });
-  }
-  for(var sz=-350; sz>Z1+200; sz-=430){
-    var sx = Math.sin(sz*.7)*180;
-    html += plane(46, 130, 'translate3d('+sx.toFixed(0)+'px,'+(CEIL+62)+'px,'+sz+'px)', 'spike');
-    html += plane(46, 130, 'translate3d('+sx.toFixed(0)+'px,'+(CEIL+62)+'px,'+sz+'px) rotateY(90deg)', 'spike');
-    if(Math.cos(sz*.3) > 0){
-      var bx = Math.cos(sz*.5)*200;
-      html += plane(40, 70, 'translate3d('+bx.toFixed(0)+'px,'+(FLOOR-34)+'px,'+(sz-180)+'px)', 'spike up');
-      html += plane(40, 70, 'translate3d('+bx.toFixed(0)+'px,'+(FLOOR-34)+'px,'+(sz-180)+'px) rotateY(90deg)', 'spike up');
-    }
-  }
-  [[-250,-1250],[255,-2650],[-255,-4150],[250,-5150]].forEach(function(b){
-    html += plane(130, 92, 'translate3d('+b[0]+'px,'+(FLOOR-46)+'px,'+b[1]+'px)', 'boulder');
-    html += plane(130, 92, 'translate3d('+b[0]+'px,'+(FLOOR-46)+'px,'+b[1]+'px) rotateY(90deg)', 'boulder');
-  });
-  var WFZ = -2800;
-  html += plane(250, wallH-40, 'translate3d('+(HALF_W-26)+'px,'+(wallY-16)+'px,'+WFZ+'px) rotateY(-90deg)', 'wfall');
-  html += plane(300, 240, 'translate3d('+(HALF_W-70)+'px,'+(wallY+40)+'px,'+WFZ+'px) rotateY(-90deg)', 'mist');
-  html += plane(340, 260, 'translate3d('+(HALF_W-150)+'px,'+(FLOOR-2)+'px,'+WFZ+'px) rotateX(90deg)', 'pool');
-  html += plane(420, 700, 'translate3d('+(HALF_W-160)+'px,'+(FLOOR-1.2)+'px,'+(WFZ+420)+'px) rotateX(90deg)', 'wetsheen');
-  [-2760,-2840].forEach(function(dz,i){
-    html += '<div class="pl drip" style="margin:-13px 0 0 -1px;transform:translate3d('+(HALF_W-40)+'px,'+(CEIL+40)+'px,'+dz+'px) rotateY(-90deg);animation-delay:-'+(i*.8)+'s"></div>';
-  });
-  html += '<div class="pl batpath1"><div class="bat"><i class="l"></i><i class="r"></i><b></b></div></div>';
-  html += '<div class="pl batpath2"><div class="bat"><i class="l"></i><i class="r"></i><b></b></div></div>';
+    var cliffMesh = new THREE.Mesh(cliffGeo, cliffMat);
+    cliffMesh.position.set(0, 6, 0);
+    cliffMesh.castShadow = true;
+    cliffMesh.receiveShadow = true;
+    cliffMesh.userData.infoIndex = 0;
+    examineObjects.push(cliffMesh);
+    cliffGroup.add(cliffMesh);
 
-  /* plates: protrude 46px off the wall, angled 16° toward the walking path, eye level */
-  function plate(info, side, z, w, h, py, niche){
-    var px = side * (HALF_W - 46);
-    var ry = side < 0 ? 74 : -74;
-    html += '<div class="pl '+(niche ? 'niche':'plate3d')+'" style="width:'+(w+ (niche?32:36))+'px;height:'+(h+(niche?32:36))+'px;margin:'+(-(h+(niche?32:36))/2)+'px 0 0 '+(-(w+(niche?32:36))/2)+'px;transform:translate3d('+px+'px,'+py+'px,'+z+'px) rotateY('+ry+'deg)">'+
-      (niche ? '' : '<div class="cone"></div>')+
-      '<div class="glass"><img src="'+info.img+'" alt="'+info.t+' — real Ajanta plate" loading="lazy"></div>'+
-      '<div class="plaque">'+info.t+'</div></div>';
-    plates.push({x:px, z:z, info:info});
-  }
-  MURALS.forEach(function(m,i){ plate(m, (i%2===0 ? -1 : 1), -650 - i*820, 520, 390, -40, false); });
-  CARVES.forEach(function(c,i){ plate(c, (i%2===1 ? -1 : 1), -1060 - i*820, 340, 420, -30, true); });
+    // Supporting outcrop bedrock backing
+    var rockBack = new THREE.Mesh(new THREE.BoxGeometry(30, 13, 10), graniteDarkMat);
+    rockBack.position.set(0, 6, -5);
+    rockBack.castShadow = true;
+    rockBack.receiveShadow = true;
+    cliffGroup.add(rockBack);
 
-  world.innerHTML = html;
+    // Ancient Cistern reservoir rim atop cliff
+    var cistern = new THREE.Mesh(new THREE.CylinderGeometry(4.5, 4.5, 1.6, 18), graniteDarkMat);
+    cistern.position.set(0, 13, -3);
+    cistern.castShadow = true;
+    cliffGroup.add(cistern);
 
-  var d3 = $("#dust3d");
-  for(var di=0; di<22; di++){
-    var sEl = document.createElement("i"), sz2 = 1.5+Math.random()*3;
-    sEl.style.left = (Math.random()*100)+"vw"; sEl.style.width = sz2+"px"; sEl.style.height = sz2+"px";
-    sEl.style.animationDuration = (10+Math.random()*16)+"s"; sEl.style.animationDelay = (-Math.random()*20)+"s";
-    d3.appendChild(sEl);
-  }
-  var em = $("#embers");
-  for(var ei=0; ei<9; ei++){
-    var e2 = document.createElement("i");
-    e2.style.setProperty("--ex", (Math.random()*90)+"px");
-    e2.style.animationDelay = (-Math.random()*3.4)+"s";
-    e2.style.animationDuration = (2.6+Math.random()*2)+"s";
-    em.appendChild(e2);
-  }
-  (function(){
-    var s = "";
-    for(var rep=0; rep<3; rep++){
-      for(var d=0; d<360; d+=15){
-        var card = d%90 === 0 ? ["N","E","S","W"][d/90] : "";
-        s += '<span class="tick'+(card ? " card":"")+'">'+(card || "·")+'</span>';
-      }
-    }
-    $("#cstrip").innerHTML = s;
+    scene.add(cliffGroup);
+    colliders.push({x:0, z:-26, r:15});
   })();
-  var all = MURALS.concat(CARVES, [SHRINE]), loaded = 0;
-  all.forEach(function(im){ var t = new Image(); var done = function(){ loaded++; var el = $("#loadTxt"); if(el) el.textContent = "Lighting torches… "+loaded+" / "+all.length+" plates"; }; t.onload = done; t.onerror = done; t.src = im.img; });
 
-  /* ---------- state (calm: no pits, no falling, no stamina) ---------- */
-  var x = 0, y = 0, z = ZMAX-60, yaw = 0, pitch = 0, lean = 0;
-  var started = false, locked = false;
-  var bob = 0, breath = 0, lastStep = 0;
-  var keys = {}, touchMoved = 0;
-  var ov = $("#enterOv"), promptEl = $("#prompt"), cross = $("#cross"), toastEl = $("#toast");
-  var hand = $("#hand"), progBar = $("#prog i"), cstrip = $("#cstrip"), compassBox = $("#compass"), puffBox = $("#puff");
-  var foundSet = {}, foundN = 0, hover = null;
+  /* 2. PANCHA RATHAS (Monolithic Shrines on the South-East) */
+  (function buildPanchaRathas(){
+    var rathaGroup = new THREE.Group();
+    rathaGroup.position.set(22, 0, 14);
 
-  function toast(msg){ toastEl.textContent = msg; toastEl.classList.add("on"); setTimeout(function(){ toastEl.classList.remove("on"); }, 2200); }
-  function puff(){
-    var p = document.createElement("i");
-    p.style.setProperty("--dx", ((Math.random()*60)-30)+"px");
-    puffBox.appendChild(p);
-    setTimeout(function(){ if(p.parentNode) p.parentNode.removeChild(p); }, 750);
-  }
-  function begin(){
-    if(started) return; started = true;
-    ov.classList.add("hide");
-    if(!isTouch){ try{ stage.requestPointerLock(); }catch(e){} }
-    toast("THE TORCH IS LIT — WALK ON");
-  }
-  ov.addEventListener("click", begin);
-  stage.addEventListener("contextmenu", function(e){ e.preventDefault(); });
+    // Dharmaraja Ratha (Tritala Dravidian stepped vimana)
+    var dr = new THREE.Group();
+    dr.position.set(0, 0, 0);
+    // Tier 1
+    var d1 = new THREE.Mesh(new THREE.BoxGeometry(6.5, 3.6, 6.5), graniteStandardMat);
+    d1.position.y = 1.8; d1.castShadow = true; d1.receiveShadow = true; dr.add(d1);
+    // Tier 2
+    var d2 = new THREE.Mesh(new THREE.BoxGeometry(5.0, 2.6, 5.0), graniteStandardMat);
+    d2.position.y = 4.9; d2.castShadow = true; dr.add(d2);
+    // Tier 3
+    var d3 = new THREE.Mesh(new THREE.BoxGeometry(3.6, 2.0, 3.6), graniteStandardMat);
+    d3.position.y = 7.2; d3.castShadow = true; dr.add(d3);
+    // Octagonal Shikhara dome + Stupi finial
+    var sDome = new THREE.Mesh(new THREE.CylinderGeometry(1.4, 2.0, 1.8, 8), graniteStandardMat);
+    sDome.position.y = 9.1; sDome.castShadow = true; dr.add(sDome);
+    var stupi = new THREE.Mesh(new THREE.SphereGeometry(0.5, 12, 10), graniteStandardMat);
+    stupi.position.y = 10.3; stupi.castShadow = true; dr.add(stupi);
+    d1.userData.infoIndex = 5;
+    examineObjects.push(d1);
+    rathaGroup.add(dr);
+    colliders.push({x:22, z:14, r:4.5});
 
-  function clampPos(){
-    x = Math.max(-XMAX, Math.min(XMAX, x));
-    z = Math.max(ZMIN, Math.min(ZMAX, z));
-  }
-  function collide(){
-    for(var i=0;i<PILLAR_Z.length;i++){
-      for(var j=0;j<2;j++){
-        var px = PILLAR_X[j], pz = PILLAR_Z[i], dx = x-px, dz = z-pz;
-        if(Math.abs(dx) < 72 && Math.abs(dz) < 72){
-          if(Math.abs(dx) > Math.abs(dz)) x = px + (dx > 0 ? 72 : -72);
-          else z = pz + (dz > 0 ? 72 : -72);
-        }
-      }
+    // Bhima Ratha (Long barrel-vaulted sala-shikhara)
+    var br = new THREE.Group();
+    br.position.set(9, 0, 1);
+    var bBase = new THREE.Mesh(new THREE.BoxGeometry(9.0, 3.5, 5.5), graniteStandardMat);
+    bBase.position.y = 1.75; bBase.castShadow = true; bBase.receiveShadow = true; br.add(bBase);
+    // Vaulted wagon roof
+    var vault = new THREE.Mesh(new THREE.CylinderGeometry(2.75, 2.75, 8.8, 20, 1, false, 0, Math.PI), graniteStandardMat);
+    vault.rotation.z = Math.PI/2;
+    vault.position.y = 3.5; vault.castShadow = true; br.add(vault);
+    // Gables
+    var gable = new THREE.Mesh(new THREE.CylinderGeometry(0.4, 0.4, 8.6, 12), graniteDarkMat);
+    gable.rotation.z = Math.PI/2; gable.position.y = 6.3; br.add(gable);
+    bBase.userData.infoIndex = 5;
+    examineObjects.push(bBase);
+    rathaGroup.add(br);
+    colliders.push({x:31, z:15, r:5.5});
+
+    // Arjuna Ratha (Two-tiered elegant shrine)
+    var ar = new THREE.Group();
+    ar.position.set(-7, 0, 2);
+    var a1 = new THREE.Mesh(new THREE.BoxGeometry(4.2, 3.0, 4.2), graniteStandardMat);
+    a1.position.y = 1.5; a1.castShadow = true; ar.add(a1);
+    var a2 = new THREE.Mesh(new THREE.BoxGeometry(3.0, 2.0, 3.0), graniteStandardMat);
+    a2.position.y = 4.0; a2.castShadow = true; ar.add(a2);
+    var aDome = new THREE.Mesh(new THREE.SphereGeometry(1.2, 14, 10), graniteStandardMat);
+    aDome.position.y = 5.6; aDome.castShadow = true; ar.add(aDome);
+    a1.userData.infoIndex = 5;
+    examineObjects.push(a1);
+    rathaGroup.add(ar);
+    colliders.push({x:15, z:16, r:3.2});
+
+    // Draupadi Ratha (Thatched hut kutagara)
+    var dra = new THREE.Group();
+    dra.position.set(-13, 0, 2);
+    var drBase = new THREE.Mesh(new THREE.BoxGeometry(3.2, 2.6, 3.2), graniteStandardMat);
+    drBase.position.y = 1.3; drBase.castShadow = true; dra.add(drBase);
+    var drRoof = new THREE.Mesh(new THREE.ConeGeometry(2.4, 1.8, 4), graniteStandardMat);
+    drRoof.rotation.y = Math.PI/4; drRoof.position.y = 3.5; drRoof.castShadow = true; dra.add(drRoof);
+    drBase.userData.infoIndex = 5;
+    examineObjects.push(drBase);
+    rathaGroup.add(dra);
+    colliders.push({x:9, z:16, r:2.8});
+
+    // Monolithic Guardian Elephant
+    var ele = new THREE.Group();
+    ele.position.set(-4, 0, 7);
+    var eb = new THREE.Mesh(new THREE.BoxGeometry(2.8, 2.2, 1.6), graniteDarkMat);
+    eb.position.y = 1.2; eb.castShadow = true; ele.add(eb);
+    var eh = new THREE.Mesh(new THREE.SphereGeometry(0.8, 12, 10), graniteDarkMat);
+    eh.position.set(1.4, 1.8, 0); eh.castShadow = true; ele.add(eh);
+    var et = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.35, 1.4, 8), graniteDarkMat);
+    et.position.set(1.9, 1.0, 0); et.rotation.z = -0.4; ele.add(et);
+    eb.userData.infoIndex = 5;
+    examineObjects.push(eb);
+    rathaGroup.add(ele);
+
+    scene.add(rathaGroup);
+  })();
+
+  /* 3. SHORE TEMPLE (Directly on the Ocean Coastline) */
+  (function buildShoreTemple(){
+    var shoreGroup = new THREE.Group();
+    shoreGroup.position.set(52, 0, -22);
+
+    // Granite foundation plinth breakwater
+    var plinth = new THREE.Mesh(new THREE.BoxGeometry(18, 1.6, 24), graniteDarkMat);
+    plinth.position.y = 0.8;
+    plinth.receiveShadow = true;
+    shoreGroup.add(plinth);
+
+    // Primary Vimana (East facing, ocean side)
+    var v1 = new THREE.Group();
+    v1.position.set(2, 1.6, -2);
+    var v1b = new THREE.Mesh(new THREE.BoxGeometry(7, 4.5, 7), graniteStandardMat);
+    v1b.position.y = 2.25; v1b.castShadow = true; v1.add(v1b);
+    var v1t1 = new THREE.Mesh(new THREE.BoxGeometry(5.4, 3.2, 5.4), graniteStandardMat);
+    v1t1.position.y = 6.1; v1t1.castShadow = true; v1.add(v1t1);
+    var v1t2 = new THREE.Mesh(new THREE.BoxGeometry(3.8, 2.4, 3.8), graniteStandardMat);
+    v1t2.position.y = 8.9; v1t2.castShadow = true; v1.add(v1t2);
+    var v1cap = new THREE.Mesh(new THREE.CylinderGeometry(1.2, 2.2, 1.8, 12), graniteStandardMat);
+    v1cap.position.y = 11.0; v1cap.castShadow = true; v1.add(v1cap);
+    var v1fin = new THREE.Mesh(new THREE.SphereGeometry(0.65, 12, 10), graniteStandardMat);
+    v1fin.position.y = 12.3; v1fin.castShadow = true; v1.add(v1fin);
+    v1b.userData.infoIndex = 6;
+    examineObjects.push(v1b);
+    shoreGroup.add(v1);
+
+    // Smaller Western Vimana
+    var v2 = new THREE.Group();
+    v2.position.set(-4.5, 1.6, -2);
+    var v2b = new THREE.Mesh(new THREE.BoxGeometry(4.6, 3.4, 4.6), graniteStandardMat);
+    v2b.position.y = 1.7; v2b.castShadow = true; v2.add(v2b);
+    var v2t = new THREE.Mesh(new THREE.BoxGeometry(3.2, 2.2, 3.2), graniteStandardMat);
+    v2t.position.y = 4.5; v2t.castShadow = true; v2.add(v2t);
+    var v2cap = new THREE.Mesh(new THREE.SphereGeometry(1.1, 10, 8), graniteStandardMat);
+    v2cap.position.y = 6.2; v2cap.castShadow = true; v2.add(v2cap);
+    shoreGroup.add(v2);
+
+    // Perimeter wall of couchant Nandi bulls
+    for(var bi=-7; bi<=7; bi+=2.5){
+      var nandi = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.8, 0.7), graniteDarkMat);
+      nandi.position.set(bi, 1.9, 10);
+      nandi.castShadow = true;
+      shoreGroup.add(nandi);
     }
-    clampPos();
-  }
-  function moveBy(f, s, dt, mult){
-    var sp = 340 * (mult || 1);
-    var A = yaw*Math.PI/180;
-    x += (Math.sin(A)*f + Math.cos(A)*s)*sp*dt;
-    z += (-Math.cos(A)*f + Math.sin(A)*s)*sp*dt;
-    collide();
-    bob += dt*9;
-    var step = Math.floor(bob/Math.PI);
-    if(step !== lastStep){ lastStep = step; puff(); }
+
+    scene.add(shoreGroup);
+    colliders.push({x:52, z:-22, r:12});
+  })();
+
+  /* 4. ROCK-CUT MANDAPAS (Varaha, Mahishasuramardini, Krishna) */
+  function createMandapaCave(x, z, rotY, infoIdx, labelName){
+    var mg = new THREE.Group();
+    mg.position.set(x, 0, z);
+    mg.rotation.y = rotY;
+
+    // Monolithic rock facade
+    var caveRock = new THREE.Mesh(new THREE.BoxGeometry(12, 7.5, 7), graniteDarkMat);
+    caveRock.position.set(0, 3.75, -2);
+    caveRock.castShadow = true; caveRock.receiveShadow = true; mg.add(caveRock);
+
+    // Cut-out interior veranda
+    var porchPlinth = new THREE.Mesh(new THREE.BoxGeometry(10, 0.6, 4), graniteStandardMat);
+    porchPlinth.position.set(0, 0.3, 1.5);
+    porchPlinth.receiveShadow = true; mg.add(porchPlinth);
+
+    // 4 Vyala (Lion-base) pillars along portico
+    for(var pi=-3.6; pi<=3.6; pi+=2.4){
+      var pg = new THREE.Group();
+      pg.position.set(pi, 0.6, 2.4);
+
+      // Crouching Lion base
+      var lBase = new THREE.Mesh(new THREE.BoxGeometry(0.85, 0.95, 0.85), graniteDarkMat);
+      lBase.position.y = 0.48; lBase.castShadow = true; pg.add(lBase);
+      // Fluted shaft
+      var shaft = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.32, 2.6, 12), graniteStandardMat);
+      shaft.position.y = 2.25; shaft.castShadow = true; pg.add(shaft);
+      // Cushion capital
+      var cap = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.4, 0.4, 12), graniteStandardMat);
+      cap.position.y = 3.65; cap.castShadow = true; pg.add(cap);
+
+      mg.add(pg);
+    }
+
+    // High relief narrative icon in back wall
+    var reliefBack = new THREE.Mesh(new THREE.PlaneGeometry(4.8, 4.2), graniteStandardMat);
+    reliefBack.position.set(0, 3.2, 0.8);
+    reliefBack.userData.infoIndex = infoIdx;
+    examineObjects.push(reliefBack);
+    mg.add(reliefBack);
+
+    scene.add(mg);
+    colliders.push({x:x, z:z, r:5.2});
   }
 
-  /* 360° look */
-  window.addEventListener("mousemove", function(e){
-    if(!started || $("#exhibit").classList.contains("on")) return;
-    if(!locked && !stage.contains(e.target)) return;
-    yaw = (yaw + e.movementX*.085) % 360;
-    pitch = Math.max(-60, Math.min(60, pitch - e.movementY*.085));
+  // Varaha Mandapa (West)
+  createMandapaCave(-20, -10, 0.6, 1, "Varaha Mandapa");
+  // Mahishasuramardini Cave (North-West)
+  createMandapaCave(-26, 8, 1.2, 2, "Mahishasuramardini Cave");
+  // Krishna Mandapa (South-West)
+  createMandapaCave(-12, 18, 0.2, 3, "Krishna Mandapa");
+
+  /* 5. SCATTERED CHARNOCKITE WEATHERED BOULDERS */
+  var boulderGeo = new THREE.DodecahedronGeometry(2.4, 1);
+  var bPos = boulderGeo.attributes.position;
+  for(var bi=0; bi<bPos.count; bi++){
+    bPos.setXYZ(bi, bPos.getX(bi)*(1 + Math.sin(bi*3)*0.2), bPos.getY(bi)*(0.9 + Math.cos(bi*4)*0.15), bPos.getZ(bi)*(1 + Math.sin(bi*5)*0.2));
+  }
+  boulderGeo.computeVertexNormals();
+
+  var boulderPositions = [
+    [-6, 6], [8, -8], [-2, 12], [28, -8], [16, -24], [-15, -28], [38, 4]
+  ];
+  boulderPositions.forEach(function(bp){
+    var bMesh = new THREE.Mesh(boulderGeo, graniteDarkMat);
+    bMesh.position.set(bp[0], 1.5, bp[1]);
+    bMesh.rotation.set(Math.random()*3, Math.random()*3, Math.random()*3);
+    bMesh.castShadow = true; bMesh.receiveShadow = true;
+    scene.add(bMesh);
+    colliders.push({x:bp[0], z:bp[1], r:2.8});
   });
-  document.addEventListener("pointerlockchange", function(){ locked = document.pointerLockElement === stage; });
-  var t0 = null;
-  stage.addEventListener("touchstart", function(e){
-    touchMoved = 0;
-    if(e.target.closest("#dpad")){ t0 = null; return; }
-    t0 = [e.touches[0].clientX, e.touches[0].clientY];
-  }, {passive:true});
-  stage.addEventListener("touchmove", function(e){
-    if(!t0 || !started) return;
-    var dx = e.touches[0].clientX - t0[0], dy = e.touches[0].clientY - t0[1];
-    touchMoved += Math.abs(dx) + Math.abs(dy);
-    yaw = (yaw + dx*.16) % 360;
-    pitch = Math.max(-60, Math.min(60, pitch - dy*.16));
-    t0 = [e.touches[0].clientX, e.touches[0].clientY];
-  }, {passive:true});
-  stage.addEventListener("wheel", function(e){
-    e.preventDefault();
-    if(!started || $("#exhibit").classList.contains("on")) return;
-    var d = Math.max(-1, Math.min(1, e.deltaY/60));
-    moveBy(-d, 0, .05, 2.2);
-  }, {passive:false});
+
+  /* ---------- PLAYER NAVIGATION & CAMERA ---------- */
+  var px = 0, py = 1.7, pz = 10;
+  var yaw = 0, pitch = 0, bob = 0;
+  var started = false, locked = false;
+  var keys = {};
+  var droneMode = false;
+
+  var enterOv = $("#sEnter"), promptEl = $("#sPrompt"), crossEl = $("#sCross"), toastEl = $("#sToast");
+  var foundSet = {}, foundN = 0, hoverIndex = null;
+
+  function toast(msg){
+    toastEl.textContent = msg;
+    toastEl.classList.add("on");
+    setTimeout(function(){ toastEl.classList.remove("on"); }, 2400);
+  }
+
+  function beginExperience(){
+    if(started) return; started = true;
+    enterOv.classList.add("hide");
+    try { renderer.domElement.requestPointerLock(); } catch(e){}
+    toast("THE PALLAVA OUTCROP IS UNLOCKED · WALK FREELY");
+  }
+  enterOv.onclick = beginExperience;
 
   window.addEventListener("keydown", function(e){
     var k = e.key.toLowerCase();
-    if(k === "enter" && $("#caveScreen").classList.contains("active") && !started){ begin(); return; }
+    if($("#site").classList.contains("on") && k==="enter" && !started){ beginExperience(); return; }
     keys[k] = true;
-    if(k === "e") tryOpen();
-    if(["arrowup","arrowdown","arrowleft","arrowright"," "].indexOf(k) >= 0) e.preventDefault();
+    if(k==="e") tryExamineMonument();
+    if(k==="l") toggleRaking();
+    if(k==="t") applyTimePreset((timeIdx+1)%TIME_PRESETS.length);
+    if(k==="m") toggleAudio();
+    if(["arrowup","arrowdown","arrowleft","arrowright"," "].indexOf(k)>=0 && $("#site").classList.contains("on")) e.preventDefault();
   });
   window.addEventListener("keyup", function(e){ keys[e.key.toLowerCase()] = false; });
-  document.querySelectorAll("#dpad button").forEach(function(b){
-    var k = b.dataset.k;
-    b.addEventListener("pointerdown", function(e){ e.preventDefault(); e.stopPropagation(); keys[k] = true; });
-    b.addEventListener("pointerup", function(){ keys[k] = false; });
-    b.addEventListener("pointerleave", function(){ keys[k] = false; });
+
+  document.addEventListener("pointerlockchange", function(){
+    locked = document.pointerLockElement === renderer.domElement;
   });
 
-  function pick(){
-    var A = yaw*Math.PI/180, fx = Math.sin(A), fz = -Math.cos(A);
-    hover = null; var best = 1e9;
-    for(var i=0;i<plates.length;i++){
-      var p = plates[i], dx = p.x - x, dz = p.z - z, d = Math.hypot(dx,dz);
-      if(d > 1300 || d === 0) continue;
-      var dot = (dx/d)*fx + (dz/d)*fz;
-      if(dot > .82 && d < best){ best = d; hover = p; }
-    }
-    var dzS = Z1 - z;
-    if(Math.abs(dzS) < 1600 && (-fz) > .88 && Math.abs(x) < 260 && (!hover || Math.abs(dzS) < best)) hover = {x:0, z:Z1, info:SHRINE};
-    var on = !!hover && started;
-    promptEl.classList.toggle("on", on);
-    cross.classList.toggle("hot", !!hover);
-    if(on) promptEl.textContent = "Click / E — " + hover.info.t;
-  }
-  function tryOpen(){
-    if(!hover || !started || $("#exhibit").classList.contains("on")) return;
-    var i = hover.info;
-    $("#exImg").src = i.img; $("#exDir").textContent = i.dir + " · " + i.cave;
-    $("#exTitle").textContent = i.t; $("#exCap").textContent = i.cap; $("#exDesc").textContent = i.desc;
-    $("#exhibit").classList.add("on");
+  window.addEventListener("mousemove", function(e){
+    if(!started || !$("#site").classList.contains("on") || $("#decode").classList.contains("on") || droneMode) return;
+    if(!locked && !host.contains(e.target)) return;
+    yaw = (yaw + e.movementX * 0.0024) % (Math.PI * 2);
+    pitch = Math.max(-1.3, Math.min(1.3, pitch + e.movementY * 0.0024));
+  });
+
+  renderer.domElement.onclick = function(){ if(locked) tryExamineMonument(); };
+
+  // Drone View Toggle
+  $("#btnOrbit").onclick = function(){
+    droneMode = !droneMode;
+    $("#btnOrbit").textContent = droneMode ? "1st Person View" : "Drone View";
+    $("#btnOrbit").classList.toggle("active", droneMode);
     if(document.pointerLockElement) document.exitPointerLock();
-    if(!foundSet[i.t]){ foundSet[i.t] = 1; foundN++; $("#found").textContent = String(foundN).padStart(2,"0") + " / 11";
-      if(foundN === 11) setTimeout(function(){ toast("ALL ELEVEN PLATES FOUND"); }, 400); }
-  }
-  stage.addEventListener("click", function(e){
-    if(e.target.closest("#dpad")) return;
-    if(touchMoved > 14){ touchMoved = 0; return; }
-    if(started && (locked || isTouch)) tryOpen();
-  });
-  $("#exClose").addEventListener("click", function(){
-    $("#exhibit").classList.remove("on");
-    if(!isTouch){ try{ stage.requestPointerLock(); }catch(e2){} }
-  });
+  };
 
-  var prev = performance.now();
-  function loop(t){
-    requestAnimationFrame(loop);
-    var dt = Math.min(.05, (t - prev)/1000); prev = t;
-    if(!$("#caveScreen").classList.contains("active")) return;
-    var exOpen = $("#exhibit").classList.contains("on");
+  // Raycasting for monument inspection
+  var raycaster = new THREE.Raycaster();
+  function checkMonumentProximity(){
+    raycaster.setFromCamera({x:0, y:0}, camera);
+    var hits = raycaster.intersectObjects(examineObjects, true);
+    hoverIndex = (hits.length > 0 && hits[0].distance < 16) ? hits[0].object.userData.infoIndex : null;
 
-    if(started && !exOpen){
-      var f = (keys["w"]||keys["arrowup"] ? 1:0) - (keys["s"]||keys["arrowdown"] ? 1:0);
-      var s = (keys["d"]||keys["arrowright"] ? 1:0) - (keys["a"]||keys["arrowleft"] ? 1:0);
-      if(f || s) moveBy(f, s, dt, 1);
-      lean += ((s*1.2) - lean)*.12;
+    var isHovering = hoverIndex !== null && hoverIndex !== undefined && started;
+    promptEl.classList.toggle("on", isHovering);
+    crossEl.classList.toggle("hot", isHovering);
+    if(isHovering){
+      promptEl.textContent = "Click / Press E — Examine: " + SLABS[hoverIndex].t;
     }
-    breath += dt*1.1;
-    var bobY = Math.sin(bob)*4 + Math.sin(breath)*1.6;
-    var bobR = Math.sin(bob*.5)*.4 + Math.sin(breath*.6)*.16 + lean;
-    world.style.transform = "rotateZ("+bobR.toFixed(2)+"deg) rotateX("+pitch.toFixed(2)+"deg) rotateY("+yaw.toFixed(2)+"deg) translate3d("+(-x).toFixed(1)+"px,"+(-y+bobY).toFixed(1)+"px,"+(-z).toFixed(1)+"px)";
-    hand.style.transform = "rotate("+(Math.sin(bob*.5)*2+Math.sin(breath*.8)*.7-lean*1.4).toFixed(2)+"deg) translate("+(Math.sin(bob)*4).toFixed(1)+"px,"+(Math.abs(Math.cos(bob))*4).toFixed(1)+"px)";
-    var deg = ((yaw%360)+360)%360;
-    cstrip.style.transform = "translateX("+ (-(deg/15)*20 + compassBox.offsetWidth/2 - 10).toFixed(1) +"px)";
-    progBar.style.width = (((ZMAX-60)-z)/((ZMAX-60)-ZMIN)*100).toFixed(1)+"%";
-    pick();
   }
-  requestAnimationFrame(loop);
+
+  function tryExamineMonument(){
+    if(hoverIndex === null || hoverIndex === undefined || !started || $("#decode").classList.contains("on")) return;
+    var s = SLABS[hoverIndex];
+    $("#dImg").src = s.img;
+    $("#dKick").textContent = s.theme + " Theme · " + s.s;
+    $("#dTitle").textContent = s.t;
+    $("#dSig").textContent = s.sig;
+    $("#dAttrs").innerHTML = s.attrs.map(function(a){
+      return "<li><b>"+a[0]+"</b><span>"+a[1]+"</span></li>";
+    }).join("");
+    $("#decode").classList.add("on");
+    if(document.pointerLockElement) document.exitPointerLock();
+
+    if(!foundSet[hoverIndex]){
+      foundSet[hoverIndex] = true;
+      foundN++;
+      $("#sFound").textContent = foundN + " / 8";
+      if(foundN === 8){
+        setTimeout(function(){ toast("ACADEMIC DISCOVERY COMPLETE · ALL 8 MONUMENTS READ"); }, 500);
+      }
+    }
+  }
+  $("#dClose").onclick = function(){
+    $("#decode").classList.remove("on");
+    try { renderer.domElement.requestPointerLock(); } catch(e){}
+  };
+
+  // Compass tick marks
+  (function buildCompass(){
+    var s = "";
+    for(var rep=0; rep<3; rep++){
+      for(var d=0; d<360; d+=15){
+        var card = d%90===0 ? ["N","E","S","W"][d/90] : "";
+        s += '<span class="tick'+(card?" card":"")+'">'+(card||"·")+'</span>';
+      }
+    }
+    $("#sStrip").innerHTML = s;
+  })();
+
+  function resolveCollisions(){
+    for(var i=0; i<colliders.length; i++){
+      var c = colliders[i];
+      var dx = px - c.x, dz = pz - c.z;
+      var dist = Math.hypot(dx, dz);
+      if(dist < c.r && dist > 0.001){
+        px = c.x + (dx/dist) * c.r;
+        pz = c.z + (dz/dist) * c.r;
+      }
+    }
+    px = Math.max(-65, Math.min(80, px));
+    pz = Math.max(-65, Math.min(65, pz));
+  }
+
+  /* ---------- MAIN RENDER ANIMATION LOOP ---------- */
+  var prevTime = performance.now();
+  var waveOffset = 0;
+
+  function animateLoop(now){
+    requestAnimationFrame(animateLoop);
+    if(!$("#site").classList.contains("on")) return;
+
+    var dt = Math.min(0.05, (now - prevTime)/1000);
+    prevTime = now;
+
+    // Ocean waves animation
+    waveOffset += dt * 1.4;
+    var wPos = waterGeo.attributes.position;
+    for(var wi=0; wi<wPos.count; wi++){
+      var wx = wPos.getX(wi), wz = wPos.getZ(wi);
+      wPos.setY(wi, Math.sin(wx*0.2 + waveOffset)*0.22 + Math.cos(wz*0.15 + waveOffset*0.8)*0.18);
+    }
+    waterGeo.computeVertexNormals();
+    waterGeo.attributes.position.needsUpdate = true;
+
+    if(started && !$("#decode").classList.contains("on") && !droneMode){
+      var moveF = (keys["w"]||keys["arrowup"]?1:0) - (keys["s"]||keys["arrowdown"]?1:0);
+      var moveS = (keys["d"]||keys["arrowright"]?1:0) - (keys["a"]||keys["arrowleft"]?1:0);
+      if(moveF || moveS){
+        var speed = keys["shift"] ? 10.5 : 4.8;
+        px += (-Math.sin(yaw)*moveF + Math.cos(yaw)*moveS) * speed * dt;
+        pz += (-Math.cos(yaw)*moveF - Math.sin(yaw)*moveS) * speed * dt;
+        resolveCollisions();
+        bob += dt * (keys["shift"] ? 12 : 8.5);
+      }
+      camera.position.set(px, py + Math.sin(bob)*0.07, pz);
+      camera.rotation.y = yaw;
+      camera.rotation.x = pitch;
+    } else if(droneMode){
+      // Aerial Cinematic Drone Orbit
+      var orbitTime = now * 0.0003;
+      camera.position.set(Math.cos(orbitTime)*55, 32, Math.sin(orbitTime)*55);
+      camera.lookAt(8, 3, -5);
+    }
+
+    // Update compass HUD
+    var deg = ((-yaw * 180 / Math.PI)%360 + 360)%360;
+    $("#sStrip").style.transform = "translateX("+ (-(deg/15)*20 + $("#sComp").offsetWidth/2 - 10).toFixed(1) +"px)";
+
+    checkMonumentProximity();
+    renderer.render(scene, camera);
+  }
+  requestAnimationFrame(animateLoop);
+
+  window.addEventListener("resize", function(){
+    if(!$("#site").classList.contains("on")) return;
+    camera.aspect = host.clientWidth / host.clientHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(host.clientWidth, host.clientHeight);
+  });
 }
-route();
 </script>
 </body>
 </html>
