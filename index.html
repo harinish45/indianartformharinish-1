@@ -209,8 +209,8 @@ h2.st em{font-style:normal; color:var(--gold)}
 <div class="top">
   <span class="top-l">21LEM301T · Indian Art Form · <b>Assignment 5 · CO2</b> · Sculpture Thematic Analysis</span>
   <span class="top-r">
-    <button class="tbtn on" id="mSite">🏛 3D Site Walk</button>
-    <button class="tbtn" id="mDeck">📖 Presentation</button>
+    <button class="tbtn on" id="mDeck">📖 Presentation</button>
+    <button class="tbtn" id="mSite">🏛 3D Stone Gallery</button>
   </span>
 </div>
 
@@ -228,7 +228,7 @@ h2.st em{font-style:normal; color:var(--gold)}
   <div class="shud">
     <div class="shud-vig"></div>
     <div id="sComp"><div class="strip" id="sStrip"></div><div class="mid"></div></div>
-    <div class="s-tl">Mamallapuram · Open Site<small>Monument group · 7th–8th c. CE</small></div>
+    <div class="s-tl">Mamallapuram · 3D Stone Gallery<small>Monument group · 7th–8th c. CE</small></div>
     <div class="s-tr">Reliefs examined<br><b id="sFound">0 / 8</b></div>
     <div id="sCross"></div>
     <div id="sPrompt"></div>
@@ -238,7 +238,7 @@ h2.st em{font-style:normal; color:var(--gold)}
   </div>
   <div id="sEnter">
     <div>
-      <h3>WALK THE SCULPTORS' SITE</h3>
+      <h3>3D STONE GALLERY & RELIEF WALK</h3>
       <p>A free-roam 3D reconstruction of the Mamallapuram outcrop: the great Ganges relief, Varaha, Durga and Govardhana panels, lion pillars, the five rathas and the Shore Temple — every carving modelled in real displaced stone. Approach any monument and press E to read its iconography against the archival photograph.</p>
       <div class="keys"><span class="enter">press ENTER</span><span>or click</span><span>W A S D walk</span><span>E examine</span><span>L light</span></div>
     </div>
@@ -422,7 +422,12 @@ deck.innerHTML = SLIDES.map(function(s,i){
         '<div class="row"><span class="k">Section</span><span class="dots"></span><span class="v">Y1</span></div>'+
         '<div class="row"><span class="k">Subject</span><span class="dots"></span><span class="v">INDIAN ART FORM</span></div>'+
         '<div class="row"><span class="k">Subject Code</span><span class="dots"></span><span class="v">21LEM301T</span></div>'+
-      '</div><p class="abs">'+s.abs+'</p></div></section>';
+      '</div>
+<div style="margin:20px 0 10px; display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+  <button id="ctaTo3D" style="padding:10px 24px; background:var(--gold); color:#1c1405; border:none; font-weight:700; font-size:11px; letter-spacing:.2em; text-transform:uppercase; cursor:pointer; border-radius:3px; box-shadow:0 0 20px rgba(217,164,65,0.4); transition:all .25s;">🏛 Explore 3D Stone Gallery</button>
+  <button id="ctaNextSlide" style="padding:10px 24px; background:transparent; border:1px solid var(--teal); color:var(--teal); font-weight:600; font-size:11px; letter-spacing:.2em; text-transform:uppercase; cursor:pointer; border-radius:3px; transition:all .25s;">Next Slide →</button>
+</div>
+<p class="abs">'+s.abs+'</p></div></section>';
   }
   var tags = (s.tags||[]).map(function(t){
     var cls = t==="rel"?"rel":t==="cul"?"cul":"art";
@@ -455,7 +460,7 @@ window.addEventListener("keydown", function(e){
   if(e.key==="ArrowRight"||e.key==="PageDown"||e.key===" "){ e.preventDefault(); show(cur+1); }
   if(e.key==="ArrowLeft"||e.key==="PageUp"){ e.preventDefault(); show(cur-1); }
   if(e.key==="Home") show(0);
-setMode("site");
+setMode("deck");
   if(e.key==="End") show(slides.length-1);
 });
 deck.addEventListener("mousemove", function(e){
@@ -474,7 +479,7 @@ deck.addEventListener("touchend", function(e){
   tx0=null;
 }, {passive:true});
 show(0);
-setMode("site");
+setMode("deck");
 
 /* ================= REPORT ================= */
 function para(s){ return s.pts.map(function(p){ return "<p>"+p.replace(/<b>/g,"<strong>").replace(/<\/b>/g,"</strong>")+"</p>"; }).join("") + (s.paper ? "<p>"+s.paper+"</p>" : ""); }
@@ -527,7 +532,7 @@ function setMode(m){
   if(m==="rep") $("#report").scrollTop = 0;
 }
 if($("#mDeck")) $("#mDeck").onclick = function(){ setMode("deck"); };
-if($("#mSite")) $("#mSite").onclick = function(){ setMode("site"); };
+if($("#mSite")) $("#mSite").onclick = function(){ setMode("deck"); };
 if($("#mRep")) $("#mRep").onclick = function(){ setMode("rep"); };
 
 /* ================= PDF DOWNLOAD ================= */
@@ -824,7 +829,7 @@ function initSite(){
   function begin(){
     if(started) return; started = true; enterOv.classList.add("hide");
     try{ renderer.domElement.requestPointerLock(); }catch(e){}
-    toast("WALK THE OUTCROP");
+    toast("3D STONE GALLERY");
   }
   enterOv.addEventListener("click", begin);
   window.addEventListener("keydown", function(e){
@@ -852,7 +857,18 @@ function initSite(){
 
   
   // Atmospheric sunlight & realistic animation
-  var animClock = 0;
+  
+  // Gallery lighting & dynamic stone relief highlights
+  var galleryClock = 0;
+  function updateAnimations(dt) {
+    galleryClock += dt;
+    // Raking sunlight shifts softly to cast deep dramatic shadows in the carvings
+    var sweepAngle = (sunAz + Math.sin(galleryClock * 0.35) * 8) * Math.PI / 180;
+    var sweepElev = (sunElev + Math.cos(galleryClock * 0.45) * 4) * Math.PI / 180;
+    sun.position.set(px + Math.cos(sweepAngle)*Math.cos(sweepElev)*70, Math.sin(sweepElev)*70, pz + Math.sin(sweepAngle)*Math.cos(sweepElev)*70);
+    sun.target.position.set(px, 1, pz);
+  }
+
   function updateAnimations(dt) {
     animClock += dt;
     // Raking sunlight shifts gently across carvings revealing subtle reliefs
