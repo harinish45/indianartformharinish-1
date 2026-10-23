@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Stone That Speaks — Mahabalipuram · Assignment 5</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%2326262a' stroke='%23d9a441' stroke-width='4'/%3E%3Ccircle cx='50' cy='50' r='30' fill='none' stroke='%233aa6a0' stroke-width='2'/%3E%3Ctext x='50' y='64' font-size='34' text-anchor='middle' fill='%23d9a441' font-family='Georgia, serif'%3Eम%3C/text%3E%3C/svg%3E">
+<title>Stone That Speaks â€” Mahabalipuram Â· Assignment 5</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%2326262a' stroke='%23d9a441' stroke-width='4'/%3E%3Ccircle cx='50' cy='50' r='30' fill='none' stroke='%233aa6a0' stroke-width='2'/%3E%3Ctext x='50' y='64' font-size='34' text-anchor='middle' fill='%23d9a441' font-family='Georgia, serif'%3Eà¤®%3C/text%3E%3C/svg%3E">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/marcellus@5/index.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/alegreya-sans@5/400.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/alegreya-sans@5/500.css">
@@ -208,8 +208,8 @@ h2.st em{font-style:normal; color:var(--gold)}
 <div id="prog"></div>
 <div class="top">
   <div class="top-l">
-    <span>21LEM301T · Indian Art Form</span>
-    <b>Assignment 5 · CO2</b>
+    <span>21LEM301T Â· Indian Art Form</span>
+    <b>Assignment 5 Â· CO2</b>
     <span class="top-badge">10 Marks</span>
   </div>
   <div class="top-r">
@@ -223,10 +223,10 @@ h2.st em{font-style:normal; color:var(--gold)}
 <!-- ============ DECK ============ -->
 <div id="deck"></div>
 <div class="dnav" id="dnav">
-  <button id="prev">← Prev</button>
+  <button id="prev">â† Prev</button>
   <div id="dots"></div>
   <span id="ctr">01 / 10</span>
-  <button id="next">Next →</button>
+  <button id="next">Next â†’</button>
 </div>
 
 <!-- ============ 3D REALISTIC SITE ============ -->
@@ -235,18 +235,18 @@ h2.st em{font-style:normal; color:var(--gold)}
   <div class="shud">
     <div class="shud-vig"></div>
     <div id="sComp"><div class="strip" id="sStrip"></div><div class="mid"></div></div>
-    <div class="s-tl">Mamallapuram · Archaeological Coastal Site<small>UNESCO World Heritage · Pallava 7th–8th c. CE</small></div>
+    <div class="s-tl">Mamallapuram Â· Archaeological Coastal Site<small>UNESCO World Heritage Â· Pallava 7thâ€“8th c. CE</small></div>
     <div class="s-tr">Monuments examined<br><b id="sFound">0 / 8</b></div>
     <div id="sCross"></div>
     <div id="sPrompt"></div>
     <div id="sToast"></div>
-    <div class="s-bl"><b>mouse</b> look 360° · <b>W A S D</b> walk · <b>shift</b> sprint · <b>E / click</b> examine carving · <b>L</b> raking light · <b>T</b> time of day · <b>M</b> audio</div>
+    <div class="s-bl"><b>mouse</b> look 360Â° Â· <b>W A S D</b> walk Â· <b>shift</b> sprint Â· <b>E / click</b> examine carving Â· <b>L</b> raking light Â· <b>T</b> time of day Â· <b>M</b> audio</div>
     
     <div class="s-ctrls">
       <button class="s-btn" id="btnRake">Raking Light: Off</button>
       <button class="s-btn" id="btnTime">Time: Golden Hour</button>
       <button class="s-btn" id="btnOrbit">Drone View</button>
-      <button class="s-btn" id="btnSound">🔊 Ambient Audio</button>
+      <button class="s-btn" id="btnSound">ðŸ”Š Ambient Audio</button>
     </div>
   </div>
   <div id="sEnter">
@@ -279,62 +279,61 @@ h2.st em{font-style:normal; color:var(--gold)}
 <script>
 "use strict";
 var $ = function(s){ return document.querySelector(s); };
-var B = "https://image.qwenlm.ai/public_source/6c87be1b-829a-4fdc-8974-0709bd18cf94/";
 var IMG = {
-  shore:  B+"05ead0c5a-5e02-4867-b527-2a24ec786b337208.png",
-  rathas: B+"45ead0c5a-5e02-4867-b527-2a24ec786b338463.png",
-  lion:   B+"15ead0c5a-5e02-4867-b527-2a24ec786b338045.png",
-  ganga:  B+"25ead0c5a-5e02-4867-b527-2a24ec786b332494.png",
-  varaha: B+"55ead0c5a-5e02-4867-b527-2a24ec786b333261.png",
-  krishna:B+"15ead0c5a-5e02-4867-b527-2a24ec786b336339.png",
-  durga:  B+"45ead0c5a-5e02-4867-b527-2a24ec786b334701.png",
-  bhima:  B+"05ead0c5a-5e02-4867-b527-2a24ec786b335274.png",
-  gaja:   B+"65ead0c5a-5e02-4867-b527-2a24ec786b339903.png",
-  arch:   B+"35ead0c5a-5e02-4867-b527-2a24ec786b338432.png",
-  gable:  B+"45ead0c5a-5e02-4867-b527-2a24ec786b339098.png"
+  shore:   "https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Shore_Temple%2C_Mahabalipuram%2C_India.jpg/800px-Shore_Temple%2C_Mahabalipuram%2C_India.jpg",
+  rathas:  "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Pancha_Rathas%2C_Mamallapuram%2C_India.jpg/800px-Pancha_Rathas%2C_Mamallapuram%2C_India.jpg",
+  lion:    "https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/Mahabalipuram_cave_temple_interior.jpg/800px-Mahabalipuram_cave_temple_interior.jpg",
+  ganga:   "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Descent_of_the_Ganges%2C_Mahabalipuram.jpg/800px-Descent_of_the_Ganges%2C_Mahabalipuram.jpg",
+  varaha:  "https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Varaha_cave%2C_Mahabalipuram.jpg/800px-Varaha_cave%2C_Mahabalipuram.jpg",
+  krishna: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/16/Krishna%27s_Butterball%2C_Mahabalipuram.jpg/800px-Krishna%27s_Butterball%2C_Mahabalipuram.jpg",
+  durga:   "https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Mahishasuramardini_cave_Mamallapuram.jpg/800px-Mahishasuramardini_cave_Mamallapuram.jpg",
+  bhima:   "https://upload.wikimedia.org/wikipedia/commons/thumb/d/df/Bhima_Ratha%2C_Mahabalipuram%2C_Tamil_Nadu.jpg/800px-Bhima_Ratha%2C_Mahabalipuram%2C_Tamil_Nadu.jpg",
+  gaja:    "https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Shore_Temple%2C_Mahabalipuram%2C_India.jpg/800px-Shore_Temple%2C_Mahabalipuram%2C_India.jpg",
+  arch:    "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Descent_of_the_Ganges%2C_Mahabalipuram.jpg/800px-Descent_of_the_Ganges%2C_Mahabalipuram.jpg",
+  gable:   "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cc/Pancha_Rathas%2C_Mamallapuram%2C_India.jpg/800px-Pancha_Rathas%2C_Mamallapuram%2C_India.jpg"
 };
 
 var SLIDES = [
 { cover:true, img:IMG.shore, cap:"Shore Temple, Mamallapuram",
   title:'Stone That <em>Speaks</em>',
-  sub:"A thematic and iconographic analysis of the rock-cut sculptures of Mahabalipuram (Mamallapuram), Tamil Nadu — Pallava, 7th–8th century CE.",
-  abs:"This research analyzes the open-air reliefs, cave shrines, and monolithic rathas of Mahabalipuram as one legible theological program, identifying four recurring themes — the descent of divine grace, gods in heroic action, the sanctification of everyday life, and royal dynastic piety — and examining the iconographic language of scale, register, attribute, and gesture through which those themes are communicated." },
+  sub:"A thematic and iconographic analysis of the rock-cut sculptures of Mahabalipuram (Mamallapuram), Tamil Nadu â€” Pallava, 7thâ€“8th century CE.",
+  abs:"This research analyzes the open-air reliefs, cave shrines, and monolithic rathas of Mahabalipuram as one legible theological program, identifying four recurring themes â€” the descent of divine grace, gods in heroic action, the sanctification of everyday life, and royal dynastic piety â€” and examining the iconographic language of scale, register, attribute, and gesture through which those themes are communicated." },
 { kick:"Context", title:"One Outcrop, One Century, <em>One Workshop</em>", tags:["art","cul"], img:IMG.rathas,
-  cap:"Pancha Rathas — five monoliths cut top-down from single boulders",
-  pts:["Mamallapuram, the premier Pallava port on the Coromandel coast, was carved <b>c. 630–730 CE</b> almost entirely from one outcrop of charnockite granite.",
+  cap:"Pancha Rathas â€” five monoliths cut top-down from single boulders",
+  pts:["Mamallapuram, the premier Pallava port on the Coromandel coast, was carved <b>c. 630â€“730 CE</b> almost entirely from one outcrop of charnockite granite.",
        "Three architectural formats speak one unified visual language here: <b>open-air bas-reliefs</b>, <b>cave shrines (mandapas)</b>, and <b>monolithic rathas</b>.",
        "Inscribed as a UNESCO World Heritage Site in 1984, it stands as the clearest primary text of early South Indian Dravidian iconography."],
-  note:"Subtractive epistemology: the sculptor removes and never adds — every form was already latent within the metamorphic boulder.",
+  note:"Subtractive epistemology: the sculptor removes and never adds â€” every form was already latent within the metamorphic boulder.",
   paper:"Because the entire complex rises from one granite outcrop, stylistic evolution across the site can be read stratigraphically: earlier soft Mahendra-period modeling crystallizes into the crisp, monumental articulation of the Mamalla workshops." },
 { kick:"Patronage", title:"The <em>Lion</em> of the Pallavas", tags:["cul","rel"], img:IMG.lion,
-  cap:"Lion-base (vyala) pillars under a mandapa porch — dynastic emblem as structure",
+  cap:"Lion-base (vyala) pillars under a mandapa porch â€” dynastic emblem as structure",
   pts:["Under <b>Narasimhavarman I 'Mamalla'</b> and his royal successors, sculptural iconography was weaponized as state theology.",
        "The seated Simha-vyala (horned lion) at pillar bases is simultaneously <b>structural support, apotropaic guardian, and dynastic signature</b>.",
        "Port wealth funded multi-generational workshops that transformed the coastal landscape into an open-air imperial manifesto."],
   note:"Heraldic insignia as architecture: the lion signs Pallava authorship as incontrovertibly as a royal copper-plate grant.",
   paper:"The vyala pillar is the site's most recognizable signature: an imperial heraldic beast converted into a load-bearing column, forcing every visitor to cross beneath the body of the king's totemic protector." },
-{ kick:"Theme I · The Sacred Descends", title:"The <em>Descent</em> of the Ganges", tags:["rel"], img:IMG.ganga,
-  cap:"The colossal open-air relief (c. 29 × 13 m): all creation converges on the cleft",
+{ kick:"Theme I Â· The Sacred Descends", title:"The <em>Descent</em> of the Ganges", tags:["rel"], img:IMG.ganga,
+  cap:"The colossal open-air relief (c. 29 Ã— 13 m): all creation converges on the cleft",
   pts:["A natural vertical cleft in the granite cliff <b>becomes the celestial river Ganga</b>: raw geology recruited directly into sacred narrative.",
        "Ascending Nagas and Naginis undulate inside the water cleft, while celestial Gandharvas and Vidyadharas soar weightlessly in the ether.",
        "The double reading (<b>Arjuna's penance</b> for the Pashupatastra / <b>Bhagiratha's penance</b> to bring Ganga down) is deliberate theological shlesha (polysemy)."],
   note:"Directionality is meaning: universal movement toward the vertical cleft is movement toward cosmic grace (anugraha).",
   paper:"The relief's genius is hydrological: an ancient masonry cistern above the cleft released water during festivals, physically cascading down the rock to literally animate the sculpted river." },
-{ kick:"Theme II · Gods in Action", title:"Vishnu <em>Raises</em> the Earth", tags:["rel"], img:IMG.varaha,
+{ kick:"Theme II Â· Gods in Action", title:"Vishnu <em>Raises</em> the Earth", tags:["rel"], img:IMG.varaha,
   cap:"Varaha mandapa: the boar-headed Vishnu lifts Bhudevi with profound tenderness",
-  pts:["<b>Bhu-Varaha rescuing Mother Earth</b>: cosmic protection (rakshana) rendered somatic — the boar snout tenderly nuzzling the rescued goddess.",
+  pts:["<b>Bhu-Varaha rescuing Mother Earth</b>: cosmic protection (rakshana) rendered somatic â€” the boar snout tenderly nuzzling the rescued goddess.",
        "In the same rock-cut mandapa, <b>Trivikrama</b> measures the cosmos in three cosmic strides, while Lakshmi is bathed by elephants (Gajalakshmi).",
        "Adjacent, <b>Durga as Mahishasuramardini</b> attacks the buffalo demon Mahishasura in eight-armed militant grandeur."],
   note:"Iconographic attributes identify avataras: boar head + hoisted Bhudevi = Varaha; disc held edgewise + cosmic stride = Trivikrama.",
   paper:"The Varaha panel synthesizes titanic power with intimacy: the god's massive shoulder cradles Bhudevi with an organic sensitivity rarely matched in world sculpture." },
-{ kick:"Theme III · The Everyday Sanctified", title:"Cowherds, Cats and <em>Milkmaids</em>", tags:["cul"], img:IMG.krishna,
+{ kick:"Theme III Â· The Everyday Sanctified", title:"Cowherds, Cats and <em>Milkmaids</em>", tags:["cul"], img:IMG.krishna,
   cap:"Krishna mandapa: the herd sheltered under Mount Govardhana",
   pts:["<b>Krishna lifting Govardhana</b> shelters pastoral society: cowherds, cattle, and milkmaids under a stone canopy.",
        "Empirical observation of life: a cowherd milks a cow while the mother turns to tenderly lick her nursing calf.",
-       "On the Great Relief, a <b>cat stands in mock ascetic penance</b> while mice dance at its feet — ethical satire inside sacred stone."],
+       "On the Great Relief, a <b>cat stands in mock ascetic penance</b> while mice dance at its feet â€” ethical satire inside sacred stone."],
   note:"Empirical naturalism: the real world is not an illusion to be discarded, but the vessel through which the divine is witnessed.",
   paper:"The pastoral reliefs in Krishna Mandapa represent an unprecedented triumph of observational realism in Indian art: bovine anatomy, rope tension, and pot-balancing postures are studied directly from Tamil coastal life." },
-{ kick:"Method · Reading the Language", title:"How the Stone <em>Says</em> It", tags:["art"], img:IMG.durga,
+{ kick:"Method Â· Reading the Language", title:"How the Stone <em>Says</em> It", tags:["art"], img:IMG.durga,
   cap:"Mahishasuramardini panel: attributes, mudras, and scale carry the sentence",
   pts:["<b>Hierarchy of scale</b>: deities are carved monumental; attendant humans and retinue step down proportionally.",
        "<b>Ayudhas and mudras are visual grammar</b>: the early Pallava discus held edgewise (prayoga), abhaya mudra, and the bow in tension.",
@@ -361,53 +360,53 @@ var SLIDES = [
        "Mamallapuram created the <b>definitive template for South Indian temple art</b>, later inherited and expanded by the Cholas and Vijayanagara.",
        "Thirteen centuries later, this living granite remains an articulate primary text that continues to be read and celebrated."],
   note:"Thematic analysis proves that the site was deliberately designed as an open-air public text for all ranks of society.",
-  paper:"Our analysis concludes where Pallava chisels began: with living stone transformed into eternal speech, proving that stone does not merely endure—it speaks." }
+  paper:"Our analysis concludes where Pallava chisels began: with living stone transformed into eternal speech, proving that stone does not merely endureâ€”it speaks." }
 ];
 
 /* 3D monuments data */
 var SLABS = [
-{ t:"Descent of the Ganges (Arjuna's Penance)", s:"Open-air bas-relief · c. 650 CE", img:IMG.ganga, theme:"Religious",
-  sig:"The colossal 29 × 13 m granite cliff transformed into the celestial river Ganga: nagas, ascetics, flying vidyadharas, and the life-sized elephant herd.",
+{ t:"Descent of the Ganges (Arjuna's Penance)", s:"Open-air bas-relief Â· c. 650 CE", img:IMG.ganga, theme:"Religious",
+  sig:"The colossal 29 Ã— 13 m granite cliff transformed into the celestial river Ganga: nagas, ascetics, flying vidyadharas, and the life-sized elephant herd.",
   attrs:[["Natural Central Fissure","Represents the celestial river Ganga flowing from heaven to earth with ascending nagas"],
          ["One-legged Ascetic (Tapas)","Dual identity: Bhagiratha bringing Ganga, or Arjuna seeking Pashupatastra"],
          ["Four-armed Lord Shiva","Accompanied by dwarfish ganas, bestowing divine boon (varada mudra)"],
          ["Matriarchal Elephant Herd","Remarkable naturalism: male tusker sheltering young calves between front legs"],
          ["Satirical Ascetic Cat","Parody of hypocritical penance: cat meditates while mice play safely at its paws"]] },
-{ t:"Bhu-Varaha Mandapa", s:"Rock-cut cave panel · Vaishnava", img:IMG.varaha, theme:"Religious",
+{ t:"Bhu-Varaha Mandapa", s:"Rock-cut cave panel Â· Vaishnava", img:IMG.varaha, theme:"Religious",
   sig:"Vishnu as the colossal boar avatara lifting Mother Earth (Bhudevi) from the cosmic abyss with monumental tenderness.",
   attrs:[["Boar Head & Muscular Torso","Symbol of Vishnu's transcendent power overturning cosmic disorder"],
          ["Bhudevi (Mother Earth)","Seated gently on Varaha's flexed right knee in trusting surrender"],
          ["Sheshanaga underfoot","Underground serpent king supporting the lotus pedestal"],
          ["Attendant Sages & Devas","Arranged in descending scale to reflect spiritual hierarchy"]] },
-{ t:"Mahishasuramardini Cave", s:"Rock-cut battle panel · Shakta", img:IMG.durga, theme:"Religious",
+{ t:"Mahishasuramardini Cave", s:"Rock-cut battle panel Â· Shakta", img:IMG.durga, theme:"Religious",
   sig:"The goddess Durga mounted on her roaring lion charging the buffalo-headed demon Mahishasura in kinetic moral combat.",
   attrs:[["Eight-armed Durga","Wielding bow, trident, discus, sword, and conch in harmonious motion"],
          ["Roaring Lion Vahana","Aggressive springing posture emphasizing divine indignation"],
          ["Mahishasura Titan","Depicted with human body and buffalo horns, wielding an iron club as he recoils"],
          ["Direction of Flight","Demonic army collapses toward the right margin, visually declaring defeat"]] },
-{ t:"Govardhana Cave (Krishna Mandapa)", s:"Rock-cut pastoral relief · Krishnaite", img:IMG.krishna, theme:"Cultural",
+{ t:"Govardhana Cave (Krishna Mandapa)", s:"Rock-cut pastoral relief Â· Krishnaite", img:IMG.krishna, theme:"Cultural",
   sig:"Krishna lifting Mount Govardhana like an umbrella to shield the cowherds (Ayars) and cattle of Gokula from Indra's storm.",
   attrs:[["Mountain Held Aloft","Single-handed effortless divine protection over human community"],
-         ["Cow Milking Scene","Mother cow turns affectionately to lick her nursing calf — observational realism"],
+         ["Cow Milking Scene","Mother cow turns affectionately to lick her nursing calf â€” observational realism"],
          ["Milkmaid with Pots","Earthy pastoral life elevated to sacred status"],
          ["Pastoral Flute Player","Music and peace amidst cosmic turmoil"]] },
-{ t:"Simha-Vyala Pillar Porch", s:"Mandapa veranda · Dynastic", img:IMG.lion, theme:"Cultural",
+{ t:"Simha-Vyala Pillar Porch", s:"Mandapa veranda Â· Dynastic", img:IMG.lion, theme:"Cultural",
   sig:"The signature Pallava architectural column: crouching horned lion acting as foundation, guardian, and royal emblem.",
   attrs:[["Seated Lion (Vyala)","Symbol of Narasimhavarman I 'Mamalla', the conquering king"],
          ["Cushion Capital (Kumbha)","Bulbous member distributing the dead weight of the rock architrave"],
          ["Repetition across Caves","Standardized workshop signature spanning four generations of monarchs"]] },
-{ t:"Pancha Rathas (Monolithic Chariots)", s:"Top-down monolithic shrines · 7th c.", img:IMG.rathas, theme:"Artistic",
+{ t:"Pancha Rathas (Monolithic Chariots)", s:"Top-down monolithic shrines Â· 7th c.", img:IMG.rathas, theme:"Artistic",
   sig:"Five experimental architectural prototypes carved top-down from single granite boulders, codifying Dravidian temple forms.",
   attrs:[["Dharmaraja Ratha","Stepped tritala vimana with octagonal sikhara and corner deity sculptures"],
          ["Bhima Ratha","Massive oblong barrel-vaulted wagon roof (sala-shikhara) with pillared portico"],
          ["Draupadi Ratha","Four-cornered square hut (kutagara) shrine modeled on thatch hermitages"],
          ["Nakula-Sahadeva & Elephant","Apsidal elephant-back (gajaprishta) shrine with free-standing monolithic elephant"]] },
-{ t:"Shore Temple (Alai-vayil-kovil)", s:"Structural coastal temple · c. 700–728 CE", img:IMG.shore, theme:"Cultural",
+{ t:"Shore Temple (Alai-vayil-kovil)", s:"Structural coastal temple Â· c. 700â€“728 CE", img:IMG.shore, theme:"Cultural",
   sig:"Twin granite vimanas kissing the ocean surf: early structural Dravidian temple functioning as both sanctuary and maritime beacon.",
   attrs:[["Twin Tiered Vimanas","Dedicated to Shiva (east and west) with Vishnu Anantasayana between"],
          ["Nandi Bull Perimeter","Enclosure wall adorned with dozens of couchant stone bulls facing the sea"],
          ["Granite Breakwater","Engineered directly into coastal bedrock to withstand tidal erosion"]] },
-{ t:"Kudu Arch & Gable Stele", s:"Ornamental detail · Architectural", img:IMG.gable, theme:"Artistic",
+{ t:"Kudu Arch & Gable Stele", s:"Ornamental detail Â· Architectural", img:IMG.gable, theme:"Artistic",
   sig:"The horseshoe-shaped chaitya arch (kudu) with a protective human face inside, framing roof tiers and dormers.",
   attrs:[["Horseshoe Kudu Arch","Dravidian decorative adaptation of earlier Buddhist sun-window arches"],
          ["Protective Face Inside","Apotropaic guardian looking outward from the roof perimeter"],
@@ -426,17 +425,17 @@ var deck = $("#deck");
 deck.innerHTML = SLIDES.map(function(s,i){
   if(s.cover){
     return '<section class="slide coverS" data-i="'+i+'"><div class="cwrap">'+
-      '<p class="inst">SRM Institute of Science and Technology · Assignment 5 · CO2 · 10 Marks</p>'+
+      '<p class="inst">SRM Institute of Science and Technology Â· Assignment 5 Â· CO2 Â· 10 Marks</p>'+
       '<h1>'+s.title+'</h1><p class="sub">'+s.sub+'</p>'+
       '<div class="ledger">'+
         '<div class="row"><span class="k">Student Name</span><span class="dots"></span><span class="v">HARINISH S V</span></div>'+
         '<div class="row"><span class="k">Registration No</span><span class="dots"></span><span class="v">RA2411030010137</span></div>'+
-        '<div class="row"><span class="k">Section / Year</span><span class="dots"></span><span class="v">Section Y1 · 2026</span></div>'+
+        '<div class="row"><span class="k">Section / Year</span><span class="dots"></span><span class="v">Section Y1 Â· 2026</span></div>'+
         '<div class="row"><span class="k">Subject Name</span><span class="dots"></span><span class="v">INDIAN ART FORM</span></div>'+
         '<div class="row"><span class="k">Subject Code</span><span class="dots"></span><span class="v">21LEM301T</span></div>'+
       '</div><p class="abs">'+s.abs+'</p>'+
       '<div class="cta-row">'+
-        '<button class="tbtn on" onclick="setMode(\'site\')">Start 3D Site Walk →</button>'+
+        '<button class="tbtn on" onclick="setMode(\'site\')">Start 3D Site Walk â†’</button>'+
         '<button class="tbtn" onclick="setMode(\'rep\')">Read Academic Paper (6 pp)</button>'+
         '<a href="Sculpture_Thematic_Analysis_Mahabalipuram_Harinish.pdf" download class="tbtn pdf">Download Official PDF</a>'+
       '</div></div></section>';
@@ -492,28 +491,28 @@ var pages = [
  '<h3>Sculpture Thematic Analysis: The Rock-Cut Sculptures of Mahabalipuram</h3>'+
  '<p class="abs">'+S[0].abs+'</p>'+
  '<div class="rledg"><div><b>Student Name</b><span>HARINISH S V (Registration No: RA2411030010137)</span></div>'+
- '<div><b>Section & Subject</b><span>Section Y1 · 21LEM301T — Indian Art Form (Assignment 5 · CO2)</span></div>'+
- '<div><b>Institution</b><span>SRM Institute of Science and Technology · Faculty of Science and Humanities</span></div></div>'+
- rfig(IMG.shore,"Fig. 1 — Shore Temple: monolithic subtraction evolving into maritime structural architecture."),
+ '<div><b>Section & Subject</b><span>Section Y1 Â· 21LEM301T â€” Indian Art Form (Assignment 5 Â· CO2)</span></div>'+
+ '<div><b>Institution</b><span>SRM Institute of Science and Technology Â· Faculty of Science and Humanities</span></div></div>'+
+ rfig(IMG.shore,"Fig. 1 â€” Shore Temple: monolithic subtraction evolving into maritime structural architecture."),
  '<h3>1. The Site and Its Method: Geology & Subtraction</h3>'+ para(S[1]) +
  '<h3>2. Patronage: The Heraldic Lion of the Pallavas</h3>'+ para(S[2]) +
- rfig(IMG.rathas,"Fig. 2 — Pancha Rathas: five monolithic structural prototypes chiseled top-down from granite."),
- '<h3>3. Theme I — The Sacred Descends: The Descent of the Ganges</h3>'+ para(S[3]) +
- rfig(IMG.ganga,"Fig. 3 — The colossal open-air relief; natural geological fissure serving as the celestial river."),
- '<h3>4. Theme II — Gods in Heroic Action</h3>'+ para(S[4]) +
- '<h3>5. Theme III — The Everyday Sanctified</h3>'+ para(S[5]) +
- rfig(IMG.varaha,"Fig. 4 — Varaha mandapa: cosmic deliverance rendered with somatic tenderness."),
+ rfig(IMG.rathas,"Fig. 2 â€” Pancha Rathas: five monolithic structural prototypes chiseled top-down from granite."),
+ '<h3>3. Theme I â€” The Sacred Descends: The Descent of the Ganges</h3>'+ para(S[3]) +
+ rfig(IMG.ganga,"Fig. 3 â€” The colossal open-air relief; natural geological fissure serving as the celestial river."),
+ '<h3>4. Theme II â€” Gods in Heroic Action</h3>'+ para(S[4]) +
+ '<h3>5. Theme III â€” The Everyday Sanctified</h3>'+ para(S[5]) +
+ rfig(IMG.varaha,"Fig. 4 â€” Varaha mandapa: cosmic deliverance rendered with somatic tenderness."),
  '<h3>6. Iconographic Language: The Semiotic Syntax</h3>'+ para(S[6]) +
  '<h3>7. Artistic Significance: The Monolithic Prototype</h3>'+ para(S[7]) +
- rfig(IMG.durga,"Fig. 5 — Mahishasuramardini panel: spatial directionality, mudras, and ayudha grammar."),
+ rfig(IMG.durga,"Fig. 5 â€” Mahishasuramardini panel: spatial directionality, mudras, and ayudha grammar."),
  '<h3>8. Cultural Significance: Trans-Oceanic Maritime Transmission</h3>'+ para(S[8]) +
  '<h3>9. Conclusion: The Living Text of Living Basalt</h3>'+ para(S[9]) +
  '<h4>Scholarly References & Primary Archival Literature</h4><ol class="refs">'+REFS.map(function(r){return "<li>"+r+"</li>";}).join("")+'</ol>'+
- rfig(IMG.arch,"Fig. 6 — 19th-century photographic archive: thirteen centuries of continuous reading.")
+ rfig(IMG.arch,"Fig. 6 â€” 19th-century photographic archive: thirteen centuries of continuous reading.")
 ];
 $("#report").innerHTML = pages.map(function(p,i){
-  return '<section class="sheet"><div class="rhead"><span>Sculpture Thematic Analysis · Mahabalipuram</span><span>21LEM301T · CO2 · 10 MARKS</span></div>'+
-    p + '<div class="pnum">— PAGE '+(i+1)+' OF 6 —</div></section>';
+  return '<section class="sheet"><div class="rhead"><span>Sculpture Thematic Analysis Â· Mahabalipuram</span><span>21LEM301T Â· CO2 Â· 10 MARKS</span></div>'+
+    p + '<div class="pnum">â€” PAGE '+(i+1)+' OF 6 â€”</div></section>';
 }).join("");
 var rio = new IntersectionObserver(function(es){ es.forEach(function(en){ if(en.isIntersecting){ en.target.classList.add("in"); rio.unobserve(en.target); } }); }, {threshold:.1});
 document.querySelectorAll(".sheet").forEach(function(s){ rio.observe(s); });
@@ -587,7 +586,7 @@ function toggleAudio(){
       whiteNoise.start(0);
       lfo.start(0);
       audioRunning = true;
-      $("#btnSound").textContent = "🔊 Ocean Surf: On";
+      $("#btnSound").textContent = "ðŸ”Š Ocean Surf: On";
       $("#btnSound").classList.add("active");
     } catch(e){
       console.log("Audio not allowed", e);
@@ -596,12 +595,12 @@ function toggleAudio(){
     if(audioCtx.state === 'suspended'){
       audioCtx.resume();
       audioRunning = true;
-      $("#btnSound").textContent = "🔊 Ocean Surf: On";
+      $("#btnSound").textContent = "ðŸ”Š Ocean Surf: On";
       $("#btnSound").classList.add("active");
     } else if(audioCtx.state === 'running'){
       audioCtx.suspend();
       audioRunning = false;
-      $("#btnSound").textContent = "🔇 Ocean Surf: Off";
+      $("#btnSound").textContent = "ðŸ”‡ Ocean Surf: Off";
       $("#btnSound").classList.remove("active");
     }
   }
@@ -1192,7 +1191,7 @@ function initRealisticSite(){
     if(started) return; started = true;
     enterOv.classList.add("hide");
     try { renderer.domElement.requestPointerLock(); } catch(e){}
-    toast("THE PALLAVA OUTCROP IS UNLOCKED · WALK FREELY");
+    toast("THE PALLAVA OUTCROP IS UNLOCKED Â· WALK FREELY");
   }
   enterOv.onclick = beginExperience;
 
@@ -1240,7 +1239,7 @@ function initRealisticSite(){
     promptEl.classList.toggle("on", isHovering);
     crossEl.classList.toggle("hot", isHovering);
     if(isHovering){
-      promptEl.textContent = "Click / Press E — Examine: " + SLABS[hoverIndex].t;
+      promptEl.textContent = "Click / Press E â€” Examine: " + SLABS[hoverIndex].t;
     }
   }
 
@@ -1248,7 +1247,7 @@ function initRealisticSite(){
     if(hoverIndex === null || hoverIndex === undefined || !started || $("#decode").classList.contains("on")) return;
     var s = SLABS[hoverIndex];
     $("#dImg").src = s.img;
-    $("#dKick").textContent = s.theme + " Theme · " + s.s;
+    $("#dKick").textContent = s.theme + " Theme Â· " + s.s;
     $("#dTitle").textContent = s.t;
     $("#dSig").textContent = s.sig;
     $("#dAttrs").innerHTML = s.attrs.map(function(a){
@@ -1262,7 +1261,7 @@ function initRealisticSite(){
       foundN++;
       $("#sFound").textContent = foundN + " / 8";
       if(foundN === 8){
-        setTimeout(function(){ toast("ACADEMIC DISCOVERY COMPLETE · ALL 8 MONUMENTS READ"); }, 500);
+        setTimeout(function(){ toast("ACADEMIC DISCOVERY COMPLETE Â· ALL 8 MONUMENTS READ"); }, 500);
       }
     }
   }
@@ -1277,7 +1276,7 @@ function initRealisticSite(){
     for(var rep=0; rep<3; rep++){
       for(var d=0; d<360; d+=15){
         var card = d%90===0 ? ["N","E","S","W"][d/90] : "";
-        s += '<span class="tick'+(card?" card":"")+'">'+(card||"·")+'</span>';
+        s += '<span class="tick'+(card?" card":"")+'">'+(card||"Â·")+'</span>';
       }
     }
     $("#sStrip").innerHTML = s;
