@@ -518,17 +518,17 @@ function setMode(m){
   $("#deck").style.display = (m==="deck") ? "" : "none";
   $("#dnav").style.display = (m==="deck") ? "" : "none";
   $("#prog").style.display = (m==="deck") ? "" : "none";
-  $("#mDeck").classList.toggle("on", m==="deck");
-  $("#mSite").classList.toggle("on", m==="site");
-  $("#mRep").classList.toggle("on", m==="rep");
-  $("#mPdf").classList.toggle("on", m==="rep");
+  var md=$("#mDeck"); if(md) md.classList.toggle("on", m==="deck");
+  var ms=$("#mSite"); if(ms) ms.classList.toggle("on", m==="site");
+  var mr=$("#mRep"); if(mr) mr.classList.toggle("on", m==="rep");
+  var mp=$("#mPdf"); if(mp) mp.classList.toggle("on", m==="rep");
   document.body.classList.toggle("cavelock", m==="site");
   if(m==="site") initSite();
   if(m==="rep") $("#report").scrollTop = 0;
 }
-$("#mDeck").onclick = function(){ setMode("deck"); };
-$("#mSite").onclick = function(){ setMode("site"); };
-$("#mRep").onclick  = function(){ setMode("rep"); };
+if($("#mDeck")) $("#mDeck").onclick = function(){ setMode("deck"); };
+if($("#mSite")) $("#mSite").onclick = function(){ setMode("site"); };
+if($("#mRep")) $("#mRep").onclick = function(){ setMode("rep"); };
 
 /* ================= PDF DOWNLOAD ================= */
 function downloadPDF(){
@@ -539,9 +539,9 @@ function downloadPDF(){
     setTimeout(function(){ window.print(); }, 200);
   }, 100);
 }
-$("#mPdf").onclick = downloadPDF;
-$("#pdfGo").onclick = downloadPDF;
-$("#pdfBack").onclick = function(){ setMode("deck"); };
+if($("#mPdf")) $("#mPdf").onclick = downloadPDF;
+if($("#pdfGo")) $("#pdfGo").onclick = downloadPDF;
+if($("#pdfBack")) $("#pdfBack").onclick = function(){ setMode("deck"); };
 
 /* ================= 3D SITE (Three.js, displaced stone carvings) ================= */
 var siteReady = false;
