@@ -1,5 +1,11 @@
-{
+﻿{
   "cleanUrls": true,
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [{ "key": "X-Assignment", "value": "5-CO2-Mahabalipuram" }]
+    }
+  ],
   "rewrites": [
     { "source": "/", "destination": "/index.html" },
     { "source": "/mahabalipuram", "destination": "/mahabalipuram.html" },
